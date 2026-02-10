@@ -41,3 +41,7 @@ pub use systems::{
     spawn_gauge_from_event, spawn_ingredients, update_ball_gauge, update_dragging_ingredient,
     update_hud,
 };
+
+pub const WINDOW_WIDTH: f32 = 1920.0;
+pub const WINDOW_HEIGHT: f32 = 1080.0;
+pub const GAME_TITLE: &str = "Pad Kaprao - Thai Cooking Game";

@@ -16,6 +16,10 @@ pub mod ui;
 
 // Re-export commonly used items for convenience
 pub use gauge::{BallGaugeEgg, BallGaugeKapaow, BarGauge, GaugeSpawnEvent, TimingGauge};
-pub use ingredient::{Dragging, Ingredient, IngredientMenu, IngredientType, OriginalPosition, Pan};
+pub use ingredient::{
+    Dragging, DraggingOriginalParent, HoverOriginalZ, Ingredient, IngredientBackground,
+    IngredientForeground, IngredientForegroundLink, IngredientMenu, IngredientType,
+    OriginalPosition, Pan,
+};
 pub use pan::{FryingPan, PanEgg, PanKapaow};
 pub use ui::{ButtonAction, GameEndScreen, HPOverlay, HeartIcon, MainMenu, StepIndicator, HUD};

@@ -22,12 +22,45 @@
 
 use bevy::prelude::*;
 
+pub const INGREDIENT_SIZE: f32 = 120.0;
+
 /// Marker component for ingredients
 /// Uses Required Components to ensure ingredients always have Transform, Visibility, and Pickable
 #[derive(Component)]
 #[require(Transform, Visibility)]
 pub struct Ingredient {
     pub ingredient_type: IngredientType,
+}
+
+/// Marker component for ingredient background sprite (Icon.png)
+#[derive(Component)]
+#[require(Transform, Visibility)]
+pub struct IngredientBackground;
+
+/// Marker component for ingredient foreground sprite (specific ingredient image)
+#[derive(Component)]
+#[require(Transform, Visibility)]
+pub struct IngredientForeground;
+
+/// Links foreground sprite to its parent ingredient entity
+#[derive(Component, Debug)]
+pub struct IngredientForegroundLink {
+    pub parent_entity: Entity,
+}
+
+/// Stores original parent entity and local transform when dragging starts
+/// Used to reparent foreground sprite back to its original position after drag
+#[derive(Component, Debug)]
+pub struct DraggingOriginalParent {
+    pub parent_entity: Entity,
+    pub original_transform: Transform,
+}
+
+/// Stores the original z-index for hover effects
+/// Used to restore z-index after hover ends
+#[derive(Component, Debug)]
+pub struct HoverOriginalZ {
+    pub z: f32,
 }
 
 /// Marker component for ingredient menu
@@ -94,6 +127,20 @@ impl IngredientType {
             IngredientType::OysterSauce => Color::srgb(0.5, 0.4, 0.2), // Dark brown
             IngredientType::ThaiChilli => Color::srgb(0.9, 0.2, 0.1), // Red
             IngredientType::HolyBasilLeaves => Color::srgb(0.3, 0.5, 0.3), // Dark green
+        }
+    }
+
+    /// Returns the image path for this ingredient
+    pub fn image_path(&self) -> &'static str {
+        match self {
+            IngredientType::Oil => "ingradients/image/Oil.png",
+            IngredientType::Garlic => "ingradients/image/Galic.png",
+            IngredientType::Pork => "ingradients/image/Pork.png",
+            IngredientType::Egg => "ingradients/image/Egg.png",
+            IngredientType::FishSauce => "ingradients/image/MSG.png",
+            IngredientType::OysterSauce => "ingradients/image/OysterSauce.png",
+            IngredientType::ThaiChilli => "ingradients/image/Chili.png",
+            IngredientType::HolyBasilLeaves => "ingradients/image/KaProw.png",
         }
     }
 }

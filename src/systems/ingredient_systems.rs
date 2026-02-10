@@ -10,71 +10,108 @@
 
 use bevy::prelude::*;
 
+use crate::entities::ingredient::INGREDIENT_SIZE;
 use crate::entities::{
-    Dragging, Ingredient, IngredientType, OriginalPosition, Pan, PanEgg, PanKapaow,
+    Dragging, HoverOriginalZ, Ingredient, IngredientForegroundLink, IngredientType,
+    OriginalPosition, Pan, PanEgg, PanKapaow,
 };
 use crate::resource::game_state::{GameStats, IngredientDroppedEvent};
-use crate::spawn::ingredient_spawn::ingredient_item_spawn;
+use crate::spawn::ingredient_spawn::{
+    ingredient_background_spawn, ingredient_foreground_spawn_independent, ingredient_item_spawn,
+};
 
 /// Spawn all ingredients at their starting positions
-/// Arranges 8 ingredients in a 2x4 grid for better screen space usage
-///
-/// Top row: Oil, Garlic, Pork, Egg
-/// Bottom row: Fish Sauce, Oyster Sauce, Thai Chilli, Holy Basil Leaves
-pub fn spawn_ingredients(mut commands: Commands, mut game_stats: ResMut<GameStats>) {
-    // Grid layout parameters
-    let start_x = 400.0; // Right side - positioned for 1920x1080 window
-    let spacing_x = 300.0; // Horizontal spacing
-    let spacing_y = 100.0; // Vertical spacing
-    let start_y = -100.0; // Top row y position
+/// Arranges 8 ingredients in a 2x4 grid, vertically centered on the right side
+pub fn spawn_ingredients(
+    mut commands: Commands,
+    mut game_stats: ResMut<GameStats>,
+    window: Single<&Window>,
+    asset_server: Res<AssetServer>,
+) {
+    // === Window size (world space) ===
+    let w = window.resolution.width();
+    let h = window.resolution.height();
 
-    // Define all 8 ingredients with their grid positions (2 columns x 4 rows)
-    let ingredient_data = [
-        (IngredientType::Oil, 1, start_y),    // Row 0, right column
-        (IngredientType::Garlic, 0, start_y), // Row 0, left column
-        (IngredientType::Pork, 1, start_y - spacing_y), // Row 1, right column
-        (IngredientType::Egg, 0, start_y - spacing_y), // Row 1, left column
-        (IngredientType::FishSauce, 1, start_y - spacing_y * 2.0), // Row 2, right column
-        (IngredientType::OysterSauce, 0, start_y - spacing_y * 2.0), // Row 2, left column
-        (IngredientType::ThaiChilli, 1, start_y - spacing_y * 3.0), // Row 3, right column
-        (
-            IngredientType::HolyBasilLeaves,
-            0,
-            start_y - spacing_y * 3.0,
-        ), // Row 3, left column
+    // === Layout config ===
+    let icon = INGREDIENT_SIZE;
+    let gap = 24.0;
+
+    let cols: i32 = 2;
+    let rows: i32 = 4;
+
+    let spacing_x = icon + gap;
+    let spacing_y = icon + gap;
+
+    let grid_w = cols as f32 * icon + (cols as f32 - 1.0) * gap;
+    let grid_h = rows as f32 * icon + (rows as f32 - 1.0) * gap;
+
+    let right_margin = 16.0;
+    let bottom_margin = 16.0;
+
+    // === Anchor: top-left of grid ===
+    let origin_x = (w * 0.5) - right_margin - grid_w;
+    let origin_y = -(h * 0.5) + bottom_margin + grid_h;
+
+    // === Ingredient order: row-major (top → bottom) ===
+    let ingredient_grid = [
+        (IngredientType::Garlic, 0, 0),
+        (IngredientType::Oil, 1, 0),
+        (IngredientType::Egg, 0, 1),
+        (IngredientType::Pork, 1, 1),
+        (IngredientType::OysterSauce, 0, 2),
+        (IngredientType::FishSauce, 1, 2),
+        (IngredientType::HolyBasilLeaves, 0, 3),
+        (IngredientType::ThaiChilli, 1, 3),
     ];
 
-    for (ingredient_type, col_index, y_pos) in ingredient_data.iter() {
-        let x_pos = start_x + (*col_index as f32 * spacing_x);
-        let position = Vec3::new(x_pos, *y_pos, 1.0);
+    for (ingredient_type, col, row) in ingredient_grid.iter() {
+        let x = origin_x + *col as f32 * spacing_x;
+        let y = origin_y - *row as f32 * spacing_y;
 
-        // Spawn ingredient entity with all required components
-        commands
+        let position = Vec3::new(x, y, 1.0);
+
+        // Parent (background)
+        let parent_entity = commands
             .spawn(ingredient_item_spawn(ingredient_type, position))
-            // Use Observer for drag start event with Bevy 0.16+ syntax
-            .observe(on_drag_start)
-            // Use Observer for drag end event with Bevy 0.16+ syntax
-            .observe(on_drag_end);
+            .with_children(|parent| {
+                parent.spawn(ingredient_background_spawn(&asset_server));
+            })
+            .id();
+
+        // Foreground (drag target)
+        let foreground_entity = commands
+            .spawn(ingredient_foreground_spawn_independent(
+                parent_entity,
+                ingredient_type,
+                position,
+                &asset_server,
+            ))
+            .id();
+
+        commands.entity(foreground_entity).observe(on_drag_start);
+        commands.entity(foreground_entity).observe(on_drag_end);
+        commands.entity(foreground_entity).observe(on_hover_start);
+        commands.entity(foreground_entity).observe(on_hover_end);
 
         info!(
-            "Spawned ingredient: {:?} at ({:.1}, {:.1})",
-            ingredient_type, x_pos, y_pos
+            "Spawned ingredient {:?} at ({:.1}, {:.1})",
+            ingredient_type, x, y
         );
     }
 
-    // Set initial step to 0 (Oil)
     game_stats.current_step = 0;
 
-    info!("All 8 ingredients spawned in 4x2 grid layout on right side (optimized for 1920x1080)");
+    info!("Ingredients spawned: 2x4 grid, centered vertically on right side");
 }
 
-/// Observer for when dragging starts on an ingredient
+/// Observer for when dragging starts on an ingredient foreground sprite
 /// Uses Bevy 0.16+ Observer pattern with On<Pointer<DragStart>>
 pub fn on_drag_start(
     trigger: On<Pointer<DragStart>>,
     mut commands: Commands,
+    q_foreground_link: Query<&IngredientForegroundLink>,
     q_ingredients: Query<&Ingredient>,
-    mut q_transform: Query<&mut Transform>,
+    q_transform: Query<&Transform>,
     q_dragging: Query<(), With<Dragging>>,
 ) {
     // Only allow one ingredient to be dragged at a time
@@ -85,41 +122,51 @@ pub fn on_drag_start(
     let entity = trigger.entity;
     let event = trigger.event();
 
-    // Get the ingredient and transform
-    if let Ok(ingredient) = q_ingredients.get(entity) {
-        if let Ok(mut transform) = q_transform.get_mut(entity) {
-            // Calculate offset for smoother dragging
-            // Convert screen Y (increases down) to world Y (increases up) by negating
-            let pointer_pos = Vec2::new(
-                event.pointer_location.position.x,
-                -event.pointer_location.position.y,
-            );
-            let ingredient_pos = transform.translation.truncate();
+    // Get the foreground link to access parent entity
+    if let Ok(foreground_link) = q_foreground_link.get(entity) {
+        // Get ingredient info from parent entity
+        if let Ok(ingredient) = q_ingredients.get(foreground_link.parent_entity) {
+            // Get current world transform of the foreground sprite
+            if let Ok(transform) = q_transform.get(entity) {
+                // Convert screen Y (increases down) to world Y (increases up) by negating
+                let pointer_pos = Vec2::new(
+                    event.pointer_location.position.x,
+                    -event.pointer_location.position.y,
+                );
+                let ingredient_pos = transform.translation.truncate();
 
-            commands.entity(entity).insert(Dragging {
-                offset: ingredient_pos - pointer_pos,
-            });
+                // Calculate offset for smoother dragging
+                let offset = ingredient_pos - pointer_pos;
 
-            // Raise the z-index so the dragged ingredient appears on top
-            transform.translation.z = 10.0;
+                // Add dragging component
+                commands.entity(entity).insert(Dragging { offset });
 
-            info!("Started dragging: {:?}", ingredient.ingredient_type);
+                // Raise the z-index so the dragged ingredient appears on top
+                commands.entity(entity).insert(Transform {
+                    translation: Vec3::new(transform.translation.x, transform.translation.y, 10.0),
+                    rotation: transform.rotation,
+                    scale: transform.scale,
+                });
+
+                info!("Started dragging: {:?}", ingredient.ingredient_type);
+            }
         }
     }
 }
 
-/// Observer for when dragging ends on an ingredient
+/// Observer for when dragging ends on an ingredient foreground sprite
 /// This is where we detect if the ingredient was dropped on the pan
 /// Uses Bevy 0.16+ Observer pattern with On<Pointer<DragEnd>>
 pub fn on_drag_end(
     trigger: On<Pointer<DragEnd>>,
     mut commands: Commands,
     mut event_writer: MessageWriter<IngredientDroppedEvent>,
-    q_ingredients: Query<(&Ingredient, &OriginalPosition)>,
+    q_foreground_link: Query<&IngredientForegroundLink>,
+    q_ingredients: Query<&Ingredient>,
+    q_original_position: Query<&OriginalPosition>,
     windows: Query<&Window>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
     mut transform_queries: ParamSet<(
-        Query<&mut Transform, Without<Pan>>,
         Query<(Entity, &Transform), With<PanKapaow>>,
         Query<(Entity, &Transform), With<PanEgg>>,
     )>,
@@ -131,80 +178,131 @@ pub fn on_drag_end(
     let drop_position = event.pointer_location.position;
     let drop_world_pos = Vec3::new(drop_position.x, drop_position.y, 1.0);
 
-    if let Ok((ingredient, original_pos)) = q_ingredients.get(entity) {
-        // Collect pan positions first (using immutable queries)
-        let mut pans: Vec<(Entity, Vec2)> = Vec::new();
-        let window = windows.single().unwrap();
-        let cursor = window.cursor_position().unwrap();
+    // Get the foreground link to access parent entity
+    if let Ok(foreground_link) = q_foreground_link.get(entity) {
+        // Get ingredient info from parent entity
+        if let Ok(ingredient) = q_ingredients.get(foreground_link.parent_entity) {
+            // Get original position of foreground sprite
+            if let Ok(original_pos) = q_original_position.get(entity) {
+                // Collect pan positions first (using immutable queries)
+                let mut pans: Vec<(Entity, Vec2)> = Vec::new();
+                let window = windows.single().unwrap();
+                let cursor = window.cursor_position().unwrap();
 
-        let (camera, camera_transform) = camera_q.single().unwrap();
+                let (camera, camera_transform) = camera_q.single().unwrap();
 
-        let position_drop = camera
-            .viewport_to_world_2d(camera_transform, cursor)
-            .unwrap();
-        for (pan_entity, pan_transform) in transform_queries.p1().iter() {
-            pans.push((pan_entity, pan_transform.translation.truncate()));
-        }
+                let position_drop = camera
+                    .viewport_to_world_2d(camera_transform, cursor)
+                    .unwrap();
+                for (pan_entity, pan_transform) in transform_queries.p0().iter() {
+                    pans.push((pan_entity, pan_transform.translation.truncate()));
+                }
 
-        for (pan_entity, pan_transform) in transform_queries.p2().iter() {
-            pans.push((pan_entity, pan_transform.translation.truncate()));
-        }
-        info!("Pan positions collected {:?}", pans);
+                for (pan_entity, pan_transform) in transform_queries.p1().iter() {
+                    pans.push((pan_entity, pan_transform.translation.truncate()));
+                }
+                info!("Pan positions collected {:?}", pans);
 
-        // Check if the ingredient was dropped on any pan
-        let mut dropped_on_pan = false;
-        let mut target_pan: Option<Entity> = None;
+                // Check if the ingredient was dropped on any pan
+                let mut dropped_on_pan = false;
+                let mut target_pan: Option<Entity> = None;
 
-        // Check if dropped on any pan
-        for (pan_entity, pan_center) in pans.iter() {
-            // let drop_point = drop_position;
+                // Check if dropped on any pan
+                for (pan_entity, pan_center) in pans.iter() {
+                    info!("pan_center {:?}", pan_center);
+                    info!("position_drop {:?}", position_drop);
 
-            // If dropped within 150 pixels of pan center, consider it dropped on the pan
-            // let distance = pan_center.distance(drop_point); // <- can't use this because isn't codinate position
-            // info!("distance {:?}", distance <= 150.0);
-            // info!("distance {:?}", distance);
-            info!("pan_center {:?}", pan_center);
-            info!("position_drop {:?}", position_drop);
-            // info!("drop_point {:?}", drop_point);
+                    if position_drop.x <= 150.0 {
+                        dropped_on_pan = true;
+                        target_pan = Some(*pan_entity);
+                        info!(
+                            "Dropped {:?} on pan at ({:.1}, {:.1})",
+                            ingredient.ingredient_type, drop_position.x, drop_position.y
+                        );
+                        break;
+                    }
+                }
 
-            // if distance <= 150.0 {
-            if position_drop.x <= 150.0 {
-                dropped_on_pan = true;
-                target_pan = Some(*pan_entity);
-                info!(
-                    "Dropped {:?} on pan at ({:.1}, {:.1})",
-                    ingredient.ingredient_type, drop_position.x, drop_position.y
-                );
-                break;
+                // Fire the ingredient dropped event if dropped on a pan
+                if dropped_on_pan {
+                    // Fire event with PARENT entity (not foreground sprite)
+                    event_writer.write(IngredientDroppedEvent {
+                        ingredient_entity: foreground_link.parent_entity,
+                        ingredient_type: ingredient.ingredient_type,
+                        drop_position: drop_world_pos,
+                        target_pan,
+                    });
+                    // Despawn foreground sprite since it was used
+                    commands.entity(entity).despawn();
+                } else {
+                    // Not dropped on pan - reset foreground sprite to original world position
+                    commands
+                        .entity(entity)
+                        .insert(Transform::from_translation(original_pos.position));
+                    info!(
+                        "Returned {:?} foreground to original position",
+                        ingredient.ingredient_type
+                    );
+                }
+
+                // Remove dragging component
+                commands.entity(entity).remove::<Dragging>();
             }
         }
+    }
+}
 
-        // Fire the ingredient dropped event if dropped on a pan
-        if dropped_on_pan {
-            event_writer.write(IngredientDroppedEvent {
-                ingredient_entity: entity,
-                ingredient_type: ingredient.ingredient_type,
-                drop_position: drop_world_pos,
-                target_pan,
+/// Observer for when hover starts on an ingredient foreground sprite
+/// Raises the z-index so the hovered ingredient appears on top
+pub fn on_hover_start(
+    trigger: On<Pointer<Over>>,
+    mut commands: Commands,
+    q_transform: Query<&Transform>,
+) {
+    let entity = trigger.entity;
+
+    // Get current transform to store original z-index
+    if let Ok(transform) = q_transform.get(entity) {
+        // Store original z-index
+        commands.entity(entity).insert(HoverOriginalZ {
+            z: transform.translation.z,
+        });
+
+        // Set z-index to high value to appear on top
+        commands.entity(entity).insert(Transform {
+            translation: Vec3::new(
+                transform.translation.x,
+                transform.translation.y,
+                100.0, // High z-index for hover
+            ),
+            rotation: transform.rotation,
+            scale: transform.scale,
+        });
+    }
+}
+
+/// Observer for when hover ends on an ingredient foreground sprite
+/// Restores the original z-index
+pub fn on_hover_end(
+    trigger: On<Pointer<Out>>,
+    mut commands: Commands,
+    q_hover_z: Query<&HoverOriginalZ>,
+    q_transform: Query<&Transform>,
+) {
+    let entity = trigger.entity;
+
+    // Get original z-index and current transform
+    if let Ok(hover_z) = q_hover_z.get(entity) {
+        if let Ok(transform) = q_transform.get(entity) {
+            // Restore original z-index
+            commands.entity(entity).insert(Transform {
+                translation: Vec3::new(transform.translation.x, transform.translation.y, hover_z.z),
+                rotation: transform.rotation,
+                scale: transform.scale,
             });
-        }
 
-        // Remove dragging component
-        commands.entity(entity).remove::<Dragging>();
-
-        // Reset z-index and return to origin if not dropped on pan
-        if let Ok(mut transform) = transform_queries.p0().get_mut(entity) {
-            if !dropped_on_pan {
-                // Animate back to original position (in a real game, you'd use a tween system)
-                // For now, we'll just snap back
-                transform.translation = original_pos.position;
-                info!(
-                    "Returned {:?} to original position",
-                    ingredient.ingredient_type
-                );
-            }
-            // Reset z-index
-            transform.translation.z = 1.0;
+            // Remove the hover z-index component
+            commands.entity(entity).remove::<HoverOriginalZ>();
         }
     }
 }

@@ -16,7 +16,7 @@
 //! - Computed States
 //! - Picking API
 
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowMode};
 
 // New module structure
 mod entities;
@@ -26,6 +26,7 @@ mod systems;
 
 // Re-export commonly used items for convenience
 use entities::GaugeSpawnEvent;
+use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use resource::game_state::{
     AppState, GameLoseEvent, GameWinEvent, InGame, IngredientDroppedEvent, StepCompletedEvent,
 };
@@ -42,8 +43,9 @@ fn main() {
         // Bevy 0.17+ Setup with Default Plugins
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Pad Kaprao - Thai Cooking Game".to_string(),
-                resolution: (1920, 1080).into(),
+                title: GAME_TITLE.to_string(),
+                resolution: (WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32).into(),
+                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Current),
                 ..default()
             }),
             ..default()
