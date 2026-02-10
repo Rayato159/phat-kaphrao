@@ -24,7 +24,8 @@ pub use gauge_systems::{
     check_gauge_hit_window, spawn_gauge_from_event, update_ball_gauge, update_gauge_follow_pan,
 };
 pub use ingredient_systems::{
-    on_drag_end, on_drag_start, spawn_ingredients, update_dragging_ingredient,
+    on_drag_end, on_drag_start, on_hover_end, on_hover_start, spawn_ingredients,
+    update_dragging_ingredient,
 };
 pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state};
 pub use pan_systems::setup_frying_pan;

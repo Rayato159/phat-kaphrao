@@ -256,6 +256,7 @@ pub fn handle_menu_button_click(
         (&Interaction, &ButtonAction),
         (Changed<Interaction>, With<Button>),
     >,
+    mut exit: MessageWriter<AppExit>,
 ) {
     for (interaction, action) in interaction_query.iter_mut() {
         if *interaction == Interaction::Pressed {
@@ -265,19 +266,7 @@ pub fn handle_menu_button_click(
                     next_state.set(AppState::InGame);
                 }
                 ButtonAction::QuitGame => {
-                    info!("Quit Game button clicked!");
-                    // In a web build, we might not be able to quit
-                    // But we can at least log it or handle differently
-                    #[cfg(not(target_arch = "wasm32"))]
-                    {
-                        // For desktop, we could close the window or exit
-                        // For now, we'll just stay in the menu
-                        warn!("Quit requested - functionality to be implemented");
-                    }
-                    #[cfg(target_arch = "wasm32")]
-                    {
-                        info!("Quit not available in web browser");
-                    }
+                    exit.write(AppExit::Success);
                 }
             }
         }
