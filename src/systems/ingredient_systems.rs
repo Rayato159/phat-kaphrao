@@ -8,6 +8,7 @@
 //!
 //! Uses Bevy 0.17+ patterns: Required Components, Picking API, and Observers
 
+use bevy::log::tracing_subscriber::reload::Handle;
 use bevy::prelude::*;
 
 use crate::entities::ingredient::INGREDIENT_SIZE;
@@ -113,45 +114,64 @@ pub fn on_drag_start(
     q_ingredients: Query<&Ingredient>,
     q_transform: Query<&Transform>,
     q_dragging: Query<(), With<Dragging>>,
+    asset_server: Res<AssetServer>,
 ) {
-    // Only allow one ingredient to be dragged at a time
+    // ลากได้ทีละชิ้น
     if !q_dragging.is_empty() {
         return;
     }
 
-    let entity = trigger.entity;
+    let source_fg = trigger.entity;
     let event = trigger.event();
 
-    // Get the foreground link to access parent entity
-    if let Ok(foreground_link) = q_foreground_link.get(entity) {
-        // Get ingredient info from parent entity
-        if let Ok(ingredient) = q_ingredients.get(foreground_link.parent_entity) {
-            // Get current world transform of the foreground sprite
-            if let Ok(transform) = q_transform.get(entity) {
-                // Convert screen Y (increases down) to world Y (increases up) by negating
-                let pointer_pos = Vec2::new(
-                    event.pointer_location.position.x,
-                    -event.pointer_location.position.y,
-                );
-                let ingredient_pos = transform.translation.truncate();
+    let Ok(fg_link) = q_foreground_link.get(source_fg) else {
+        return;
+    };
 
-                // Calculate offset for smoother dragging
-                let offset = ingredient_pos - pointer_pos;
+    let Ok(ingredient) = q_ingredients.get(fg_link.parent_entity) else {
+        return;
+    };
 
-                // Add dragging component
-                commands.entity(entity).insert(Dragging { offset });
+    let Ok(source_transform) = q_transform.get(source_fg) else {
+        return;
+    };
 
-                // Raise the z-index so the dragged ingredient appears on top
-                commands.entity(entity).insert(Transform {
-                    translation: Vec3::new(transform.translation.x, transform.translation.y, 10.0),
-                    rotation: transform.rotation,
-                    scale: transform.scale,
-                });
+    // screen → world
+    let pointer_pos = Vec2::new(
+        event.pointer_location.position.x,
+        -event.pointer_location.position.y,
+    );
 
-                info!("Started dragging: {:?}", ingredient.ingredient_type);
-            }
-        }
-    }
+    let world_pos = source_transform.translation.truncate();
+    let offset = world_pos - pointer_pos;
+
+    let e = q_ingredients
+        .get(fg_link.parent_entity)
+        .unwrap()
+        .ingredient_type
+        .image_path();
+    let cloned_fg = commands
+        .spawn((
+            Sprite {
+                image: asset_server.load(e),
+                ..Default::default()
+            },
+            Transform {
+                translation: Vec3::new(world_pos.x, world_pos.y, 10.0),
+                scale: source_transform.scale,
+                rotation: source_transform.rotation,
+            },
+            Dragging { offset },
+            IngredientForegroundLink {
+                parent_entity: fg_link.parent_entity,
+            },
+        ))
+        .id();
+
+    info!(
+        "Cloned & dragging ingredient: {:?} → {:?}",
+        ingredient.ingredient_type, cloned_fg
+    );
 }
 
 /// Observer for when dragging ends on an ingredient foreground sprite
@@ -233,7 +253,7 @@ pub fn on_drag_end(
                         target_pan,
                     });
                     // Despawn foreground sprite since it was used
-                    commands.entity(entity).despawn();
+                    // commands.entity(entity).despawn();
                 } else {
                     // Not dropped on pan - reset foreground sprite to original world position
                     commands
