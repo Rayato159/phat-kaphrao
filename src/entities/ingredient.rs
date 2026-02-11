@@ -156,7 +156,3 @@ pub struct OriginalPosition {
 pub struct Dragging {
     pub offset: Vec2,
 }
-
-/// Marker component for the frying pan drop area
-#[derive(Component)]
-pub struct Pan;

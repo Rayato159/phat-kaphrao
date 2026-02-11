@@ -24,3 +24,7 @@ pub struct PanKapaow;
 #[derive(Component)]
 #[require(Transform, Visibility)]
 pub struct PanEgg;
+
+/// Marker component for the frying pan drop area
+#[derive(Component)]
+pub struct Pan;

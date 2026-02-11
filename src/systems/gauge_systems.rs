@@ -19,6 +19,7 @@ use crate::entities::gauge::GaugeSpawnEvent;
 use crate::entities::gauge::{BallGaugeEgg, BallGaugeKapaow, GaugeFollowsPan};
 use crate::entities::PanEgg;
 use crate::entities::PanKapaow;
+use crate::resource::game_state::GameStats;
 use crate::{gaueg_bar_spawn, spawn_ball_gauge_kapaow};
 
 /// Spawn a ball gauge for Egg pan at the specified position
@@ -54,6 +55,7 @@ pub fn spawn_ball_gauge_egg(
 /// Randomizes the target zone position each time
 pub fn spawn_gauge_from_event(
     mut commands: Commands,
+    mut game_stats: ResMut<GameStats>,
     mut gauge_events: MessageReader<GaugeSpawnEvent>,
     q_kapaow_pans: Query<Entity, With<PanKapaow>>,
     q_egg_pans: Query<Entity, With<PanEgg>>,
@@ -63,26 +65,28 @@ pub fn spawn_gauge_from_event(
 
         if let Some(target_pan) = event.target_pan {
             // Determine which pan type this is and spawn the appropriate gauge
-            if q_kapaow_pans.contains(target_pan) {
+            if q_kapaow_pans.contains(target_pan) && !game_stats.kpaow_has_guage {
                 // This is a Kapaow pan
                 // Randomize target zone (0.2 to 0.8, leaving some margin)
                 let mut rng = rand::thread_rng();
                 let target_width = 0.15; // Width of target zone (15% of gauge)
                 let target_zone_start = rng.gen_range(0.1..(1.0 - target_width - 0.1));
                 let target_zone_end = target_zone_start + target_width;
+                game_stats.kpaow_has_guage = true;
                 gauge_entity = Some(spawn_ball_gauge_kapaow(
                     &mut commands.reborrow(),
                     event.position,
                     target_zone_start,
                     target_zone_end,
                 ));
-            } else if q_egg_pans.contains(target_pan) {
+            } else if q_egg_pans.contains(target_pan) && !game_stats.egg_has_guage {
                 // This is an Egg pan
                 // Randomize target zone (0.2 to 0.8, leaving some margin)
                 let mut rng = rand::thread_rng();
                 let target_width = 0.15; // Width of target zone (15% of gauge)
                 let target_zone_start = rng.gen_range(0.1..(1.0 - target_width - 0.1));
                 let target_zone_end = target_zone_start + target_width;
+                game_stats.egg_has_guage = true;
                 gauge_entity = Some(spawn_ball_gauge_egg(
                     &mut commands.reborrow(),
                     event.position,

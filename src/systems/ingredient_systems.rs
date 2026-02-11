@@ -226,19 +226,28 @@ pub fn on_drag_end(
                 let mut target_pan: Option<Entity> = None;
 
                 // Check if dropped on any pan
-                for (pan_entity, pan_center) in pans.iter() {
-                    info!("pan_center {:?}", pan_center);
-                    info!("position_drop {:?}", position_drop);
 
-                    if position_drop.x <= 150.0 {
-                        dropped_on_pan = true;
-                        target_pan = Some(*pan_entity);
-                        info!(
-                            "Dropped {:?} on pan at ({:.1}, {:.1})",
-                            ingredient.ingredient_type, drop_position.x, drop_position.y
-                        );
-                        break;
-                    }
+                // info!("pan_center {:?}", pan_center);
+                info!("position_drop {:?}", position_drop);
+
+                if position_drop.x >= 0.0 && position_drop.x <= 300.0 {
+                    info!("pan_entity {:?}", pans[1].0);
+                    dropped_on_pan = true;
+                    let pan = pans[1].0;
+                    target_pan = Some(pan);
+                    info!(
+                        "Dropped {:?} on pan at ({:.1}, {:.1})",
+                        ingredient.ingredient_type, drop_position.x, drop_position.y
+                    );
+                } else if position_drop.x >= -300.0 && position_drop.x < 0.0 {
+                    info!("pan_entity {:?}", pans[0].0);
+                    dropped_on_pan = true;
+                    let pan = pans[0].0;
+                    target_pan = Some(pan);
+                    info!(
+                        "Dropped {:?} on pan at ({:.1}, {:.1})",
+                        ingredient.ingredient_type, drop_position.x, drop_position.y
+                    );
                 }
 
                 // Fire the ingredient dropped event if dropped on a pan

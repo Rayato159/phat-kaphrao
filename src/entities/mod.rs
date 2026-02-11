@@ -19,7 +19,7 @@ pub use gauge::{BallGaugeEgg, BallGaugeKapaow, BarGauge, GaugeSpawnEvent, Timing
 pub use ingredient::{
     Dragging, DraggingOriginalParent, HoverOriginalZ, Ingredient, IngredientBackground,
     IngredientForeground, IngredientForegroundLink, IngredientMenu, IngredientType,
-    OriginalPosition, Pan,
+    OriginalPosition,
 };
-pub use pan::{FryingPan, PanEgg, PanKapaow};
+pub use pan::{FryingPan, Pan, PanEgg, PanKapaow};
 pub use ui::{ButtonAction, GameEndScreen, HPOverlay, HeartIcon, MainMenu, StepIndicator, HUD};
