@@ -38,6 +38,8 @@ use systems::{
     update_gauge_follow_pan, update_hud,
 };
 
+use crate::resource::time_state::{check_game_timer, start_timer};
+
 fn main() {
     App::new()
         // Bevy 0.17+ Setup with Default Plugins
@@ -73,6 +75,7 @@ fn main() {
             ),
         )
         // System Schedules - Gameplay Systems
+        .add_systems(OnEnter(InGame), start_timer)
         .add_systems(
             Update,
             (
@@ -81,6 +84,7 @@ fn main() {
                 update_ball_gauge,
                 update_gauge_follow_pan,
                 check_gauge_hit_window,
+                check_game_timer,
             )
                 .run_if(in_state(InGame)),
         )
