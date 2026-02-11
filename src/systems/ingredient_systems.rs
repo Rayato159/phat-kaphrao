@@ -18,7 +18,8 @@ use crate::entities::{
 };
 use crate::resource::game_state::{GameStats, IngredientDroppedEvent};
 use crate::spawn::ingredient_spawn::{
-    ingredient_background_spawn, ingredient_foreground_spawn_independent, ingredient_item_spawn,
+    ghost_ingredient_foreground_spawn, ingredient_background_spawn,
+    ingredient_foreground_spawn_independent, ingredient_item_spawn,
 };
 
 /// Spawn all ingredients at their starting positions
@@ -132,18 +133,18 @@ pub fn on_drag_start(
         return;
     };
 
-    let Ok(source_transform) = q_transform.get(source_fg) else {
+    let Ok(transform) = q_transform.get(source_fg) else {
         return;
     };
 
     // screen → world
-    let pointer_pos = Vec2::new(
+    let pointer_position = Vec2::new(
         event.pointer_location.position.x,
         -event.pointer_location.position.y,
     );
 
-    let world_pos = source_transform.translation.truncate();
-    let offset = world_pos - pointer_pos;
+    let world_position = transform.translation.truncate();
+    let offset = world_position - pointer_position;
 
     let e = q_ingredients
         .get(fg_link.parent_entity)
@@ -151,20 +152,13 @@ pub fn on_drag_start(
         .ingredient_type
         .image_path();
     let cloned_fg = commands
-        .spawn((
-            Sprite {
-                image: asset_server.load(e),
-                ..Default::default()
-            },
-            Transform {
-                translation: Vec3::new(world_pos.x, world_pos.y, 10.0),
-                scale: source_transform.scale,
-                rotation: source_transform.rotation,
-            },
-            Dragging { offset },
-            IngredientForegroundLink {
-                parent_entity: fg_link.parent_entity,
-            },
+        .spawn(ghost_ingredient_foreground_spawn(
+            &ingredient.ingredient_type,
+            &world_position,
+            offset,
+            &asset_server,
+            transform,
+            fg_link,
         ))
         .id();
 
@@ -186,11 +180,15 @@ pub fn on_drag_end(
     q_original_position: Query<&OriginalPosition>,
     windows: Query<&Window>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
+    q_dragging: Query<Entity, With<Dragging>>,
     mut transform_queries: ParamSet<(
         Query<(Entity, &Transform), With<PanKapaow>>,
         Query<(Entity, &Transform), With<PanEgg>>,
     )>,
 ) {
+    for e in q_dragging.iter() {
+        commands.entity(e).despawn();
+    }
     let entity = trigger.entity;
     let event = trigger.event();
 

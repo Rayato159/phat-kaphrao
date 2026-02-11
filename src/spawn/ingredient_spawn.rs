@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::entities::{
-    Ingredient, IngredientBackground, IngredientForeground, IngredientForegroundLink,
+    Dragging, Ingredient, IngredientBackground, IngredientForeground, IngredientForegroundLink,
     IngredientType, OriginalPosition,
 };
 
@@ -62,5 +62,30 @@ pub fn ingredient_foreground_spawn_independent(
             world_position.z + 0.5,
         )),
         Pickable::default(), // Foreground sprite is draggable
+    )
+}
+
+pub fn ghost_ingredient_foreground_spawn(
+    ingredient_type: &IngredientType,
+    world_position: &Vec2,
+    offset: Vec2,
+    asset_server: &AssetServer,
+    transform: &Transform,
+    fg_link: &IngredientForegroundLink,
+) -> impl Bundle {
+    (
+        Sprite {
+            image: asset_server.load(ingredient_type.image_path()),
+            ..Default::default()
+        },
+        Transform {
+            translation: Vec3::new(world_position.x, world_position.y, 10.0),
+            scale: transform.scale,
+            rotation: transform.rotation,
+        },
+        Dragging { offset },
+        IngredientForegroundLink {
+            parent_entity: fg_link.parent_entity,
+        },
     )
 }
