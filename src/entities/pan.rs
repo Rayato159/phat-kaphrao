@@ -7,11 +7,8 @@
 
 use bevy::prelude::*;
 
-/// Marker component for the frying pan
-/// Uses Required Components to ensure the pan always has Transform and Visibility
-#[derive(Component)]
-#[require(Transform, Visibility)]
-pub struct FryingPan;
+pub const SCALE: f32 = 10.0; // Scale factor for all pan objects
+pub const PAN_SIZE: f32 = 32.0 * SCALE; // 32 is original pan size, scaled up by SCALE
 
 /// Marker component for the Kapaow pan
 /// Used for the Pad Kapaow (Thai Basil Pork Stir-fry) recipe
