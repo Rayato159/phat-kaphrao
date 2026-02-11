@@ -30,7 +30,7 @@ use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use resource::game_state::{
     AppState, GameLoseEvent, GameWinEvent, InGame, IngredientDroppedEvent, StepCompletedEvent,
 };
-use spawn::gaueg_spawn::{gaueg_bar_spawn, spawn_ball_gauge_kapaow};
+use spawn::gaueg_spawn::{gaueg_bar_spawn, spawn_ball_gauge_egg, spawn_ball_gauge_kapaow};
 use systems::{
     check_gauge_hit_window, handle_ingredient_drop, handle_menu_button_click, reset_game_state,
     setup_camera_and_scene, setup_frying_pan, setup_hud, setup_initial_game_state, setup_main_menu,

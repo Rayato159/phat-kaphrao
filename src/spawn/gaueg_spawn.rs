@@ -1,4 +1,4 @@
-use crate::entities::{gauge::GaugeFollowsPan, BallGaugeKapaow};
+use crate::entities::{gauge::GaugeFollowsPan, BallGaugeEgg, BallGaugeKapaow};
 use bevy::{
     color::Color,
     ecs::{component::Component, entity::Entity, name::Name, system::Commands},
@@ -18,7 +18,7 @@ pub fn gaueg_bar_spawn(
     target_zone_start: f32,
     target_zone_end: f32,
 ) -> Entity {
-    let gauge_width = 300.0;
+    let gauge_width = 600.0;
     let gauge_height = 40.0;
 
     info!(
@@ -97,6 +97,28 @@ pub fn spawn_ball_gauge_kapaow(
         gauge_data,
         "Kapaow",
         Color::srgb(1.0, 0.4, 0.0), // Orange for Kapaow
+        target_zone_start,
+        target_zone_end,
+    )
+}
+
+pub fn spawn_ball_gauge_egg(
+    commands: &mut Commands,
+    position: Vec3,
+    target_zone_start: f32,
+    target_zone_end: f32,
+) -> Entity {
+    let gauge_data = BallGaugeEgg {
+        target_zone_start,
+        target_zone_end,
+        ..default()
+    };
+    gaueg_bar_spawn(
+        commands,
+        position,
+        gauge_data,
+        "Egg",
+        Color::srgb(1.0, 0.9, 0.6), // Light yellow for Egg
         target_zone_start,
         target_zone_end,
     )

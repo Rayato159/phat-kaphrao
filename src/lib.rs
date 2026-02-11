@@ -33,7 +33,7 @@ pub use resource::game_state::{
     AppState, GameLoseEvent, GameStats, GameWinEvent, InGame, IngredientDroppedEvent,
     StepCompletedEvent,
 };
-pub use spawn::gaueg_spawn::{gaueg_bar_spawn, spawn_ball_gauge_kapaow};
+pub use spawn::gaueg_spawn::{gaueg_bar_spawn, spawn_ball_gauge_egg, spawn_ball_gauge_kapaow};
 pub use systems::{
     check_gauge_hit_window, cleanup_game_end_screens, handle_game_over_screen_input,
     handle_ingredient_drop, handle_victory_screen_input, observe_game_state_changes, on_drag_end,

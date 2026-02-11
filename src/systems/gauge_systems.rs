@@ -20,32 +20,11 @@ use crate::entities::gauge::{BallGaugeEgg, BallGaugeKapaow, GaugeFollowsPan};
 use crate::entities::PanEgg;
 use crate::entities::PanKapaow;
 use crate::resource::game_state::GameStats;
-use crate::{gaueg_bar_spawn, spawn_ball_gauge_kapaow};
+use crate::{spawn_ball_gauge_egg, spawn_ball_gauge_kapaow};
 
 /// Spawn a ball gauge for Egg pan at the specified position
 /// Phase 3: Cooking Mini-game
 /// Returns the entity ID of the spawned gauge
-pub fn spawn_ball_gauge_egg(
-    commands: &mut Commands,
-    position: Vec3,
-    target_zone_start: f32,
-    target_zone_end: f32,
-) -> Entity {
-    let gauge_data = BallGaugeEgg {
-        target_zone_start,
-        target_zone_end,
-        ..default()
-    };
-    gaueg_bar_spawn(
-        commands,
-        position,
-        gauge_data,
-        "Egg",
-        Color::srgb(1.0, 0.9, 0.6), // Light yellow for Egg
-        target_zone_start,
-        target_zone_end,
-    )
-}
 
 /// Helper function to spawn a ball gauge with randomized target zone
 /// Returns the entity ID of the spawned gauge
@@ -311,7 +290,7 @@ fn check_gauge_hit(
     );
 
     // Despawn the gauge after the hit
-    commands.entity(entity).despawn();
+    // commands.entity(entity).despawn();
 }
 
 /// Trait for common gauge data operations
