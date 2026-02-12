@@ -14,7 +14,7 @@ use bevy::prelude::*;
 use crate::entities::ingredient::INGREDIENT_SIZE;
 use crate::entities::{
     Dragging, HoverOriginalZ, Ingredient, IngredientForegroundLink, IngredientType,
-    OriginalPosition, Pan, PanEgg, PanKapaow,
+    OriginalPosition, PanArea, PanEgg, PanKapaow,
 };
 use crate::resource::game_state::{GameStats, IngredientDroppedEvent};
 use crate::spawn::ingredient_spawn::{

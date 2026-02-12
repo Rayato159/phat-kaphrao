@@ -22,7 +22,7 @@
 
 use bevy::prelude::*;
 
-pub const INGREDIENT_SIZE: f32 = 120.0;
+pub const INGREDIENT_SIZE: f32 = 16.0 * 7.5; // 16 is original ingredient size, scaled up by 7.5
 
 /// Marker component for ingredients
 /// Uses Required Components to ensure ingredients always have Transform, Visibility, and Pickable
@@ -156,3 +156,7 @@ pub struct OriginalPosition {
 pub struct Dragging {
     pub offset: Vec2,
 }
+
+/// Marker component for the pan drop area
+#[derive(Component)]
+pub struct PanArea;

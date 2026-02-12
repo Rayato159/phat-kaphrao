@@ -6,5 +6,6 @@ pub mod ingredient_spawn;
 pub mod main_menu_spawn;
 pub mod pan_spawn;
 pub mod setup_hud_spawn;
+pub mod spawn_table;
 pub mod step_spawn;
 pub mod victory_screen_spawn;

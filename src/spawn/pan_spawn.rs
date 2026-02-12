@@ -1,41 +1,41 @@
-use bevy::{
-    color::Color,
-    ecs::{bundle::Bundle, name::Name},
-    math::{Vec2, Vec3},
-    picking::Pickable,
-    sprite::Sprite,
-    transform::components::Transform,
-    utils::default,
-};
+use bevy::prelude::*;
 
-use crate::entities::{Pan, PanEgg, PanKapaow};
+use crate::entities::{spatula::Spatula, PanArea, PanEgg, PanKapaow};
 
-pub fn pan_kapaow_spawn() -> impl Bundle {
+pub fn pan_kaprow_spawn(pan_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
     (
-        Name::new("PanKapaow"),
         PanKapaow,
-        Pan,
+        PanArea,
         Sprite {
-            color: Color::srgb(0.4, 0.4, 0.4), // Dark grey pan
-            custom_size: Some(Vec2::new(300.0, 150.0)),
+            image: pan_sprite,
             ..default()
         },
-        Transform::from_translation(Vec3::new(-150.0, -100.0, 0.0)),
+        transform,
         Pickable::default(),
     )
 }
 
-pub fn pan_egg_spawn() -> impl Bundle {
+pub fn pan_egg_spawn(pan_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
     (
-        Name::new("PanEgg"),
         PanEgg,
-        Pan,
+        PanArea,
         Sprite {
-            color: Color::srgb(0.5, 0.5, 0.5), // Slightly lighter grey for Egg pan
-            custom_size: Some(Vec2::new(300.0, 150.0)),
+            image: pan_sprite,
             ..default()
         },
-        Transform::from_translation(Vec3::new(150.0, -100.0, 0.0)),
+        transform,
+        Pickable::default(),
+    )
+}
+
+pub fn spatula_spawn(spatula_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
+    (
+        Spatula,
+        Sprite {
+            image: spatula_sprite,
+            ..default()
+        },
+        transform,
         Pickable::default(),
     )
 }

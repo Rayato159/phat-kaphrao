@@ -26,8 +26,8 @@ pub mod systems;
 //
 
 pub use entities::{
-    Dragging, FryingPan, GaugeSpawnEvent, Ingredient, IngredientType, OriginalPosition, Pan,
-    TimingGauge, HUD,
+    Dragging, GaugeSpawnEvent, Ingredient, IngredientType, OriginalPosition, PanArea, TimingGauge,
+    HUD,
 };
 pub use resource::game_state::{
     AppState, GameLoseEvent, GameStats, GameWinEvent, InGame, IngredientDroppedEvent,

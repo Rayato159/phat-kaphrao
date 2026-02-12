@@ -184,7 +184,7 @@ fn update_gauge_animation<T>(
 pub fn update_gauge_follow_pan(
     mut transform_queries: ParamSet<(
         Query<(Entity, &mut Transform, &GaugeFollowsPan)>,
-        Query<&Transform, With<crate::entities::Pan>>,
+        Query<&Transform, With<crate::entities::PanArea>>,
     )>,
 ) {
     // Collect all gauges and their target pans
