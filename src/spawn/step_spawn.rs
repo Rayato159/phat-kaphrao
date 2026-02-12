@@ -1,10 +1,5 @@
-use bevy::{
-    color::Color,
-    ecs::{bundle::Bundle, name::Name},
-    text::{TextColor, TextFont},
-    ui::{widget::Text, AlignItems, FlexDirection, Node, Val},
-    utils::default,
-};
+use bevy::prelude::*;
+use bevy_spritesheet_animation::prelude::*;
 
 use crate::entities::StepIndicator;
 
@@ -42,4 +37,54 @@ pub fn step_child_current_spawn() -> impl Bundle {
         },
         TextColor(Color::srgb(0.8, 0.6, 0.2)),
     )
+}
+
+pub fn spawn_oil_step(
+    sprite: Sprite,
+    animation: Handle<Animation>,
+    transform: Transform,
+) -> impl Bundle {
+    (sprite, SpritesheetAnimation::new(animation), transform)
+}
+
+#[derive(States, Clone, PartialEq, Eq, Hash, Debug, Default)]
+pub enum KaprowCookingState {
+    #[default]
+    Oil,
+    Garlic,
+    Chilli,
+    Pork,
+    OysterSauce,
+    MSG,
+    Basil,
+}
+
+impl KaprowCookingState {
+    pub fn next_step(&self) -> Self {
+        match self {
+            KaprowCookingState::Oil => KaprowCookingState::Garlic,
+            KaprowCookingState::Garlic => KaprowCookingState::Chilli,
+            KaprowCookingState::Chilli => KaprowCookingState::Pork,
+            KaprowCookingState::Pork => KaprowCookingState::OysterSauce,
+            KaprowCookingState::OysterSauce => KaprowCookingState::MSG,
+            KaprowCookingState::MSG => KaprowCookingState::Basil,
+            KaprowCookingState::Basil => KaprowCookingState::Oil,
+        }
+    }
+}
+
+#[derive(States, Clone, PartialEq, Eq, Hash, Debug, Default)]
+pub enum EggCookingState {
+    #[default]
+    Oil,
+    Egg,
+}
+
+impl EggCookingState {
+    pub fn next_step(&self) -> Self {
+        match self {
+            EggCookingState::Oil => EggCookingState::Egg,
+            EggCookingState::Egg => EggCookingState::Oil,
+        }
+    }
 }

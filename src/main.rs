@@ -27,36 +27,46 @@ mod spawn;
 mod systems;
 
 // Re-export commonly used items for convenience
+use bevy_spritesheet_animation::prelude::*;
 use entities::GaugeSpawnEvent;
 use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use resource::game_state::{
     AppState, GameLoseEvent, GameWinEvent, InGame, IngredientDroppedEvent, StepCompletedEvent,
 };
 use systems::{
-    check_gauge_hit_window, handle_ingredient_drop, handle_menu_button_click, reset_game_state,
-    setup_camera_and_scene, setup_frying_pan, setup_hud, setup_initial_game_state, setup_main_menu,
-    spawn_gauge_from_event, spawn_ingredients, update_dragging_ingredient, update_hud,
+    check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
+    reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_hud,
+    setup_initial_game_state, setup_main_menu, spawn_gauge_from_event, spawn_ingredients,
+    update_dragging_ingredient, update_hud,
 };
 
 use crate::{
     animate::gauge_animate::moving_ball_gauge_animation,
     resource::time_state::{check_game_timer, start_timer},
+    spawn::step_spawn::{EggCookingState, KaprowCookingState},
 };
 
 fn main() {
     App::new()
         // Bevy 0.17+ Setup with Default Plugins
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: GAME_TITLE.to_string(),
-                resolution: (WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32).into(),
-                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Current),
-                ..default()
-            }),
-            ..default()
-        }))
+        .add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        title: GAME_TITLE.to_string(),
+                        resolution: (WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32).into(),
+                        mode: WindowMode::BorderlessFullscreen(MonitorSelection::Current),
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(ImagePlugin::default_nearest()),
+        )
+        .add_plugins(SpritesheetAnimationPlugin)
         // Initialize the main game state
         .init_state::<AppState>()
+        .init_state::<KaprowCookingState>()
+        .init_state::<EggCookingState>()
         // Add computed state - InGame is automatically computed based on AppState
         // This follows Bevy 0.16+ ComputedStates pattern
         .add_computed_state::<InGame>()
@@ -82,7 +92,7 @@ fn main() {
         .add_systems(
             Update,
             (
-                handle_ingredient_drop,
+                handle_kaprow_pan_ingredient_drop,
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,

@@ -24,8 +24,8 @@ pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) 
 
     let pan = pan::PAN_SIZE;
 
-    let pan_kaprow_transform = Transform::from_translation(Vec3::new(pan * 0.5 + gap, 0.0, 1.0));
-    let pan_egg_transform = Transform::from_translation(Vec3::new(-(pan * 0.5 + gap), 0.0, 0.0));
+    let pan_kaprow_transform = Transform::from_translation(Vec3::new(-(pan * 0.5 + gap), 0.0, 1.0));
+    let pan_egg_transform = Transform::from_translation(Vec3::new(pan * 0.5 + gap, 0.0, 0.0));
 
     let spatula_offset = 10.0 * spatula::SCALE; // 10.0 is original spatula offset, scaled up by SCALE
 
