@@ -11,6 +11,7 @@ bevy = { version = "0.17", features = [
     "bevy_ui",       # For UI systems
     "bevy_sprite",   # For Sprite bundles and 2D rendering
 ] }
+bevy_spritesheet_animation = "5"
 
 # Random number generation for gauge target zones
 rand = "0.8"
