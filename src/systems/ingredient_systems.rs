@@ -146,11 +146,6 @@ pub fn on_drag_start(
     let world_position = transform.translation.truncate();
     let offset = world_position - pointer_position;
 
-    let e = q_ingredients
-        .get(fg_link.parent_entity)
-        .unwrap()
-        .ingredient_type
-        .image_path();
     let cloned_fg = commands
         .spawn(ghost_ingredient_foreground_spawn(
             &ingredient.ingredient_type,
@@ -225,9 +220,6 @@ pub fn on_drag_end(
                 let mut dropped_on_pan = false;
                 let mut target_pan: Option<Entity> = None;
 
-                // Check if dropped on any pan
-
-                // info!("pan_center {:?}", pan_center);
                 info!("position_drop {:?}", position_drop);
 
                 if position_drop.x >= 0.0 && position_drop.x <= 300.0 {

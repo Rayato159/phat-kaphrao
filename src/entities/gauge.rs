@@ -56,7 +56,7 @@ pub struct BarGauge {
 /// Component for the Kapaow Ball Gauge
 /// Used for the Kapaow recipe timing mini-game
 #[derive(Component)]
-pub struct BallGaugeKapaow {
+pub struct BallGauge {
     /// Current position of the ball (0.0 to 1.0)
     pub position: f32,
     /// Direction of movement (-1.0 for left, 1.0 for right)
@@ -73,7 +73,7 @@ pub struct BallGaugeKapaow {
     pub target_zone_end: f32,
 }
 
-impl Default for BallGaugeKapaow {
+impl Default for BallGauge {
     fn default() -> Self {
         Self {
             position: 0.0,

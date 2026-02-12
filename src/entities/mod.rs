@@ -16,7 +16,7 @@ pub mod spatula;
 pub mod ui;
 
 // Re-export commonly used items for convenience
-pub use gauge::{BallGaugeEgg, BallGaugeKapaow, BarGauge, GaugeSpawnEvent, TimingGauge};
+pub use gauge::{BallGauge, BarGauge, GaugeSpawnEvent, TimingGauge};
 pub use ingredient::{
     Dragging, DraggingOriginalParent, HoverOriginalZ, Ingredient, IngredientBackground,
     IngredientForeground, IngredientForegroundLink, IngredientMenu, IngredientType,

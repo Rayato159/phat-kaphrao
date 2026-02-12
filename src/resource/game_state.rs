@@ -55,6 +55,7 @@ pub struct GameStats {
     /// Track which pans have oil
     pub kapaow_has_oil: bool,
     pub egg_has_oil: bool,
+    pub gauge_container: bool,
     pub kpaow_has_guage: bool,
     pub egg_has_guage: bool,
 }
@@ -68,6 +69,7 @@ impl Default for GameStats {
             steps_completed: 0,
             kapaow_has_oil: false,
             egg_has_oil: false,
+            gauge_container: false,
             kpaow_has_guage: false,
             egg_has_guage: false,
         }

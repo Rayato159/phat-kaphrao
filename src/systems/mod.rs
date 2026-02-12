@@ -20,9 +20,7 @@ pub mod ui_systems;
 
 // Re-export commonly used items for convenience
 pub use cooking_systems::handle_ingredient_drop;
-pub use gauge_systems::{
-    check_gauge_hit_window, spawn_gauge_from_event, update_ball_gauge, update_gauge_follow_pan,
-};
+pub use gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event, update_ball_gauge};
 pub use ingredient_systems::{
     on_drag_end, on_drag_start, on_hover_end, on_hover_start, spawn_ingredients,
     update_dragging_ingredient,
