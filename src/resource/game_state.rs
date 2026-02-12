@@ -52,12 +52,19 @@ pub struct GameStats {
     pub max_hp: u8,
     pub current_step: usize,
     pub steps_completed: usize,
-    /// Track which pans have oil
     pub kapaow_has_oil: bool,
     pub egg_has_oil: bool,
     pub gauge_container: bool,
+    pub gauge_container_entity: Option<Entity>,
+    pub gauge_container_width: f32,
+    pub gauge_container_height: f32,
     pub kpaow_has_guage: bool,
     pub egg_has_guage: bool,
+    pub target_width: f32,
+    pub target_egg_x: Option<f32>,
+    pub target_kapaow_x: Option<f32>,
+    pub cout_pud_kapoaw: f32,
+    pub cout_tod_kai: f32,
 }
 
 impl Default for GameStats {
@@ -70,8 +77,16 @@ impl Default for GameStats {
             kapaow_has_oil: false,
             egg_has_oil: false,
             gauge_container: false,
+            gauge_container_entity: None,
+            gauge_container_width: 600.0,
+            gauge_container_height: 40.0,
             kpaow_has_guage: false,
             egg_has_guage: false,
+            target_width: 0.15,
+            target_egg_x: None,
+            target_kapaow_x: None,
+            cout_pud_kapoaw: 0.0,
+            cout_tod_kai: 0.0,
         }
     }
 }

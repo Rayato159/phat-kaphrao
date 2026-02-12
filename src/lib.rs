@@ -17,7 +17,9 @@
 //! - Picking API
 
 // Public modules
+pub mod animate;
 pub mod entities;
+pub mod helper;
 pub mod resource;
 pub mod spawn;
 pub mod systems;
@@ -38,8 +40,7 @@ pub use systems::{
     check_gauge_hit_window, cleanup_game_end_screens, handle_game_over_screen_input,
     handle_ingredient_drop, handle_victory_screen_input, observe_game_state_changes, on_drag_end,
     on_drag_start, setup_frying_pan, setup_hud, show_game_over_screen, show_victory_screen,
-    spawn_gauge_from_event, spawn_ingredients, update_ball_gauge, update_dragging_ingredient,
-    update_hud,
+    spawn_gauge_from_event, spawn_ingredients, update_dragging_ingredient, update_hud,
 };
 
 pub const WINDOW_WIDTH: f32 = 1920.0;

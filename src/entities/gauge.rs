@@ -63,11 +63,6 @@ pub struct BallGauge {
     pub direction: f32,
     /// Speed of the ball movement
     pub speed: f32,
-    /// Whether the player has attempted to hit
-    pub has_hit: bool,
-    /// Whether the hit was successful
-    pub is_success: bool,
-    /// Start of the target zone (0.0 to 1.0)
     pub target_zone_start: f32,
     /// End of the target zone (0.0 to 1.0)
     pub target_zone_end: f32,
@@ -79,42 +74,6 @@ impl Default for BallGauge {
             position: 0.0,
             direction: 1.0,
             speed: 1.5,
-            has_hit: false,
-            is_success: false,
-            target_zone_start: 0.4,
-            target_zone_end: 0.6,
-        }
-    }
-}
-
-/// Component for the Egg Ball Gauge
-/// Used for the Egg recipe timing mini-game
-#[derive(Component)]
-pub struct BallGaugeEgg {
-    /// Current position of the ball (0.0 to 1.0)
-    pub position: f32,
-    /// Direction of movement (-1.0 for left, 1.0 for right)
-    pub direction: f32,
-    /// Speed of the ball movement
-    pub speed: f32,
-    /// Whether the player has attempted to hit
-    pub has_hit: bool,
-    /// Whether the hit was successful
-    pub is_success: bool,
-    /// Start of the target zone (0.0 to 1.0)
-    pub target_zone_start: f32,
-    /// End of the target zone (0.0 to 1.0)
-    pub target_zone_end: f32,
-}
-
-impl Default for BallGaugeEgg {
-    fn default() -> Self {
-        Self {
-            position: 0.0,
-            direction: 1.0,
-            speed: 1.5,
-            has_hit: false,
-            is_success: false,
             target_zone_start: 0.4,
             target_zone_end: 0.6,
         }

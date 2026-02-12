@@ -1,9 +1,11 @@
 use crate::entities::{gauge::GaugeFollowsPan, BallGauge};
+use bevy::prelude::{ColorMaterial, MeshMaterial2d};
 use bevy::{
+    asset::Assets,
     color::Color,
-    ecs::{bundle::Bundle, component::Component, entity::Entity, name::Name, system::Commands},
-    log::info,
-    math::{Vec2, Vec3},
+    ecs::{bundle::Bundle, entity::Entity, name::Name},
+    math::{primitives::Circle, Vec2, Vec3},
+    mesh::{Mesh, Mesh2d},
     sprite::Sprite,
     transform::components::Transform,
     utils::default,
@@ -31,33 +33,62 @@ pub fn gauge_container_background_spawn(gauge_width: f32, gauge_height: f32) -> 
     )
 }
 
+// pub fn gauge_target_zone_spawn(
+//     zone_name: &'static str,
+//     target_width: f32,
+//     gauge_width: f32,
+//     gauge_height: f32,
+//     target_x: f32,
+// ) -> impl Bundle {
+//     (
+//         Name::new(zone_name),
+//         Sprite {
+//             color: Color::WHITE,
+//             // color: Color::srgb(0.3, 0.8, 0.3),
+//             custom_size: Some(Vec2::new(target_width * gauge_width, gauge_height)),
+//             ..default()
+//         },
+//         Transform::from_translation(Vec3::new(target_x, 0.0, 0.1)),
+//     )
+// }
 pub fn gauge_target_zone_spawn(
     zone_name: &'static str,
-    target_width: f32,
-    gauge_width: f32,
+    world_width: f32,
     gauge_height: f32,
-    target_x: f32,
+    world_x: f32,
 ) -> impl Bundle {
     (
         Name::new(zone_name),
         Sprite {
-            color: Color::srgb(0.3, 0.8, 0.3),
-            custom_size: Some(Vec2::new(target_width * gauge_width, gauge_height)),
+            color: Color::WHITE,
+            custom_size: Some(Vec2::new(world_width, gauge_height)),
             ..default()
         },
-        Transform::from_translation(Vec3::new(target_x, 0.0, 0.1)),
+        Transform::from_translation(Vec3::new(world_x, 0.0, 0.1)),
     )
 }
-
-pub fn gauge_ball_spawn(gauge_height: f32, ball_color: Color) -> impl Bundle {
+pub fn gauge_ball_spawn(
+    ball_color: Color,
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<ColorMaterial>,
+) -> impl Bundle {
     (
         Name::new("MovingBall"),
         BallGauge::default(),
+        Mesh2d(meshes.add(Circle::new(20.0))),
+        MeshMaterial2d(materials.add(ColorMaterial::from(ball_color))),
+        Transform::from_translation(Vec3::new(0.0, 0.0, 0.2)),
+    )
+}
+
+pub fn guage_perfect_spawn(name: &'static str, gauge_container_height: f32) -> impl Bundle {
+    (
+        Name::new(name),
         Sprite {
-            color: ball_color,
-            custom_size: Some(Vec2::new(20.0, gauge_height + 10.0)),
+            color: Color::srgb(1.0, 0.0, 0.0),
+            custom_size: Some(Vec2::new(4.0, gauge_container_height)),
             ..default()
         },
-        Transform::from_translation(Vec3::new(0.0, 0.0, 0.2)),
+        Transform::from_xyz(0.0, 0.0, 0.2), // 🔥 0.0 = กลาง zone
     )
 }

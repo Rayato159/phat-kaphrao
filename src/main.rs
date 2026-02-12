@@ -19,7 +19,9 @@
 use bevy::{prelude::*, window::WindowMode};
 
 // New module structure
+mod animate;
 mod entities;
+mod helper;
 mod resource;
 mod spawn;
 mod systems;
@@ -33,11 +35,13 @@ use resource::game_state::{
 use systems::{
     check_gauge_hit_window, handle_ingredient_drop, handle_menu_button_click, reset_game_state,
     setup_camera_and_scene, setup_frying_pan, setup_hud, setup_initial_game_state, setup_main_menu,
-    spawn_gauge_from_event, spawn_ingredients, update_ball_gauge, update_dragging_ingredient,
-    update_hud,
+    spawn_gauge_from_event, spawn_ingredients, update_dragging_ingredient, update_hud,
 };
 
-use crate::resource::time_state::{check_game_timer, start_timer};
+use crate::{
+    animate::gauge_animate::moving_ball_gauge_animation,
+    resource::time_state::{check_game_timer, start_timer},
+};
 
 fn main() {
     App::new()
@@ -80,7 +84,7 @@ fn main() {
             (
                 handle_ingredient_drop,
                 spawn_gauge_from_event,
-                update_ball_gauge,
+                moving_ball_gauge_animation,
                 check_gauge_hit_window,
                 check_game_timer,
             )
