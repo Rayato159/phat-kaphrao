@@ -15,20 +15,18 @@ pub mod cooking_systems;
 pub mod gauge_systems;
 pub mod ingredient_systems;
 pub mod init_game_systems;
+pub mod kapaow_cooking_systems;
 pub mod pan_systems;
 pub mod ui_systems;
 
 // Re-export commonly used items for convenience
 pub use cooking_systems::handle_kaprow_pan_ingredient_drop;
 pub use gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event};
-pub use ingredient_systems::{
-    on_drag_end, on_drag_start, on_hover_end, on_hover_start, spawn_ingredients,
-    update_dragging_ingredient,
-};
+pub use ingredient_systems::{spawn_ingredients, update_dragging_ingredient};
 pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state};
 pub use pan_systems::setup_frying_pan;
 pub use ui_systems::{
     cleanup_game_end_screens, cleanup_main_menu, handle_game_over_screen_input,
     handle_menu_button_click, handle_victory_screen_input, observe_game_state_changes, setup_hud,
-    setup_main_menu, show_game_over_screen, show_victory_screen, update_hud,
+    setup_main_menu, show_game_over_screen, show_victory_screen,
 };

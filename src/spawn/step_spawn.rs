@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
 
-use crate::entities::StepIndicator;
+use crate::entities::{
+    ingredient::DroppedIngredient, IngredientNext, IngredientType, StepIndicator,
+};
 
 pub fn step_parent_spawn() -> impl Bundle {
     (
@@ -29,13 +31,27 @@ pub fn step_child_spawn() -> impl Bundle {
 
 pub fn step_child_current_spawn() -> impl Bundle {
     (
-        Name::new("CurrentIngredient"),
+        Name::new("NextIngredient"),
+        IngredientNext,
         Text::new("Oil"),
         TextFont {
             font_size: 32.0,
             ..default()
         },
         TextColor(Color::srgb(0.8, 0.6, 0.2)),
+    )
+}
+
+pub fn step_child_drop_spawn() -> impl Bundle {
+    (
+        Name::new("DropIngredient"),
+        DroppedIngredient,
+        Text::new("No"),
+        TextFont {
+            font_size: 32.0,
+            ..default()
+        },
+        TextColor(Color::srgb(1.0, 0.3, 0.5)),
     )
 }
 
@@ -69,6 +85,32 @@ impl KaprowCookingState {
             KaprowCookingState::OysterSauce => KaprowCookingState::MSG,
             KaprowCookingState::MSG => KaprowCookingState::Basil,
             KaprowCookingState::Basil => KaprowCookingState::Oil,
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            KaprowCookingState::Oil => "Oil".to_string(),
+            KaprowCookingState::Garlic => "Garlic".to_string(),
+            KaprowCookingState::Chilli => "Chilli".to_string(),
+            KaprowCookingState::Pork => "Pork".to_string(),
+            KaprowCookingState::OysterSauce => "Oyster Sauce".to_string(),
+            KaprowCookingState::MSG => "MSG".to_string(),
+            KaprowCookingState::Basil => "Basil".to_string(),
+        }
+    }
+}
+
+impl From<KaprowCookingState> for IngredientType {
+    fn from(state: KaprowCookingState) -> Self {
+        match state {
+            KaprowCookingState::Oil => IngredientType::Oil,
+            KaprowCookingState::Garlic => IngredientType::Garlic,
+            KaprowCookingState::Chilli => IngredientType::ThaiChilli,
+            KaprowCookingState::Pork => IngredientType::Pork,
+            KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
+            KaprowCookingState::MSG => IngredientType::FishSauce, // หรือแก้ตาม logic คุณ
+            KaprowCookingState::Basil => IngredientType::HolyBasilLeaves,
         }
     }
 }

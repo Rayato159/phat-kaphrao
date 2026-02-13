@@ -31,7 +31,7 @@ pub fn setup_initial_game_state(mut commands: Commands) {
 /// This allows for restart functionality
 pub fn reset_game_state(mut game_stats: ResMut<GameStats>, mut commands: Commands) {
     game_stats.hp = game_stats.max_hp;
-    game_stats.current_step = 0;
+    // game_stats.current_step = 0;
     game_stats.steps_completed = 0;
 
     info!("Game state reset - HP: {}, Step: 0", game_stats.hp);

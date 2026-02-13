@@ -22,28 +22,34 @@ use bevy::{prelude::*, window::WindowMode};
 mod animate;
 mod entities;
 mod helper;
+mod message;
 mod resource;
 mod spawn;
 mod systems;
 
 // Re-export commonly used items for convenience
+
 use bevy_spritesheet_animation::prelude::*;
-use entities::GaugeSpawnEvent;
 use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
-use resource::game_state::{
-    AppState, GameLoseEvent, GameWinEvent, InGame, IngredientDroppedEvent, StepCompletedEvent,
-};
+
+use resource::game_state::{AppState, InGame};
 use systems::{
     check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
     reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_hud,
     setup_initial_game_state, setup_main_menu, spawn_gauge_from_event, spawn_ingredients,
-    update_dragging_ingredient, update_hud,
+    update_dragging_ingredient,
 };
 
 use crate::{
     animate::gauge_animate::moving_ball_gauge_animation,
+    message::{
+        game_message::{GameLoseMessage, GameWinMessage},
+        gaug_message::{GaugeKapoawHitMassage, GaugeSpawnMassage},
+        ingredient_message::IngredientDroppedMessage,
+    },
     resource::time_state::{check_game_timer, start_timer},
     spawn::step_spawn::{EggCookingState, KaprowCookingState},
+    systems::kapaow_cooking_systems::next_step_kapaow_cooking,
 };
 
 fn main() {
@@ -71,11 +77,12 @@ fn main() {
         // This follows Bevy 0.16+ ComputedStates pattern
         .add_computed_state::<InGame>()
         // Register all game events
-        .add_message::<GaugeSpawnEvent>()
-        .add_message::<GameWinEvent>()
-        .add_message::<GameLoseEvent>()
-        .add_message::<StepCompletedEvent>()
-        .add_message::<IngredientDroppedEvent>()
+        .add_message::<GaugeSpawnMassage>()
+        .add_message::<GameWinMessage>()
+        .add_message::<GameLoseMessage>()
+        // .add_message::<StepCompletedEvent>()
+        .add_message::<IngredientDroppedMessage>()
+        .add_message::<GaugeKapoawHitMassage>()
         // System Schedules - Startup
         .add_systems(
             Startup,
@@ -102,8 +109,7 @@ fn main() {
         )
         // System Schedules - Ingredient Systems
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
-        // System Schedules - UI Systems
-        .add_systems(Update, update_hud.run_if(in_state(InGame)))
+        .add_systems(Update, next_step_kapaow_cooking.run_if(in_state(InGame)))
         // System Schedules - Game State Transitions
         .add_systems(OnEnter(AppState::InGame), reset_game_state)
         .add_systems(OnEnter(AppState::Victory), systems::show_victory_screen)

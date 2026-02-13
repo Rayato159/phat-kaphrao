@@ -2,7 +2,6 @@ use bevy::input::ButtonInput;
 use bevy::prelude::*;
 
 use crate::entities::gauge::BallGauge;
-use crate::entities::gauge::GaugeSpawnEvent;
 use crate::entities::PanEgg;
 use crate::entities::PanKapaow;
 use crate::helper::random_target_start::random_target_start;
@@ -11,11 +10,13 @@ use crate::spawn::gaueg_spawn::{
     gauge_ball_spawn, gauge_container_background_spawn, gauge_container_spawn,
     gauge_target_zone_spawn, guage_perfect_spawn,
 };
+use crate::GaugeKapoawHitMassage;
+use crate::GaugeSpawnMassage;
 
 pub fn spawn_gauge_from_event(
     mut commands: Commands,
     mut game_stats: ResMut<GameStats>,
-    mut gauge_events: MessageReader<GaugeSpawnEvent>,
+    mut gauge_events: MessageReader<GaugeSpawnMassage>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     q_kapaow_pan: Query<&PanKapaow>,
@@ -65,6 +66,7 @@ pub fn spawn_gauge_from_event(
                     let zone_entity = parent
                         .spawn(gauge_target_zone_spawn(
                             "kapaow_gauge",
+                            Color::srgb(0.0, 1.0, 0.0),
                             world_width,
                             game_stats.gauge_container_height,
                             world_x,
@@ -89,6 +91,7 @@ pub fn spawn_gauge_from_event(
                     let zone_entity = parent
                         .spawn(gauge_target_zone_spawn(
                             "egg_gauge",
+                            Color::WHITE,
                             world_width,
                             game_stats.gauge_container_height,
                             world_x,
@@ -113,6 +116,7 @@ pub fn check_gauge_hit_window(
     mut game_stats: ResMut<GameStats>,
     ball_gauge: Single<&mut BallGauge>,
     keyboard: Res<ButtonInput<KeyCode>>,
+    mut hit_kapaow: MessageWriter<GaugeKapoawHitMassage>,
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
         let position = ball_gauge.position; // normalized
@@ -125,6 +129,8 @@ pub fn check_gauge_hit_window(
             let end = start + zone_width;
 
             if check_zone(position, start, end, "Kapaow") {
+                info!("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅ HIT KAPAOW!");
+                hit_kapaow.write(GaugeKapoawHitMassage {});
                 hit_any = true;
                 game_stats.cout_pud_kapoaw += 1.0;
             }
@@ -150,18 +156,18 @@ pub fn check_gauge_hit_window(
 fn check_zone(position: f32, start: f32, end: f32, name: &str) -> bool {
     let in_target = position >= start && position <= end;
 
-    let center = (start + end) / 2.0;
-    let is_perfect = (position - center).abs() < 0.0;
-    info!("start{} -> end: {}", start, end);
-    info!(
-        "{} -> center: {}, position: {}, diff:{}",
-        name,
-        center,
-        position,
-        (position - center).abs()
-    );
+    // let center = (start + end) / 2.0;
+    // let is_perfect = (position - center).abs() < 0.0;
+    // info!("start{} -> end: {}", start, end);
+    // info!(
+    //     "{} -> center: {}, position: {}, diff:{}",
+    //     name,
+    //     center,
+    //     position,
+    //     (position - center).abs()
+    // );
 
-    info!("{} -> Hit: {}, Perfect: {}", name, in_target, is_perfect);
+    // info!("{} -> Hit: {}, Perfect: {}", name, in_target, is_perfect);
 
     in_target
 }
