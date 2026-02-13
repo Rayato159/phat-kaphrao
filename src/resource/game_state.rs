@@ -50,7 +50,8 @@ impl ComputedStates for InGame {
 pub struct GameState {
     pub hp: u8,
     pub max_hp: u8,
-    pub ingredient_dropped: bool,
+    pub ingredient_kapaow_dropped: bool,
+    pub ingredient_egg_dropped: bool,
     // pub current_step: usize,
     pub steps_completed: usize,
     pub kapaow_has_oil: bool,
@@ -75,7 +76,8 @@ impl Default for GameState {
         Self {
             hp: 10,     // Increased to 4 for 8 ingredients ; change to 10
             max_hp: 10, // Increased max HP ; change to 10
-            ingredient_dropped: true,
+            ingredient_kapaow_dropped: true,
+            ingredient_egg_dropped: true,
             // current_step: 0,
             steps_completed: 0,
             kapaow_has_oil: false,

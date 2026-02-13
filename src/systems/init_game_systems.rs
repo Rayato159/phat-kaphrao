@@ -29,7 +29,7 @@ pub fn setup_initial_game_state(mut commands: Commands) {
 
 /// Reset game state when entering InGame state
 /// This allows for restart functionality
-pub fn reset_game_state(mut game_stats: ResMut<GameState>, mut commands: Commands) {
+pub fn reset_game_state(mut game_stats: ResMut<GameState>) {
     game_stats.hp = game_stats.max_hp;
     // game_stats.current_step = 0;
     game_stats.steps_completed = 0;

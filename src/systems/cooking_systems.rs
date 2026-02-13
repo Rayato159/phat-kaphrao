@@ -96,7 +96,8 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         target_pan: Some(target_pan),
                     });
 
-                    next_egg_cooking_state.set(egg_cooking_state.next_step());
+                    // State transition should only happen when gauge is hit, not when oil is dropped
+                    // next_egg_cooking_state.set(egg_cooking_state.next_step());
 
                     info!(
                         "Timing gauge spawned to follow PanEgg at {:?}",
@@ -156,7 +157,8 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         target_pan: Some(target_pan),
                     });
 
-                    next_kaprow_cooking_state.set(kaprow_cooking_state.next_step());
+                    // State transition should only happen when gauge is hit, not when oil is dropped
+                    // next_kaprow_cooking_state.set(kaprow_cooking_state.next_step());
 
                     info!(
                         "Timing gauge spawned to follow PanKapaow at {:?}",

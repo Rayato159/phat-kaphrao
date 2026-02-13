@@ -70,8 +70,26 @@ impl EggCookingState {
     pub fn next_step(&self) -> Self {
         match self {
             EggCookingState::Oil => EggCookingState::Egg,
-            EggCookingState::Egg => EggCookingState::Oil,
+            EggCookingState::Egg => EggCookingState::None,
             EggCookingState::None => EggCookingState::None,
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            EggCookingState::Oil => "Oil".to_string(),
+            EggCookingState::Egg => "Egg".to_string(),
+            EggCookingState::None => "".to_string(),
+        }
+    }
+}
+
+impl From<EggCookingState> for IngredientType {
+    fn from(state: EggCookingState) -> Self {
+        match state {
+            EggCookingState::Oil => IngredientType::Oil,
+            EggCookingState::Egg => IngredientType::Egg,
+            EggCookingState::None => IngredientType::None,
         }
     }
 }

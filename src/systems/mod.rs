@@ -8,27 +8,34 @@
 //! - cooking_systems: Systems for cooking logic and game mechanics
 //! - pan_systems: Systems for pan setup and management
 //! - gauge_systems: Systems for timing gauge mini-game
-//! - ui_systems: Systems for HUD updates, game end screens, and UI interactions
+//! - hud_systems: Systems for HUD display (hearts and step indicators)
+//! - game_end_systems: Systems for victory and game over screens
+//! - menu_systems: Systems for main menu and button interactions
+//! - observer_systems: Systems for observing game state changes
 //! - init_game_systems: Systems for initial game setup
 
 pub mod cooking_systems;
 pub mod egg_cooking_systems;
+pub mod game_end_systems;
 pub mod gauge_systems;
+pub mod hud_systems;
 pub mod ingredient_systems;
 pub mod init_game_systems;
 pub mod kapaow_cooking_systems;
+pub mod menu_systems;
+pub mod observer_systems;
 pub mod pan_systems;
-pub mod ui_systems;
 
 // Re-export commonly used items for convenience
 pub use cooking_systems::handle_kaprow_pan_ingredient_drop;
-pub use egg_cooking_systems::next_step_egg_cooking;
+pub use game_end_systems::{
+    cleanup_game_end_screens, handle_game_over_screen_input, handle_victory_screen_input,
+    show_game_over_screen, show_victory_screen,
+};
 pub use gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event};
+pub use hud_systems::setup_hud;
 pub use ingredient_systems::{spawn_ingredients, update_dragging_ingredient};
 pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state};
+pub use menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu};
+pub use observer_systems::observe_game_state_changes;
 pub use pan_systems::setup_frying_pan;
-pub use ui_systems::{
-    cleanup_game_end_screens, cleanup_main_menu, handle_game_over_screen_input,
-    handle_menu_button_click, handle_victory_screen_input, observe_game_state_changes, setup_hud,
-    setup_main_menu, show_game_over_screen, show_victory_screen,
-};

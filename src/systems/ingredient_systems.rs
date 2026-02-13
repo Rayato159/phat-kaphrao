@@ -13,12 +13,11 @@ use bevy::prelude::*;
 use crate::entities::ingredient::{DroppedIngredient, INGREDIENT_SIZE};
 use crate::entities::{
     Dragging, HoverOriginalZ, Ingredient, IngredientForegroundLink, IngredientType,
-    OriginalPosition, PanEgg, PanKapaow,
+    OriginalPosition, PanEgg, PanKapaow, StepIndicatorEgg, StepIndicatorKapaow,
 };
-
 use crate::logic::drop_on_pan::{handle_drop_on_pan_egg, handle_drop_on_pan_kapoaw};
 use crate::message::ingredient_message::IngredientDroppedMessage;
-use crate::resource::cooking_state::KaprowCookingState;
+use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
 use crate::resource::game_state::GameState;
 use crate::spawn::ingredient_spawn::{
     ghost_ingredient_foreground_spawn, ingredient_background_spawn,
@@ -172,6 +171,7 @@ pub fn on_drag_end(
     mut event_writer: MessageWriter<IngredientDroppedMessage>,
     mut game_stats: ResMut<GameState>,
     kapow_state: Res<State<KaprowCookingState>>,
+    egg_state: Res<State<EggCookingState>>,
     q_foreground_link: Query<&IngredientForegroundLink>,
     q_ingredients: Query<&Ingredient>,
     q_original_position: Query<&OriginalPosition>,
@@ -180,7 +180,10 @@ pub fn on_drag_end(
     q_dragging: Query<Entity, With<Dragging>>,
     q_pan_kapoaw: Query<(Entity, &Transform), With<PanKapaow>>,
     q_pan_egg: Query<(Entity, &Transform), With<PanEgg>>,
-    mut check_drop_ingredient_text: Query<(&mut Text, &mut TextColor), With<DroppedIngredient>>,
+    mut check_drop_ingredient_text: ParamSet<(
+        Query<(&mut Text, &mut TextColor), (With<DroppedIngredient>, With<StepIndicatorKapaow>)>,
+        Query<(&mut Text, &mut TextColor), (With<DroppedIngredient>, With<StepIndicatorEgg>)>,
+    )>,
 ) {
     // Despawn all dragging entities
     for e in q_dragging.iter() {
@@ -214,6 +217,9 @@ pub fn on_drag_end(
 
                 info!("position_drop {:?}", position_drop);
 
+                // Create separate queries for kapaow and egg step indicators
+                // Use ParamSet to access queries for kapaow and egg step indicators
+
                 let mut handled = false;
 
                 // Check pan kapoaw first (left side: -300.0 to 0.0)
@@ -221,7 +227,7 @@ pub fn on_drag_end(
                     if handle_drop_on_pan_kapoaw(
                         &mut event_writer,
                         &mut game_stats,
-                        &mut check_drop_ingredient_text,
+                        &mut check_drop_ingredient_text.p0(),
                         ingredient.ingredient_type,
                         drop_position,
                         pan_kapoaw_entity,
@@ -234,9 +240,12 @@ pub fn on_drag_end(
                 else if position_drop.x >= 0.0 && position_drop.x <= 300.0 {
                     handle_drop_on_pan_egg(
                         &mut event_writer,
+                        &mut game_stats,
+                        &mut check_drop_ingredient_text.p1(),
                         ingredient.ingredient_type,
                         drop_position,
                         pan_egg_entity,
+                        egg_state.get(),
                     );
                     handled = true;
                 }
