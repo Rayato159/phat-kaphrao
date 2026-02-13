@@ -20,6 +20,7 @@
 pub mod animate;
 pub mod entities;
 pub mod helper;
+pub mod message;
 pub mod resource;
 pub mod spawn;
 pub mod systems;
@@ -28,14 +29,15 @@ pub mod systems;
 //
 
 pub use entities::{
-    Dragging, GaugeSpawnEvent, Ingredient, IngredientType, OriginalPosition, PanArea, TimingGauge,
-    HUD,
+    Dragging, Ingredient, IngredientType, OriginalPosition, PanArea, TimingGauge, HUD,
 };
-pub use resource::game_state::{
-    AppState, GameLoseEvent, GameStats, GameWinEvent, InGame, IngredientDroppedEvent,
-    StepCompletedEvent,
+pub use message::{
+    game_message::{GameLoseMessage, GameWinMessage},
+    gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage, GaugeSpawnMassage},
+    ingredient_message::IngredientDroppedMessage,
 };
 
+pub use resource::game_state::{AppState, GameStats, InGame};
 pub const WINDOW_WIDTH: f32 = 1920.0;
 pub const WINDOW_HEIGHT: f32 = 1080.0;
 pub const GAME_TITLE: &str = "Pad Kaprao - Thai Cooking Game";

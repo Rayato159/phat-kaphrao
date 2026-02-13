@@ -14,12 +14,10 @@
 
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
-use bevy::text::TextSpanAccess;
 
-use crate::entities::{
-    ButtonAction, GameEndScreen, HeartIcon, IngredientType, MainMenu, StepIndicator, HUD,
-};
-use crate::resource::game_state::{AppState, GameLoseEvent, GameStats, GameWinEvent};
+use crate::entities::{ButtonAction, GameEndScreen, MainMenu};
+use crate::message::game_message::{GameLoseMessage, GameWinMessage};
+use crate::resource::game_state::{AppState, GameStats};
 use crate::spawn::game_over_screen_spawn::{
     game_over_screen_instructions_spawn, game_over_screen_parent_spawn,
     game_over_screen_subtitle_spawn, game_over_screen_title_spawn,
@@ -30,7 +28,9 @@ use crate::spawn::main_menu_spawn::{
     main_menu_subtitle_spawn, main_menu_title_spawn,
 };
 use crate::spawn::setup_hud_spawn::setup_hud_spawn;
-use crate::spawn::step_spawn::{step_child_current_spawn, step_child_spawn, step_parent_spawn};
+use crate::spawn::step_spawn::{
+    step_child_current_spawn, step_child_drop_spawn, step_child_spawn, step_parent_spawn,
+};
 use crate::spawn::victory_screen_spawn::{
     victory_screen_instructions_spawn, victory_screen_parent_spawn, victory_screen_subtitle_spawn,
     victory_screen_title_spawn,
@@ -64,53 +64,10 @@ fn spawn_step_indicator(builder: &mut ChildSpawnerCommands) {
         // "Next Ingredient:" label
         parent.spawn(step_child_spawn());
         parent.spawn(step_child_current_spawn());
+        parent.spawn(step_child_drop_spawn());
     });
 }
 
-/// Update the HUD based on current game state
-/// Phase 4: Recipe & Progress
-pub fn update_hud(
-    game_stats: Res<GameStats>,
-    q_hearts: Query<&HeartIcon>,
-    mut q_heart_text: Query<(Entity, &mut Text, &mut TextColor), With<HeartIcon>>,
-    mut q_current_ingredient: Query<(&mut Text, &mut TextColor), (With<Name>, Without<HeartIcon>)>,
-) {
-    // Update HP hearts visibility and color
-    for (heart_entity, mut text, mut text_color) in q_heart_text.iter_mut() {
-        if let Ok(heart_icon) = q_hearts.get(heart_entity) {
-            let is_alive = heart_icon.index < game_stats.hp;
-            *text.write_span() = if is_alive {
-                "❤️".to_string()
-            } else {
-                "🖤".to_string()
-            };
-
-            // Update color - red for alive, gray for dead
-            if is_alive {
-                *text_color = TextColor(Color::srgb(1.0, 0.3, 0.3));
-            } else {
-                *text_color = TextColor(Color::srgb(0.3, 0.3, 0.3));
-            }
-        }
-    }
-
-    // Update the step indicator (current ingredient)
-    if let Ok((mut ingredient_text, mut ingredient_color)) = q_current_ingredient.single_mut() {
-        // Get the next ingredient based on current_step
-        // If current_step is 0-7, show the corresponding ingredient
-        // If current_step is 8 or more, show "Done!"
-        if let Some(ingredient_type) = IngredientType::from_step(game_stats.current_step) {
-            *ingredient_text.write_span() = ingredient_type.name().to_string();
-            *ingredient_color = TextColor(Color::srgb(0.8, 0.6, 0.2)); // Gold color
-        } else {
-            *ingredient_text.write_span() = "Done!".to_string();
-            *ingredient_color = TextColor(Color::srgb(0.3, 0.8, 0.3)); // Green color
-        }
-    }
-}
-
-/// Show the victory screen when the player wins
-/// Phase 5: Polish & Juice
 pub fn show_victory_screen(mut commands: Commands) {
     info!("Showing victory screen!");
 
@@ -278,8 +235,8 @@ pub fn handle_menu_button_click(
 pub fn observe_game_state_changes(
     _commands: Commands,
     _game_stats: ResMut<GameStats>,
-    mut game_win_events: MessageReader<GameWinEvent>,
-    mut game_lose_events: MessageReader<GameLoseEvent>,
+    mut game_win_events: MessageReader<GameWinMessage>,
+    mut game_lose_events: MessageReader<GameLoseMessage>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     // Handle victory event

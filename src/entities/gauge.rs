@@ -43,16 +43,6 @@ impl Default for TimingGauge {
     }
 }
 
-/// Component for the Bar Gauge
-/// Used for visual representation of the timing gauge bar
-#[derive(Component)]
-pub struct BarGauge {
-    /// Width of the bar gauge
-    pub width: f32,
-    /// Height of the bar gauge
-    pub height: f32,
-}
-
 /// Component for the Kapaow Ball Gauge
 /// Used for the Kapaow recipe timing mini-game
 #[derive(Component)]
@@ -78,14 +68,6 @@ impl Default for BallGauge {
             target_zone_end: 0.6,
         }
     }
-}
-
-/// Event fired when a Timing Gauge should be spawned
-/// This event is triggered when oil is added to the pan
-#[derive(Message, Debug, Clone)]
-pub struct GaugeSpawnEvent {
-    pub position: Vec3,
-    pub target_pan: Option<Entity>,
 }
 
 /// Component for a gauge that follows a specific pan

@@ -1,0 +1,12 @@
+use bevy::prelude::*;
+
+#[derive(Message, Debug, Clone)]
+pub struct GaugeKapoawHitMassage;
+
+#[derive(Message, Debug, Clone)]
+pub struct GaugeEggHitMassage;
+
+#[derive(Message, Debug, Clone)]
+pub struct GaugeSpawnMassage {
+    pub target_pan: Option<Entity>,
+}

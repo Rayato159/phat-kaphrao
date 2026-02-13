@@ -10,18 +10,19 @@ use bevy_spritesheet_animation::prelude::*;
 
 use crate::entities::pan::PAN_SIZE;
 use crate::entities::{IngredientType, PanKapaow};
-use crate::resource::game_state::{
-    GameLoseEvent, GameStats, GameWinEvent, IngredientDroppedEvent, StepCompletedEvent,
+use crate::message::{
+    game_message::GameLoseMessage, gaug_message::GaugeSpawnMassage,
+    ingredient_message::IngredientDroppedMessage,
 };
+use crate::resource::game_state::GameStats;
 use crate::spawn::step_spawn::{spawn_oil_step, KaprowCookingState};
-use crate::GaugeSpawnEvent;
 
 pub fn handle_kaprow_pan_ingredient_drop(
     mut commands: Commands,
-    mut event_reader: MessageReader<IngredientDroppedEvent>,
+    mut event_reader: MessageReader<IngredientDroppedMessage>,
     mut game_stats: ResMut<GameStats>,
-    mut gauge_spawn_events: MessageWriter<GaugeSpawnEvent>,
-    mut game_over_events: MessageWriter<GameLoseEvent>,
+    mut gauge_spawn_events: MessageWriter<GaugeSpawnMassage>,
+    mut game_over_events: MessageWriter<GameLoseMessage>,
     kaprow_cooking_state: Res<State<KaprowCookingState>>,
     mut next_kaprow_cooking_state: ResMut<NextState<KaprowCookingState>>,
     q_kaprow_pans: Query<&Transform, With<PanKapaow>>,
@@ -30,19 +31,21 @@ pub fn handle_kaprow_pan_ingredient_drop(
     mut animations: ResMut<Assets<Animation>>,
 ) {
     for event in event_reader.read() {
-        let expected_ingredient = IngredientType::from_step(game_stats.current_step);
+        // let expected_ingredient = IngredientType::from_step(game_stats.current_step);
 
-        info!(
-            "Ingredient dropped: {:?}, Expected: {:?}, Step: {}/8",
-            event.ingredient_type, expected_ingredient, game_stats.current_step
-        );
+        // info!(
+        //     "Ingredient dropped: {:?}, Expected: {:?}, Step: {}/8",
+        //     event.ingredient_type, expected_ingredient, game_stats.current_step
+        // );
 
         // Special rule: First and second ingredients MUST be oil
-        if game_stats.current_step < 2 {
+        // if !game_stats.egg_has_oil || !game_stats.kapaow_has_oil {
+
+        if !game_stats.kapaow_has_oil {
             if event.ingredient_type != IngredientType::Oil {
                 // Game over - first or second ingredient is not oil!
-                error!("Game Over - Step {} must be Oil!", game_stats.current_step);
-                game_over_events.write(GameLoseEvent);
+                // error!("Game Over - Step {} must be Oil!", game_stats.current_step);
+                game_over_events.write(GameLoseMessage);
                 return;
             }
 
@@ -92,8 +95,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     let gauge_position =
                         kaprow_pan_transform.translation + Vec3::new(0.0, 150.0, 10.0);
 
-                    gauge_spawn_events.write(crate::entities::GaugeSpawnEvent {
-                        position: gauge_position,
+                    gauge_spawn_events.write(GaugeSpawnMassage {
                         target_pan: Some(target_pan),
                     });
 

@@ -1,25 +1,3 @@
-//! Ingredient Entities
-//!
-//! Contains all component definitions related to ingredients:
-//! - Ingredient: Marker component for ingredient entities
-//! - IngredientMenu: Marker component for ingredient menu container
-//! - IngredientType: Enum defining all 8 available ingredients
-//! - OriginalPosition: Stores the initial position for return-to-origin logic
-//! - Dragging: Tracks dragging state and offset
-//! - Pan: Marker component for the frying pan drop area
-//!
-//! Cooking Sequence:
-//! 1. Oil
-//! 2. Garlic
-//! 3. Pork
-//! 4. Egg
-//! 5. Fish sauce
-//! 6. Oyster sauce
-//! 7. Thai chilli
-//! 8. Holy basil leaves
-//!
-//! After step 8, the dish is complete (step 9 = none/completed)
-
 use bevy::prelude::*;
 
 pub const INGREDIENT_SIZE: f32 = 16.0 * 7.5; // 16 is original ingredient size, scaled up by 7.5
@@ -31,7 +9,8 @@ pub const INGREDIENT_SIZE: f32 = 16.0 * 7.5; // 16 is original ingredient size, 
 pub struct Ingredient {
     pub ingredient_type: IngredientType,
 }
-
+#[derive(Component)]
+pub struct IngredientNext;
 /// Marker component for ingredient background sprite (Icon.png)
 #[derive(Component)]
 #[require(Transform, Visibility)]
@@ -71,7 +50,7 @@ pub struct IngredientMenu;
 
 /// Ingredient types available in the game
 /// 8 ingredients total with a specific cooking sequence
-#[derive(Component, Clone, Copy, PartialEq, Eq, Debug, Default)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum IngredientType {
     #[default]
     Oil,
@@ -160,3 +139,6 @@ pub struct Dragging {
 /// Marker component for the pan drop area
 #[derive(Component)]
 pub struct PanArea;
+
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct DroppedIngredient;

@@ -8,25 +8,27 @@
 //!
 //! Uses Bevy 0.17+ patterns: Required Components, Picking API, and Observers
 
-use bevy::log::tracing_subscriber::reload::Handle;
 use bevy::prelude::*;
 
-use crate::entities::ingredient::INGREDIENT_SIZE;
+use crate::entities::ingredient::{DroppedIngredient, INGREDIENT_SIZE};
 use crate::entities::{
     Dragging, HoverOriginalZ, Ingredient, IngredientForegroundLink, IngredientType,
     OriginalPosition, PanArea, PanEgg, PanKapaow,
 };
-use crate::resource::game_state::{GameStats, IngredientDroppedEvent};
+
+use crate::message::ingredient_message::IngredientDroppedMessage;
+use crate::resource::game_state::GameStats;
 use crate::spawn::ingredient_spawn::{
     ghost_ingredient_foreground_spawn, ingredient_background_spawn,
     ingredient_foreground_spawn_independent, ingredient_item_spawn,
 };
+use crate::spawn::step_spawn::KaprowCookingState;
 
 /// Spawn all ingredients at their starting positions
 /// Arranges 8 ingredients in a 2x4 grid, vertically centered on the right side
 pub fn spawn_ingredients(
     mut commands: Commands,
-    mut game_stats: ResMut<GameStats>,
+    // mut game_stats: ResMut<GameStats>,
     window: Single<&Window>,
     asset_server: Res<AssetServer>,
 ) {
@@ -101,7 +103,7 @@ pub fn spawn_ingredients(
         );
     }
 
-    game_stats.current_step = 0;
+    // game_stats.current_step = 0;
 
     info!("Ingredients spawned: 2x4 grid, centered vertically on right side");
 }
@@ -163,19 +165,19 @@ pub fn on_drag_start(
     );
 }
 
-/// Observer for when dragging ends on an ingredient foreground sprite
-/// This is where we detect if the ingredient was dropped on the pan
-/// Uses Bevy 0.16+ Observer pattern with On<Pointer<DragEnd>>
 pub fn on_drag_end(
     trigger: On<Pointer<DragEnd>>,
     mut commands: Commands,
-    mut event_writer: MessageWriter<IngredientDroppedEvent>,
+    mut event_writer: MessageWriter<IngredientDroppedMessage>,
+    mut game_stats: ResMut<GameStats>,
+    kapow_state: Res<State<KaprowCookingState>>,
     q_foreground_link: Query<&IngredientForegroundLink>,
     q_ingredients: Query<&Ingredient>,
     q_original_position: Query<&OriginalPosition>,
     windows: Query<&Window>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
     q_dragging: Query<Entity, With<Dragging>>,
+    mut check_drop_ingredient_text: Query<(&mut Text, &mut TextColor), With<DroppedIngredient>>,
     mut transform_queries: ParamSet<(
         Query<(Entity, &Transform), With<PanKapaow>>,
         Query<(Entity, &Transform), With<PanEgg>>,
@@ -232,8 +234,26 @@ pub fn on_drag_end(
                         ingredient.ingredient_type, drop_position.x, drop_position.y
                     );
                 } else if position_drop.x >= -300.0 && position_drop.x < 0.0 {
+                    let kapow_state = kapow_state.get();
+
+                    info!("kapow_state {:?}", kapow_state);
+                    info!(
+                        "compared {:?}",
+                        ingredient.ingredient_type == kapow_state.clone().into()
+                    );
+                    let check_state_kapow_and_ingredient_drop =
+                        ingredient.ingredient_type == kapow_state.clone().into();
+                    if !check_state_kapow_and_ingredient_drop {
+                        return;
+                    }
                     info!("pan_entity {:?}", pans[0].0);
                     dropped_on_pan = true;
+                    game_stats.ingredient_dropped = true;
+                    for (mut text, mut color) in &mut check_drop_ingredient_text {
+                        *text = Text::new("Ingredient dropped!");
+                        *color = TextColor(Color::srgb(0.1, 1.0, 0.5));
+                    }
+
                     let pan = pans[0].0;
                     target_pan = Some(pan);
                     info!(
@@ -245,10 +265,10 @@ pub fn on_drag_end(
                 // Fire the ingredient dropped event if dropped on a pan
                 if dropped_on_pan {
                     // Fire event with PARENT entity (not foreground sprite)
-                    event_writer.write(IngredientDroppedEvent {
-                        ingredient_entity: foreground_link.parent_entity,
+                    event_writer.write(IngredientDroppedMessage {
+                        // ingredient_entity: foreground_link.parent_entity,
                         ingredient_type: ingredient.ingredient_type,
-                        drop_position: drop_world_pos,
+                        // drop_position: drop_world_pos,
                         target_pan,
                     });
                     // Despawn foreground sprite since it was used

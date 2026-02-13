@@ -53,6 +53,7 @@ pub fn gauge_container_background_spawn(gauge_width: f32, gauge_height: f32) -> 
 // }
 pub fn gauge_target_zone_spawn(
     zone_name: &'static str,
+    color: Color,
     world_width: f32,
     gauge_height: f32,
     world_x: f32,
@@ -60,7 +61,7 @@ pub fn gauge_target_zone_spawn(
     (
         Name::new(zone_name),
         Sprite {
-            color: Color::WHITE,
+            color: color,
             custom_size: Some(Vec2::new(world_width, gauge_height)),
             ..default()
         },

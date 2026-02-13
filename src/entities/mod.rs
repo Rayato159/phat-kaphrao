@@ -16,10 +16,10 @@ pub mod spatula;
 pub mod ui;
 
 // Re-export commonly used items for convenience
-pub use gauge::{BallGauge, BarGauge, GaugeSpawnEvent, TimingGauge};
+pub use gauge::{BallGauge, TimingGauge};
 pub use ingredient::{
     Dragging, DraggingOriginalParent, HoverOriginalZ, Ingredient, IngredientBackground,
-    IngredientForeground, IngredientForegroundLink, IngredientMenu, IngredientType,
+    IngredientForeground, IngredientForegroundLink, IngredientMenu, IngredientNext, IngredientType,
     OriginalPosition, PanArea,
 };
 pub use pan::{PanEgg, PanKapaow};

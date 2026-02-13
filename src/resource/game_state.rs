@@ -50,7 +50,8 @@ impl ComputedStates for InGame {
 pub struct GameStats {
     pub hp: u8,
     pub max_hp: u8,
-    pub current_step: usize,
+    pub ingredient_dropped: bool,
+    // pub current_step: usize,
     pub steps_completed: usize,
     pub kapaow_has_oil: bool,
     pub egg_has_oil: bool,
@@ -72,7 +73,8 @@ impl Default for GameStats {
         Self {
             hp: 10,     // Increased to 4 for 8 ingredients ; change to 10
             max_hp: 10, // Increased max HP ; change to 10
-            current_step: 0,
+            ingredient_dropped: true,
+            // current_step: 0,
             steps_completed: 0,
             kapaow_has_oil: false,
             egg_has_oil: false,
@@ -89,28 +91,4 @@ impl Default for GameStats {
             cout_tod_kai: 0.0,
         }
     }
-}
-
-/// Event fired when the game is won
-#[derive(Message, Debug, Clone)]
-pub struct GameWinEvent;
-
-/// Event fired when the game is lost
-#[derive(Message, Debug, Clone)]
-pub struct GameLoseEvent;
-
-/// Event fired when a cooking step is completed successfully
-#[derive(Message, Debug, Clone)]
-pub struct StepCompletedEvent {
-    pub step_index: usize,
-}
-
-/// Event fired when an ingredient is dropped onto the pan
-/// Moved from ingredients module to game_state for better organization
-#[derive(Message, Debug, Clone)]
-pub struct IngredientDroppedEvent {
-    pub ingredient_entity: Entity,
-    pub ingredient_type: crate::entities::IngredientType,
-    pub drop_position: Vec3,
-    pub target_pan: Option<Entity>,
 }
