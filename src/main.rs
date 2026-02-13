@@ -22,14 +22,15 @@ use bevy::{prelude::*, window::WindowMode};
 mod animate;
 mod entities;
 mod helper;
+mod logic;
 mod message;
 mod resource;
 mod spawn;
 mod systems;
-
 // Re-export commonly used items for convenience
 
 use bevy_spritesheet_animation::prelude::*;
+use logic::check_lose::check_game_over;
 use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 use resource::game_state::{AppState, InGame};
@@ -37,19 +38,24 @@ use systems::{
     check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
     reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_hud,
     setup_initial_game_state, setup_main_menu, spawn_gauge_from_event, spawn_ingredients,
-    update_dragging_ingredient,
+    update_dragging_ingredient, update_hp_text,
 };
 
 use crate::{
     animate::gauge_animate::moving_ball_gauge_animation,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
-        gaug_message::{GaugeKapoawHitMassage, GaugeSpawnMassage},
+        gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage, GaugeSpawnMassage},
         ingredient_message::IngredientDroppedMessage,
     },
-    resource::time_state::{check_game_timer, start_timer},
-    spawn::step_spawn::{EggCookingState, KaprowCookingState},
-    systems::kapaow_cooking_systems::next_step_kapaow_cooking,
+    resource::{
+        cooking_state::{EggCookingState, KaprowCookingState},
+        time_state::{check_game_timer, start_timer},
+    },
+    systems::{
+        egg_cooking_systems::next_step_egg_cooking,
+        kapaow_cooking_systems::next_step_kapaow_cooking,
+    },
 };
 
 fn main() {
@@ -83,6 +89,7 @@ fn main() {
         // .add_message::<StepCompletedEvent>()
         .add_message::<IngredientDroppedMessage>()
         .add_message::<GaugeKapoawHitMassage>()
+        .add_message::<GaugeEggHitMassage>()
         // System Schedules - Startup
         .add_systems(
             Startup,
@@ -91,7 +98,6 @@ fn main() {
                 setup_initial_game_state,
                 spawn_ingredients.after(setup_initial_game_state),
                 setup_frying_pan,
-                setup_hud,
             ),
         )
         // System Schedules - Gameplay Systems
@@ -103,15 +109,18 @@ fn main() {
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,
+                check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
+                update_hp_text,
             )
                 .run_if(in_state(InGame)),
         )
         // System Schedules - Ingredient Systems
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
         .add_systems(Update, next_step_kapaow_cooking.run_if(in_state(InGame)))
+        .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
         // System Schedules - Game State Transitions
-        .add_systems(OnEnter(AppState::InGame), reset_game_state)
+        .add_systems(OnEnter(AppState::InGame), (reset_game_state, setup_hud))
         .add_systems(OnEnter(AppState::Victory), systems::show_victory_screen)
         .add_systems(OnEnter(AppState::GameOver), systems::show_game_over_screen)
         .add_systems(OnExit(AppState::Victory), systems::cleanup_game_end_screens)

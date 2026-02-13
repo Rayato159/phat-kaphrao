@@ -23,4 +23,7 @@ pub use ingredient::{
     OriginalPosition, PanArea,
 };
 pub use pan::{PanEgg, PanKapaow};
-pub use ui::{ButtonAction, GameEndScreen, HPOverlay, HeartIcon, MainMenu, StepIndicator, HUD};
+pub use ui::{
+    ButtonAction, GameEndScreen, HPOverlay, HPText, HeartIcon, MainMenu, StepIndicator,
+    StepIndicatorEgg, StepIndicatorKapaow, HUD,
+};

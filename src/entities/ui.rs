@@ -27,6 +27,16 @@ pub struct HeartIcon {
 #[derive(Component)]
 pub struct StepIndicator;
 
+/// Marker component for the Kapaow pan step indicator
+/// Shows the next ingredient for the Kapaow (Thai Basil Pork) cooking sequence
+#[derive(Component)]
+pub struct StepIndicatorKapaow;
+
+/// Marker component for the Egg pan step indicator
+/// Shows the next ingredient for the Egg cooking sequence
+#[derive(Component)]
+pub struct StepIndicatorEgg;
+
 /// Marker component for game end screens
 /// Used for both the victory screen and game over screen
 #[derive(Component)]
@@ -36,6 +46,11 @@ pub struct GameEndScreen;
 /// Used for the gray/dark overlay when HP == 0
 #[derive(Component)]
 pub struct HPOverlay;
+
+/// Marker component for HP text display
+/// Used to display the current HP value as a number (e.g., "10/10")
+#[derive(Component)]
+pub struct HPText;
 
 /// Marker component for the main menu
 /// Used to identify the main menu UI elements

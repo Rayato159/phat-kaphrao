@@ -1,9 +1,9 @@
 use crate::entities::BallGauge;
-use crate::resource::game_state::GameStats;
+use crate::resource::game_state::GameState;
 use bevy::prelude::*;
 
 pub fn moving_ball_gauge_animation(
-    game_stats: Res<GameStats>,
+    game_stats: Res<GameState>,
     q_gauge: Single<&mut BallGauge>,
     mut q_ball: Query<&mut Transform, With<BallGauge>>,
     time: Res<Time>,

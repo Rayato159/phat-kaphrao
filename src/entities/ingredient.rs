@@ -55,12 +55,13 @@ pub enum IngredientType {
     #[default]
     Oil,
     Garlic,
+    Chilli,
     Pork,
-    Egg,
-    FishSauce,
     OysterSauce,
-    ThaiChilli,
-    HolyBasilLeaves,
+    MSG,
+    Basil,
+    Egg,
+    None,
 }
 
 impl IngredientType {
@@ -71,13 +72,29 @@ impl IngredientType {
         match step {
             0 => Some(IngredientType::Oil),
             1 => Some(IngredientType::Garlic),
-            2 => Some(IngredientType::Pork),
-            3 => Some(IngredientType::Egg),
-            4 => Some(IngredientType::FishSauce),
-            5 => Some(IngredientType::OysterSauce),
-            6 => Some(IngredientType::ThaiChilli),
-            7 => Some(IngredientType::HolyBasilLeaves),
+            2 => Some(IngredientType::Chilli),
+            3 => Some(IngredientType::Pork),
+            4 => Some(IngredientType::OysterSauce),
+            5 => Some(IngredientType::MSG),
+            6 => Some(IngredientType::Basil),
+            7 => Some(IngredientType::Egg),
             _ => None,
+        }
+    }
+
+    /// Returns the next ingredient type in the cooking sequence
+    /// Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg -> None
+    pub fn next_step(&self) -> Self {
+        match self {
+            IngredientType::Oil => IngredientType::Garlic,
+            IngredientType::Garlic => IngredientType::Chilli,
+            IngredientType::Chilli => IngredientType::Pork,
+            IngredientType::Pork => IngredientType::OysterSauce,
+            IngredientType::OysterSauce => IngredientType::MSG,
+            IngredientType::MSG => IngredientType::Basil,
+            IngredientType::Basil => IngredientType::Egg,
+            IngredientType::Egg => IngredientType::None,
+            IngredientType::None => IngredientType::None,
         }
     }
 
@@ -86,12 +103,13 @@ impl IngredientType {
         match self {
             IngredientType::Oil => "Oil",
             IngredientType::Garlic => "Garlic",
+            IngredientType::Chilli => "Chilli",
             IngredientType::Pork => "Pork",
-            IngredientType::Egg => "Egg",
-            IngredientType::FishSauce => "Fish Sauce",
             IngredientType::OysterSauce => "Oyster Sauce",
-            IngredientType::ThaiChilli => "Thai Chilli",
-            IngredientType::HolyBasilLeaves => "Holy Basil Leaves",
+            IngredientType::MSG => "MSG",
+            IngredientType::Basil => "Basil",
+            IngredientType::Egg => "Egg",
+            IngredientType::None => "",
         }
     }
 
@@ -100,12 +118,13 @@ impl IngredientType {
         match self {
             IngredientType::Oil => Color::srgb(0.9, 0.8, 0.5), // Yellow-ish
             IngredientType::Garlic => Color::srgb(0.95, 0.95, 0.9), // White-ish
+            IngredientType::Chilli => Color::srgb(0.9, 0.2, 0.1), // Red
             IngredientType::Pork => Color::srgb(0.9, 0.7, 0.7), // Pink-ish
-            IngredientType::Egg => Color::srgb(1.0, 0.9, 0.6), // Yellow-orange
-            IngredientType::FishSauce => Color::srgb(0.6, 0.7, 0.8), // Brown-ish
             IngredientType::OysterSauce => Color::srgb(0.5, 0.4, 0.2), // Dark brown
-            IngredientType::ThaiChilli => Color::srgb(0.9, 0.2, 0.1), // Red
-            IngredientType::HolyBasilLeaves => Color::srgb(0.3, 0.5, 0.3), // Dark green
+            IngredientType::MSG => Color::srgb(0.6, 0.7, 0.8), // Brown-ish
+            IngredientType::Basil => Color::srgb(0.3, 0.5, 0.3), // Dark green
+            IngredientType::Egg => Color::srgb(1.0, 0.9, 0.6), // Yellow-orange
+            IngredientType::None => Color::srgb(1.0, 1.0, 1.0), // White
         }
     }
 
@@ -114,12 +133,13 @@ impl IngredientType {
         match self {
             IngredientType::Oil => "ingradients/image/Oil.png",
             IngredientType::Garlic => "ingradients/image/Galic.png",
+            IngredientType::Chilli => "ingradients/image/Chili.png",
             IngredientType::Pork => "ingradients/image/Pork.png",
-            IngredientType::Egg => "ingradients/image/Egg.png",
-            IngredientType::FishSauce => "ingradients/image/MSG.png",
             IngredientType::OysterSauce => "ingradients/image/OysterSauce.png",
-            IngredientType::ThaiChilli => "ingradients/image/Chili.png",
-            IngredientType::HolyBasilLeaves => "ingradients/image/KaProw.png",
+            IngredientType::MSG => "ingradients/image/MSG.png",
+            IngredientType::Basil => "ingradients/image/KaProw.png",
+            IngredientType::Egg => "ingradients/image/Egg.png",
+            IngredientType::None => "",
         }
     }
 }
