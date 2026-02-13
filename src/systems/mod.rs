@@ -12,6 +12,7 @@
 //! - init_game_systems: Systems for initial game setup
 
 pub mod cooking_systems;
+pub mod egg_cooking_systems;
 pub mod gauge_systems;
 pub mod ingredient_systems;
 pub mod init_game_systems;
@@ -21,6 +22,7 @@ pub mod ui_systems;
 
 // Re-export commonly used items for convenience
 pub use cooking_systems::handle_kaprow_pan_ingredient_drop;
+pub use egg_cooking_systems::next_step_egg_cooking;
 pub use gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event};
 pub use ingredient_systems::{spawn_ingredients, update_dragging_ingredient};
 pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state};

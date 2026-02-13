@@ -48,11 +48,11 @@ impl From<KaprowCookingState> for IngredientType {
         match state {
             KaprowCookingState::Oil => IngredientType::Oil,
             KaprowCookingState::Garlic => IngredientType::Garlic,
-            KaprowCookingState::Chilli => IngredientType::ThaiChilli,
+            KaprowCookingState::Chilli => IngredientType::Chilli,
             KaprowCookingState::Pork => IngredientType::Pork,
             KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
-            KaprowCookingState::MSG => IngredientType::FishSauce, // หรือแก้ตาม logic คุณ
-            KaprowCookingState::Basil => IngredientType::HolyBasilLeaves,
+            KaprowCookingState::MSG => IngredientType::MSG,
+            KaprowCookingState::Basil => IngredientType::Basil,
             KaprowCookingState::None => IngredientType::None,
         }
     }

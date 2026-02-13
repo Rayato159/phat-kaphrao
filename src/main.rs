@@ -22,11 +22,11 @@ use bevy::{prelude::*, window::WindowMode};
 mod animate;
 mod entities;
 mod helper;
+mod logic;
 mod message;
 mod resource;
 mod spawn;
 mod systems;
-
 // Re-export commonly used items for convenience
 
 use bevy_spritesheet_animation::prelude::*;
@@ -44,14 +44,17 @@ use crate::{
     animate::gauge_animate::moving_ball_gauge_animation,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
-        gaug_message::{GaugeKapoawHitMassage, GaugeSpawnMassage},
+        gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage, GaugeSpawnMassage},
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
         cooking_state::{EggCookingState, KaprowCookingState},
         time_state::{check_game_timer, start_timer},
     },
-    systems::kapaow_cooking_systems::next_step_kapaow_cooking,
+    systems::{
+        egg_cooking_systems::next_step_egg_cooking,
+        kapaow_cooking_systems::next_step_kapaow_cooking,
+    },
 };
 
 fn main() {
@@ -85,6 +88,7 @@ fn main() {
         // .add_message::<StepCompletedEvent>()
         .add_message::<IngredientDroppedMessage>()
         .add_message::<GaugeKapoawHitMassage>()
+        .add_message::<GaugeEggHitMassage>()
         // System Schedules - Startup
         .add_systems(
             Startup,
@@ -112,6 +116,7 @@ fn main() {
         // System Schedules - Ingredient Systems
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
         .add_systems(Update, next_step_kapaow_cooking.run_if(in_state(InGame)))
+        .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
         // System Schedules - Game State Transitions
         .add_systems(OnEnter(AppState::InGame), reset_game_state)
         .add_systems(OnEnter(AppState::Victory), systems::show_victory_screen)

@@ -1,9 +1,7 @@
 use bevy::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
 
-use crate::entities::{
-    ingredient::DroppedIngredient, IngredientNext, IngredientType, StepIndicator,
-};
+use crate::entities::{ingredient::DroppedIngredient, IngredientNext, StepIndicator};
 
 pub fn step_parent_spawn() -> impl Bundle {
     (

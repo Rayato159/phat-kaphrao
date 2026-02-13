@@ -20,10 +20,12 @@
 pub mod animate;
 pub mod entities;
 pub mod helper;
+pub mod logic;
 pub mod message;
 pub mod resource;
 pub mod spawn;
 pub mod systems;
+
 // Re-export commonly used items for convenience
 //
 //
@@ -37,7 +39,7 @@ pub use message::{
     ingredient_message::IngredientDroppedMessage,
 };
 
-pub use resource::game_state::{AppState, GameStats, InGame};
+pub use resource::game_state::{AppState, GameState, InGame};
 pub const WINDOW_WIDTH: f32 = 1920.0;
 pub const WINDOW_HEIGHT: f32 = 1080.0;
 pub const GAME_TITLE: &str = "Pad Kaprao - Thai Cooking Game";

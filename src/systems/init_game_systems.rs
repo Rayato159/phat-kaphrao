@@ -4,7 +4,7 @@
 //! These systems run during startup and when entering the InGame state.
 
 use crate::{
-    resource::game_state::GameStats,
+    resource::game_state::GameState,
     spawn::{camera_spawn::camera_2d_spawn, spawn_table::table_spawn},
 };
 use bevy::prelude::*;
@@ -24,12 +24,12 @@ pub fn setup_camera_and_scene(mut commands: Commands, asset_server: Res<AssetSer
 /// Sets up the GameStats resource for HP and cooking progress
 pub fn setup_initial_game_state(mut commands: Commands) {
     // Game Statistics Resource - tracks HP and cooking progress
-    commands.init_resource::<GameStats>();
+    commands.init_resource::<GameState>();
 }
 
 /// Reset game state when entering InGame state
 /// This allows for restart functionality
-pub fn reset_game_state(mut game_stats: ResMut<GameStats>, mut commands: Commands) {
+pub fn reset_game_state(mut game_stats: ResMut<GameState>, mut commands: Commands) {
     game_stats.hp = game_stats.max_hp;
     // game_stats.current_step = 0;
     game_stats.steps_completed = 0;

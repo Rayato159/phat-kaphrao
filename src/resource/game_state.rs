@@ -47,7 +47,7 @@ impl ComputedStates for InGame {
 /// HP: Player's health points (game over when 0)
 /// current_step: Which ingredient step we're on (0-7 for 8 ingredients, 8 = none/completed)
 #[derive(Resource, Debug, Clone)]
-pub struct GameStats {
+pub struct GameState {
     pub hp: u8,
     pub max_hp: u8,
     pub ingredient_dropped: bool,
@@ -66,9 +66,11 @@ pub struct GameStats {
     pub target_kapaow_x: Option<f32>,
     pub cout_pud_kapoaw: f32,
     pub cout_tod_kai: f32,
+    pub kapaow_is_finished: bool,
+    pub egg_is_finished: bool,
 }
 
-impl Default for GameStats {
+impl Default for GameState {
     fn default() -> Self {
         Self {
             hp: 10,     // Increased to 4 for 8 ingredients ; change to 10
@@ -89,6 +91,8 @@ impl Default for GameStats {
             target_kapaow_x: None,
             cout_pud_kapoaw: 0.0,
             cout_tod_kai: 0.0,
+            kapaow_is_finished: false,
+            egg_is_finished: false,
         }
     }
 }

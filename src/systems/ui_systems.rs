@@ -17,7 +17,7 @@ use bevy::prelude::*;
 
 use crate::entities::{ButtonAction, GameEndScreen, MainMenu};
 use crate::message::game_message::{GameLoseMessage, GameWinMessage};
-use crate::resource::game_state::{AppState, GameStats};
+use crate::resource::game_state::{AppState, GameState};
 use crate::spawn::game_over_screen_spawn::{
     game_over_screen_instructions_spawn, game_over_screen_parent_spawn,
     game_over_screen_subtitle_spawn, game_over_screen_title_spawn,
@@ -234,7 +234,7 @@ pub fn handle_menu_button_click(
 /// This ensures the UI stays in sync with the game state
 pub fn observe_game_state_changes(
     _commands: Commands,
-    _game_stats: ResMut<GameStats>,
+    _game_stats: ResMut<GameState>,
     mut game_win_events: MessageReader<GameWinMessage>,
     mut game_lose_events: MessageReader<GameLoseMessage>,
     mut next_state: ResMut<NextState<AppState>>,

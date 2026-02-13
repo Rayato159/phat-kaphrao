@@ -5,17 +5,18 @@ use crate::entities::gauge::BallGauge;
 use crate::entities::PanEgg;
 use crate::entities::PanKapaow;
 use crate::helper::random_target_start::random_target_start;
-use crate::resource::game_state::GameStats;
+use crate::resource::game_state::GameState;
 use crate::spawn::gaueg_spawn::{
     gauge_ball_spawn, gauge_container_background_spawn, gauge_container_spawn,
     gauge_target_zone_spawn, guage_perfect_spawn,
 };
+use crate::GaugeEggHitMassage;
 use crate::GaugeKapoawHitMassage;
 use crate::GaugeSpawnMassage;
 
 pub fn spawn_gauge_from_event(
     mut commands: Commands,
-    mut game_stats: ResMut<GameStats>,
+    mut game_stats: ResMut<GameState>,
     mut gauge_events: MessageReader<GaugeSpawnMassage>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -113,10 +114,11 @@ pub fn spawn_gauge_from_event(
 /// Check if the gauge is in the hit window
 /// This is called when the player presses space to hit the gauge
 pub fn check_gauge_hit_window(
-    mut game_stats: ResMut<GameStats>,
+    mut game_stats: ResMut<GameState>,
     ball_gauge: Single<&mut BallGauge>,
     keyboard: Res<ButtonInput<KeyCode>>,
     mut hit_kapaow: MessageWriter<GaugeKapoawHitMassage>,
+    mut hit_egg: MessageWriter<GaugeEggHitMassage>,
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
         let position = ball_gauge.position; // normalized
@@ -141,6 +143,8 @@ pub fn check_gauge_hit_window(
             let end = start + zone_width;
 
             if check_zone(position, start, end, "Egg") {
+                info!("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅ HIT EGG!");
+                hit_egg.write(GaugeEggHitMassage {});
                 hit_any = true;
                 game_stats.cout_tod_kai += 1.0;
             }
