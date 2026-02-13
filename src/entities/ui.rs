@@ -47,6 +47,11 @@ pub struct GameEndScreen;
 #[derive(Component)]
 pub struct HPOverlay;
 
+/// Marker component for HP text display
+/// Used to display the current HP value as a number (e.g., "10/10")
+#[derive(Component)]
+pub struct HPText;
+
 /// Marker component for the main menu
 /// Used to identify the main menu UI elements
 #[derive(Component)]

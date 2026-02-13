@@ -5,6 +5,7 @@ use crate::entities::gauge::BallGauge;
 use crate::entities::PanEgg;
 use crate::entities::PanKapaow;
 use crate::helper::random_target_start::random_target_start;
+
 use crate::resource::game_state::GameState;
 use crate::spawn::gaueg_spawn::{
     gauge_ball_spawn, gauge_container_background_spawn, gauge_container_spawn,

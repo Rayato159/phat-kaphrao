@@ -33,7 +33,7 @@ pub use game_end_systems::{
     show_game_over_screen, show_victory_screen,
 };
 pub use gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event};
-pub use hud_systems::setup_hud;
+pub use hud_systems::{setup_hud, update_hp_text};
 pub use ingredient_systems::{spawn_ingredients, update_dragging_ingredient};
 pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state};
 pub use menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu};

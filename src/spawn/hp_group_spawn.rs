@@ -6,7 +6,7 @@ use bevy::{
     utils::default,
 };
 
-use crate::entities::HeartIcon;
+use crate::entities::{HPText, HeartIcon};
 
 pub fn hp_container_parent_spawn() -> impl Bundle {
     (Node {
@@ -27,5 +27,19 @@ pub fn hp_container_child_spawn(i: u8) -> impl Bundle {
             ..default()
         },
         TextColor(Color::srgb(1.0, 0.3, 0.3)),
+    )
+}
+
+/// Spawn HP text display (e.g., "10/10")
+pub fn hp_text_spawn(current_hp: u8, max_hp: u8) -> impl Bundle {
+    (
+        Name::new("HP-Text"),
+        HPText,
+        Text::new(format!("{}/{}", current_hp, max_hp)),
+        TextFont {
+            font_size: 40.0,
+            ..default()
+        },
+        TextColor(Color::srgb(1.0, 1.0, 1.0)),
     )
 }
