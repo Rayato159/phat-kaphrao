@@ -47,8 +47,10 @@ use crate::{
         gaug_message::{GaugeKapoawHitMassage, GaugeSpawnMassage},
         ingredient_message::IngredientDroppedMessage,
     },
-    resource::time_state::{check_game_timer, start_timer},
-    spawn::step_spawn::{EggCookingState, KaprowCookingState},
+    resource::{
+        cooking_state::{EggCookingState, KaprowCookingState},
+        time_state::{check_game_timer, start_timer},
+    },
     systems::kapaow_cooking_systems::next_step_kapaow_cooking,
 };
 

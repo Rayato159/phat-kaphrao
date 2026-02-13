@@ -3,8 +3,7 @@ use bevy::prelude::*;
 use crate::{
     entities::{ingredient::DroppedIngredient, IngredientNext},
     message::gaug_message::GaugeKapoawHitMassage,
-    resource::game_state::GameStats,
-    spawn::step_spawn::KaprowCookingState,
+    resource::{cooking_state::KaprowCookingState, game_state::GameStats},
 };
 pub fn next_step_kapaow_cooking(
     mut commands: Commands,

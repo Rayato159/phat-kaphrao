@@ -61,6 +61,7 @@ pub enum IngredientType {
     OysterSauce,
     ThaiChilli,
     HolyBasilLeaves,
+    None,
 }
 
 impl IngredientType {
@@ -92,6 +93,7 @@ impl IngredientType {
             IngredientType::OysterSauce => "Oyster Sauce",
             IngredientType::ThaiChilli => "Thai Chilli",
             IngredientType::HolyBasilLeaves => "Holy Basil Leaves",
+            IngredientType::None => "",
         }
     }
 
@@ -106,6 +108,7 @@ impl IngredientType {
             IngredientType::OysterSauce => Color::srgb(0.5, 0.4, 0.2), // Dark brown
             IngredientType::ThaiChilli => Color::srgb(0.9, 0.2, 0.1), // Red
             IngredientType::HolyBasilLeaves => Color::srgb(0.3, 0.5, 0.3), // Dark green
+            IngredientType::None => Color::srgb(1.0, 1.0, 1.0), // White
         }
     }
 
@@ -120,6 +123,7 @@ impl IngredientType {
             IngredientType::OysterSauce => "ingradients/image/OysterSauce.png",
             IngredientType::ThaiChilli => "ingradients/image/Chili.png",
             IngredientType::HolyBasilLeaves => "ingradients/image/KaProw.png",
+            IngredientType::None => "",
         }
     }
 }

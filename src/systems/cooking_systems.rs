@@ -14,8 +14,9 @@ use crate::message::{
     game_message::GameLoseMessage, gaug_message::GaugeSpawnMassage,
     ingredient_message::IngredientDroppedMessage,
 };
+use crate::resource::cooking_state::KaprowCookingState;
 use crate::resource::game_state::GameStats;
-use crate::spawn::step_spawn::{spawn_oil_step, KaprowCookingState};
+use crate::spawn::step_spawn::spawn_oil_step;
 
 pub fn handle_kaprow_pan_ingredient_drop(
     mut commands: Commands,

@@ -17,12 +17,12 @@ use crate::entities::{
 };
 
 use crate::message::ingredient_message::IngredientDroppedMessage;
+use crate::resource::cooking_state::KaprowCookingState;
 use crate::resource::game_state::GameStats;
 use crate::spawn::ingredient_spawn::{
     ghost_ingredient_foreground_spawn, ingredient_background_spawn,
     ingredient_foreground_spawn_independent, ingredient_item_spawn,
 };
-use crate::spawn::step_spawn::KaprowCookingState;
 
 /// Spawn all ingredients at their starting positions
 /// Arranges 8 ingredients in a 2x4 grid, vertically centered on the right side
