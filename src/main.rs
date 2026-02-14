@@ -42,6 +42,7 @@ use systems::{
 
 use crate::{
     animate::gauge_animate::moving_ball_gauge_animation,
+    entities::check_list::spawn_checklist,
     logic::check_lose::check_game_over,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
@@ -52,7 +53,6 @@ use crate::{
         cooking_state::{EggCookingState, KaprowCookingState},
         time_state::{check_game_timer, start_timer},
     },
-    spawn::check_list_spawn::spawn_checklist,
     systems::{
         egg_cooking_systems::next_step_egg_cooking,
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
