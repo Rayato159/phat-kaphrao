@@ -7,6 +7,8 @@
 
 use bevy::prelude::*;
 
+use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
+
 pub const SCALE: f32 = 10.0; // Scale factor for all pan objects
 pub const PAN_SIZE: f32 = 32.0 * SCALE; // 32 is original pan size, scaled up by SCALE
 pub const INGREDIENT_SIZE: f32 = 32.0 * SCALE; // 32 is original ingredient size, scaled up by SCALE
@@ -26,3 +28,15 @@ pub struct PanEgg;
 /// Marker component for the frying pan drop area
 #[derive(Component)]
 pub struct Pan;
+
+#[derive(Component)]
+pub struct KaprowPanStepStateTag(pub KaprowCookingState);
+
+#[derive(Component)]
+pub struct KapaowStepSprite;
+
+#[derive(Component)]
+pub struct EggPanStepStateTag(pub EggCookingState);
+
+#[derive(Component)]
+pub struct EggStepSprite;

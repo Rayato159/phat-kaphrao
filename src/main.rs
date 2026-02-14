@@ -10,8 +10,8 @@ use pad_kaprao::{
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
+        cooking_animations::{EggCookingAnimations, KaprowCookingAnimations},
         cooking_state::{EggCookingState, KaprowCookingState},
-        game_state::{EggPanCheckList, KaprowPanCheckList},
         time_state::{check_game_timer, start_timer},
     },
     systems::{
@@ -38,8 +38,8 @@ use pad_kaprao::{
 
 fn main() {
     App::new()
-        .insert_resource(KaprowPanCheckList::default())
-        .insert_resource(EggPanCheckList::default())
+        .insert_resource(KaprowCookingAnimations::default())
+        .insert_resource(EggCookingAnimations::default())
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {

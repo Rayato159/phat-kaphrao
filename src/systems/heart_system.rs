@@ -63,10 +63,6 @@ pub fn update_hearts_ui(
         let hp_in_slot = game_state.hp as f32 - (i * hp_per_heart);
 
         let new_index = if hp_in_slot >= hp_per_heart { 1 } else { 0 };
-        info!(
-            "Updating Heart {}: hp_in_slot = {}, new_index = {}",
-            heart.slot_index, hp_in_slot, new_index
-        );
 
         if heart.frame_index != new_index {
             heart.frame_index = new_index;

@@ -4,16 +4,13 @@ use bevy_spritesheet_animation::prelude::*;
 use crate::entities::pan::INGREDIENT_SIZE;
 
 pub fn spawn_ingredient_animation(
-    image_path: String,
+    image: Handle<Image>,
     row: usize,
     col: usize,
     duration_ms: u32,
-    asset_server: &Res<AssetServer>,
     atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
     animations: &mut ResMut<Assets<Animation>>,
 ) -> (Sprite, SpritesheetAnimation) {
-    let image = asset_server.load(image_path);
-
     let spritesheet = Spritesheet::new(&image, col, row);
 
     let animation = spritesheet

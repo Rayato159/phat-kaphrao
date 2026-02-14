@@ -4,7 +4,7 @@ use bevy_spritesheet_animation::prelude::*;
 use crate::{
     entities::{
         ingredient::{DroppedIngredient, IngredientType},
-        pan::PanKapaow,
+        pan::{KapaowStepSprite, KaprowPanStepStateTag, PanKapaow},
         ui::StepIndicatorKapaow,
     },
     message::{
@@ -13,10 +13,12 @@ use crate::{
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
-        cooking_state::KaprowCookingState,
-        game_state::{GameState, KaprowPanCheckList},
+        cooking_animations::KaprowCookingAnimations, cooking_state::KaprowCookingState,
+        game_state::GameState,
     },
-    spawn::step_spawn::spawn_ingredient_animation,
+    spawn::{
+        animation_spawn::insert_kaprow_cooking_animation, step_spawn::spawn_ingredient_animation,
+    },
 };
 
 pub fn handle_kaprow_pan_ingredient_drop(
@@ -31,10 +33,11 @@ pub fn handle_kaprow_pan_ingredient_drop(
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<Assets<Animation>>,
-    kaprow_pan_check_list: Res<KaprowPanCheckList>,
-    q_animation: Query<(&Name, Entity), With<SpritesheetAnimation>>,
+    q_step_sprite: Query<(&KaprowPanStepStateTag, Entity), With<KapaowStepSprite>>,
+    mut kaprow_cooking_animation: ResMut<KaprowCookingAnimations>,
 ) {
     for event in event_reader.read() {
+        let state = kaprow_cooking_state.get();
         // Determine which pan the ingredient was dropped on
         let target_pan = event.target_pan;
 
@@ -59,14 +62,15 @@ pub fn handle_kaprow_pan_ingredient_drop(
                 game_stats.kapaow_has_oil = true;
 
                 for kaprow_pan_transform in q_kaprow_pans.iter() {
-                    let (image_path, row, col) = ("cooking_steps/image/Oil.png", 3, 1);
+                    let (image_path, row, col) = ("cooking_steps/image/Oil.png", 1, 3);
+
+                    let image = asset_server.load(image_path);
 
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
-                        image_path.to_string(),
+                        image,
                         row,
                         col,
                         300,
-                        &asset_server,
                         &mut atlas_layouts,
                         &mut animations,
                     );
@@ -76,7 +80,13 @@ pub fn handle_kaprow_pan_ingredient_drop(
                             + Vec3::new(0.0, 0.0, game_stats.count_pud_kapoaw + 1.0),
                     );
 
-                    commands.spawn((sprite, spritesheet_animation, transform));
+                    commands.spawn((
+                        KaprowPanStepStateTag(state.clone()),
+                        KapaowStepSprite,
+                        sprite,
+                        spritesheet_animation,
+                        transform,
+                    ));
 
                     // Spawn timing gauge that follows the pan
                     gauge_spawn_events.write(GaugeSpawnMassage {
@@ -84,16 +94,9 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     });
                 }
             } else {
-                if let Some(is_checked) = kaprow_pan_check_list
-                    .check_list
-                    .get(&kaprow_cooking_state.get().clone())
-                {
-                    for key in kaprow_pan_check_list.check_list.keys() {
-                        if key == &kaprow_cooking_state.get().clone() {
-                            if *is_checked {
-                                continue;
-                            }
-                        }
+                for (step_tag, _) in q_step_sprite.iter() {
+                    if step_tag.0 == *state {
+                        continue;
                     }
                 }
 
@@ -123,16 +126,16 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         KaprowCookingState::Chilli => ("cooking_steps/image/Chili.png", 3, 3),
                         KaprowCookingState::Pork => ("cooking_steps/image/Pork.png", 3, 3),
                         KaprowCookingState::OysterSauce => {
-                            for (name, entity) in q_animation.iter() {
-                                if name.as_str() == KaprowCookingState::Pork.to_string() {
+                            for (step_tag, entity) in q_step_sprite.iter() {
+                                if step_tag.0 == KaprowCookingState::Pork {
                                     commands.entity(entity).despawn();
                                 }
                             }
                             ("cooking_steps/image/PorkWithOysterSauce.png", 3, 3)
                         }
                         KaprowCookingState::MSG => {
-                            for (name, entity) in q_animation.iter() {
-                                if name.as_str() == KaprowCookingState::OysterSauce.to_string() {
+                            for (step_tag, entity) in q_step_sprite.iter() {
+                                if step_tag.0 == KaprowCookingState::OysterSauce {
                                     commands.entity(entity).despawn();
                                 }
                             }
@@ -142,20 +145,31 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         _ => continue,
                     };
 
-                    info!(
-                        "Spawning ingredient animation for {:?} on Kaprow Pan",
-                        event.ingredient_type
-                    );
+                    let image = asset_server.load(image_path);
+                    let duration = 300;
 
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
-                        image_path.to_string(),
+                        image.clone(),
                         row,
                         col,
-                        300,
-                        &asset_server,
+                        duration,
                         &mut atlas_layouts,
                         &mut animations,
                     );
+
+                    let animations_cahce = insert_kaprow_cooking_animation(
+                        state.clone(),
+                        Spritesheet::new(&image, col, row),
+                        duration,
+                        &mut animations,
+                    );
+
+                    for animation in animations_cahce.iter() {
+                        kaprow_cooking_animation.animations.insert(
+                            (animation.0 .0.clone(), animation.0 .1),
+                            animation.1.clone(),
+                        );
+                    }
 
                     let transform = Transform::from_translation(
                         kaprow_pan_transform.translation
@@ -163,7 +177,8 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     );
 
                     commands.spawn((
-                        Name::new(kaprow_cooking_state.get().to_string()),
+                        KaprowPanStepStateTag(state.clone()),
+                        KapaowStepSprite,
                         sprite,
                         spritesheet_animation,
                         transform,
@@ -190,18 +205,36 @@ pub fn next_step_kaprow_cooking(
         (&mut Text, &mut TextColor),
         (With<DroppedIngredient>, With<StepIndicatorKapaow>),
     >,
-    mut kaprow_pan_check_list: ResMut<KaprowPanCheckList>,
+    mut q_sprite_sheet_animation: Query<
+        (&KaprowPanStepStateTag, &mut SpritesheetAnimation),
+        With<KapaowStepSprite>,
+    >,
+    kaprow_cooking_animation: Res<KaprowCookingAnimations>,
 ) {
     for _ in gauge_events.read() {
         if !game_stats.ingredient_kapaow_dropped {
             return;
         }
 
-        kaprow_pan_check_list
-            .check_list
-            .insert(state.get().clone(), true);
+        let state = state.get();
 
-        let next = state.get().next_step();
+        for (step_tag, mut spritesheet_animation) in q_sprite_sheet_animation.iter_mut() {
+            let state = state.clone();
+
+            if state == KaprowCookingState::Oil {
+                continue;
+            }
+
+            if step_tag.0 == state {
+                if let Some(animation) =
+                    kaprow_cooking_animation.animations.get(&(state.clone(), 2))
+                {
+                    spritesheet_animation.animation = animation.clone();
+                }
+            }
+        }
+
+        let next = state.next_step();
         next_state.set(next.clone());
 
         // Check if kapaow cooking is finished

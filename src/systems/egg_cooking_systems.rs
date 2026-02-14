@@ -4,7 +4,7 @@ use bevy_spritesheet_animation::prelude::*;
 use crate::{
     entities::{
         ingredient::{DroppedIngredient, IngredientType},
-        pan::PanEgg,
+        pan::{EggPanStepStateTag, EggStepSprite, PanEgg},
         ui::StepIndicatorEgg,
     },
     message::{
@@ -13,10 +13,12 @@ use crate::{
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
-        cooking_state::EggCookingState,
-        game_state::{EggPanCheckList, GameState},
+        cooking_animations::EggCookingAnimations, cooking_state::EggCookingState,
+        game_state::GameState,
     },
-    spawn::step_spawn::spawn_ingredient_animation,
+    spawn::{
+        animation_spawn::insert_egg_cooking_animation, step_spawn::spawn_ingredient_animation,
+    },
 };
 
 pub fn handle_egg_pan_ingredient_drop(
@@ -31,10 +33,12 @@ pub fn handle_egg_pan_ingredient_drop(
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<Assets<Animation>>,
-    egg_pan_check_list: ResMut<EggPanCheckList>,
+    q_step_sprite: Query<&EggPanStepStateTag, With<EggStepSprite>>,
+    mut egg_cooking_animation: ResMut<EggCookingAnimations>,
 ) {
     for event in event_reader.read() {
-        // Determine which pan the ingredient was dropped on
+        let state = egg_cooking_state.get();
+
         let target_pan = event.target_pan;
 
         if target_pan.is_none() {
@@ -58,14 +62,15 @@ pub fn handle_egg_pan_ingredient_drop(
                 game_stats.egg_has_oil = true;
 
                 for egg_pan_transform in q_egg_pans.iter() {
-                    let (image_path, row, col) = ("cooking_steps/image/Oil.png", 3, 1);
+                    let (image_path, row, col) = ("cooking_steps/image/Oil.png", 1, 3);
+
+                    let image = asset_server.load(image_path);
 
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
-                        image_path.to_string(),
+                        image,
                         row,
                         col,
                         300,
-                        &asset_server,
                         &mut atlas_layouts,
                         &mut animations,
                     );
@@ -75,7 +80,13 @@ pub fn handle_egg_pan_ingredient_drop(
                             + Vec3::new(0.0, 0.0, game_stats.count_tod_kai + 1.0),
                     );
 
-                    commands.spawn((sprite, spritesheet_animation, transform));
+                    commands.spawn((
+                        EggPanStepStateTag(state.clone()),
+                        EggStepSprite,
+                        sprite,
+                        spritesheet_animation,
+                        transform,
+                    ));
 
                     // Spawn timing gauge that follows the pan
                     gauge_spawn_events.write(GaugeSpawnMassage {
@@ -83,20 +94,13 @@ pub fn handle_egg_pan_ingredient_drop(
                     });
                 }
             } else {
-                if let Some(is_checked) = egg_pan_check_list
-                    .check_list
-                    .get(&egg_cooking_state.get().clone())
-                {
-                    for key in egg_pan_check_list.check_list.keys() {
-                        if key == &egg_cooking_state.get().clone() {
-                            if *is_checked {
-                                continue;
-                            }
-                        }
+                for step_tag in q_step_sprite.iter() {
+                    if step_tag.0 == *state {
+                        continue;
                     }
                 }
 
-                let expected_ingredient = match *egg_cooking_state.get() {
+                let expected_ingredient = match *state {
                     EggCookingState::Egg => IngredientType::Egg,
                     _ => {
                         // Wrong ingredient or game over condition
@@ -112,27 +116,49 @@ pub fn handle_egg_pan_ingredient_drop(
 
                 // Correct ingredient - spawn the step and gauge
                 for egg_pan_transform in q_egg_pans.iter() {
-                    let (image_path, row, col) = match *egg_cooking_state.get() {
+                    let (image_path, row, col) = match *state {
                         EggCookingState::Egg => ("cooking_steps/image/Egg.png", 3, 3),
                         _ => continue,
                     };
 
+                    let image = asset_server.load(image_path);
+                    let duration = 300;
+
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
-                        image_path.to_string(),
+                        image.clone(),
                         row,
                         col,
-                        300,
-                        &asset_server,
+                        duration,
                         &mut atlas_layouts,
                         &mut animations,
                     );
+
+                    let animations_cahce = insert_egg_cooking_animation(
+                        state.clone(),
+                        Spritesheet::new(&image, col, row),
+                        duration,
+                        &mut animations,
+                    );
+
+                    for animation in animations_cahce.iter() {
+                        egg_cooking_animation.animations.insert(
+                            (animation.0 .0.clone(), animation.0 .1),
+                            animation.1.clone(),
+                        );
+                    }
 
                     let transform = Transform::from_translation(
                         egg_pan_transform.translation
                             + Vec3::new(0.0, 0.0, game_stats.count_tod_kai + 1.0),
                     );
 
-                    commands.spawn((sprite, spritesheet_animation, transform));
+                    commands.spawn((
+                        EggPanStepStateTag(state.clone()),
+                        EggStepSprite,
+                        sprite,
+                        spritesheet_animation,
+                        transform,
+                    ));
 
                     // Spawn timing gauge that follows the pan
                     gauge_spawn_events.write(GaugeSpawnMassage {
@@ -155,18 +181,34 @@ pub fn next_step_egg_cooking(
         (&mut Text, &mut TextColor),
         (With<DroppedIngredient>, With<StepIndicatorEgg>),
     >,
-    mut egg_pan_check_list: ResMut<EggPanCheckList>,
+    mut q_sprite_sheet_animation: Query<
+        (&EggPanStepStateTag, &mut SpritesheetAnimation),
+        With<EggStepSprite>,
+    >,
+    egg_cooking_animation: Res<EggCookingAnimations>,
 ) {
     for _ in gauge_events.read() {
         if !game_stats.ingredient_egg_dropped {
             return;
         }
 
-        egg_pan_check_list
-            .check_list
-            .insert(state.get().clone(), true);
+        let state = state.get();
 
-        let next = state.get().next_step();
+        for (step_tag, mut spritesheet_animation) in q_sprite_sheet_animation.iter_mut() {
+            let state = state.clone();
+
+            if state == EggCookingState::Oil {
+                continue;
+            }
+
+            if step_tag.0 == state {
+                if let Some(animation) = egg_cooking_animation.animations.get(&(state.clone(), 2)) {
+                    spritesheet_animation.animation = animation.clone();
+                }
+            }
+        }
+
+        let next = state.next_step();
         next_state.set(next.clone());
 
         // Check if egg cooking is finished

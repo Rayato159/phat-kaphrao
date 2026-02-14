@@ -1,3 +1,4 @@
+pub mod cooking_animations;
 pub mod cooking_state;
 pub mod game_state;
 pub mod heart;

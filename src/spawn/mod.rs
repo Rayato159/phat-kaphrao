@@ -1,3 +1,4 @@
+pub mod animation_spawn;
 pub mod camera_spawn;
 pub mod game_over_screen_spawn;
 pub mod gaueg_spawn;

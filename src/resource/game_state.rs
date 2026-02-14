@@ -1,18 +1,4 @@
-//! Game State Module
-//!
-//! Contains all game state definitions, resources, and events:
-//! - AppState: Main application states (Menu, InGame, GameOver, Victory)
-//! - InGame: Computed state that exists only during gameplay
-//! - GameStats: Resource tracking HP and cooking progress
-//! - Game Events: Events for win/lose conditions and step completion
-//!
-//! Uses Bevy 0.17+ ComputedStates for automatic state derivation
-
-use std::collections::HashMap;
-
 use bevy::prelude::*;
-
-use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
 
 /// Main application state for the game
 /// This is the primary state that controls game flow
@@ -99,40 +85,5 @@ impl Default for GameState {
             kapaow_is_finished: false,
             egg_is_finished: false,
         }
-    }
-}
-
-#[derive(Resource, Debug, Clone)]
-pub struct KaprowPanCheckList {
-    pub check_list: HashMap<KaprowCookingState, bool>,
-}
-
-impl Default for KaprowPanCheckList {
-    fn default() -> Self {
-        let mut check_list = HashMap::new();
-        check_list.insert(KaprowCookingState::Oil, false);
-        check_list.insert(KaprowCookingState::Garlic, false);
-        check_list.insert(KaprowCookingState::Chilli, false);
-        check_list.insert(KaprowCookingState::Pork, false);
-        check_list.insert(KaprowCookingState::OysterSauce, false);
-        check_list.insert(KaprowCookingState::MSG, false);
-        check_list.insert(KaprowCookingState::Kaprow, false);
-
-        Self { check_list }
-    }
-}
-
-#[derive(Resource, Debug, Clone)]
-pub struct EggPanCheckList {
-    pub check_list: HashMap<EggCookingState, bool>,
-}
-
-impl Default for EggPanCheckList {
-    fn default() -> Self {
-        let mut check_list = HashMap::new();
-        check_list.insert(EggCookingState::Oil, false);
-        check_list.insert(EggCookingState::Egg, false);
-
-        Self { check_list }
     }
 }
