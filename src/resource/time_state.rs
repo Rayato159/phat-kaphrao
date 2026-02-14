@@ -9,7 +9,6 @@ use bevy::{
 
 use crate::AppState;
 
-/// Maximum game time in seconds (3 minutes)
 pub const MAX_GAME_TIME: f64 = 30.0;
 
 #[derive(Resource)]
