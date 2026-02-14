@@ -30,9 +30,7 @@ pub mod systems;
 //
 //
 
-pub use entities::{
-    Dragging, Ingredient, IngredientType, OriginalPosition, PanArea, TimingGauge, HUD,
-};
+pub use entities::{Dragging, Ingredient, IngredientType, OriginalPosition, PanArea, TimingGauge};
 pub use message::{
     game_message::{GameLoseMessage, GameWinMessage},
     gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage, GaugeSpawnMassage},

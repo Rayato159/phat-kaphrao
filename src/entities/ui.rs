@@ -14,14 +14,6 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct HUD;
 
-/// Marker component for HP heart icons
-/// Each heart has an index to track which one it is (0, 1, 2, etc.)
-#[derive(Component)]
-pub struct HeartIcon {
-    /// Index of this heart (0 = first heart, 1 = second heart, etc.)
-    pub index: u8,
-}
-
 /// Marker component for the step indicator
 /// This shows which ingredient should be added next in the cooking sequence
 #[derive(Component)]
@@ -46,11 +38,6 @@ pub struct GameEndScreen;
 /// Used for the gray/dark overlay when HP == 0
 #[derive(Component)]
 pub struct HPOverlay;
-
-/// Marker component for HP text display
-/// Used to display the current HP value as a number (e.g., "10/10")
-#[derive(Component)]
-pub struct HPText;
 
 /// Marker component for the main menu
 /// Used to identify the main menu UI elements
