@@ -37,8 +37,8 @@ use resource::game_state::{AppState, InGame};
 use systems::{
     check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
     reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_hud,
-    setup_initial_game_state, setup_main_menu, spawn_gauge_from_event, spawn_ingredients,
-    update_dragging_ingredient, update_hp_text,
+    setup_initial_game_state, setup_main_menu, spawn_countdown_timer, spawn_gauge_from_event,
+    spawn_ingredients, update_countdown_timer, update_dragging_ingredient, update_hp_text,
 };
 
 use crate::{
@@ -101,7 +101,7 @@ fn main() {
             ),
         )
         // System Schedules - Gameplay Systems
-        .add_systems(OnEnter(InGame), start_timer)
+        .add_systems(OnEnter(InGame), (start_timer, spawn_countdown_timer))
         .add_systems(
             Update,
             (
@@ -111,6 +111,7 @@ fn main() {
                 check_gauge_hit_window,
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
+                update_countdown_timer,
                 update_hp_text,
             )
                 .run_if(in_state(InGame)),
