@@ -24,7 +24,8 @@ pub fn spawn_countdown_timer(mut commands: Commands) {
                 align_items: AlignItems::Start,
                 ..default()
             },
-            ZIndex(50), // Below HUD but above game elements
+            ZIndex(50),       // Below HUD but above game elements
+            Pickable::IGNORE, // Don't block pointer events to ingredients
         ))
         .with_children(|parent| {
             parent.spawn((

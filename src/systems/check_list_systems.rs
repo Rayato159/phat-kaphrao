@@ -7,6 +7,7 @@
 //! - update_checklist_symbols: Updates symbol display (X or ✓) based on status
 
 use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 
 use crate::entities::{
     CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListStatus, CheckListSymbol,
@@ -15,16 +16,16 @@ use crate::entities::{
 use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage};
 use crate::message::ingredient_message::IngredientDroppedMessage;
 use crate::resource::cooking_state::KaprowCookingState;
-use crate::spawn::ingredient_spawn::ingredient_item_spawn;
 
 /// Spawn the checklist on the left side of the screen
 /// Displays all ingredients in a 2x4 grid layout
 pub fn spawn_checklist(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    window: Single<&Window>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
     // === Window size (world space) ===
+    let window = window_query.single().unwrap();
     let w = window.resolution.width();
     let h = window.resolution.height();
 
@@ -41,12 +42,11 @@ pub fn spawn_checklist(
     let grid_w = cols as f32 * icon + (cols as f32 - 1.0) * gap;
     let grid_h = rows as f32 * icon + (rows as f32 - 1.0) * gap;
 
-    let left_margin = 16.0;
-    let top_margin = 150.0; // Below the countdown timer
+    let left_margin = 200.0;
 
     // === Anchor: top-left of grid (on the left side of screen) ===
     let origin_x = -(w * 0.5) + left_margin;
-    let origin_y = (h * 0.5) - top_margin;
+    let origin_y = grid_h / 3.0; // Centered vertically
 
     // === Ingredient order: row-major (top → bottom) ===
     // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg
@@ -76,7 +76,7 @@ pub fn spawn_checklist(
                     ingredient_type: *ingredient_type,
                 },
                 CheckListStatus::NotDropped,
-                ingredient_item_spawn(ingredient_type, position),
+                Transform::from_translation(position),
             ))
             .with_children(|parent| {
                 // Spawn ingredient icon

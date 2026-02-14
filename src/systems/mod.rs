@@ -29,6 +29,10 @@ pub mod pan_systems;
 pub mod time_count_down_systems;
 
 // Re-export commonly used items for convenience
+pub use check_list_systems::{
+    spawn_checklist, update_checklist_on_drop, update_checklist_on_gauge_hit,
+    update_checklist_symbols,
+};
 pub use cooking_systems::handle_kaprow_pan_ingredient_drop;
 pub use game_end_systems::{
     cleanup_game_end_screens, handle_game_over_screen_input, handle_victory_screen_input,
