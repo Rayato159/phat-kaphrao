@@ -14,6 +14,7 @@
 //! - observer_systems: Systems for observing game state changes
 //! - init_game_systems: Systems for initial game setup
 
+pub mod check_list_systems;
 pub mod cooking_systems;
 pub mod egg_cooking_systems;
 pub mod game_end_systems;
@@ -25,8 +26,12 @@ pub mod kapaow_cooking_systems;
 pub mod menu_systems;
 pub mod observer_systems;
 pub mod pan_systems;
+pub mod time_count_down_systems;
 
 // Re-export commonly used items for convenience
+pub use check_list_systems::{
+    update_checklist_on_drop, update_checklist_on_gauge_hit, update_checklist_symbols,
+};
 pub use cooking_systems::handle_kaprow_pan_ingredient_drop;
 pub use game_end_systems::{
     cleanup_game_end_screens, handle_game_over_screen_input, handle_victory_screen_input,
@@ -38,3 +43,4 @@ pub use init_game_systems::{reset_game_state, setup_camera_and_scene, setup_init
 pub use menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu};
 pub use observer_systems::observe_game_state_changes;
 pub use pan_systems::setup_frying_pan;
+pub use time_count_down_systems::{spawn_countdown_timer, update_countdown_timer};

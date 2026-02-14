@@ -53,7 +53,7 @@ pub fn spawn_ingredients(
 
     // === Anchor: top-left of grid ===
     let origin_x = (w * 0.5) - right_margin - grid_w;
-    let origin_y = -(h * 0.5) + bottom_margin + grid_h;
+    let origin_y = -(h * 0.4) + bottom_margin + grid_h;
 
     // === Ingredient order: row-major (top → bottom) ===
     // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg

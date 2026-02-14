@@ -103,19 +103,6 @@ pub fn step_child_current_egg_spawn() -> impl Bundle {
     )
 }
 
-pub fn step_child_drop_spawn() -> impl Bundle {
-    (
-        Name::new("DropIngredient"),
-        DroppedIngredient,
-        Text::new("No"),
-        TextFont {
-            font_size: 32.0,
-            ..default()
-        },
-        TextColor(Color::srgb(1.0, 0.3, 0.5)),
-    )
-}
-
 pub fn step_child_drop_kapaow_spawn() -> impl Bundle {
     (
         Name::new("DropIngredient"),
