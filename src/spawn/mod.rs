@@ -1,4 +1,5 @@
 pub mod camera_spawn;
+pub mod check_list_spawn;
 pub mod game_over_screen_spawn;
 pub mod gaueg_spawn;
 pub mod hp_group_spawn;

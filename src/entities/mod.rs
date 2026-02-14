@@ -19,7 +19,8 @@ pub mod ui;
 
 // Re-export commonly used items for convenience
 pub use check_list::{
-    CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListStatus, CheckListSymbol,
+    CheckListCheckbox, CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListNumber,
+    CheckListStatus, CheckListSymbol,
 };
 pub use gauge::{BallGauge, TimingGauge};
 pub use ingredient::{

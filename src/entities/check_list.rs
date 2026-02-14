@@ -4,6 +4,8 @@
 //! - CheckListItem: Marker component for a checklist item container
 //! - CheckListItemIcon: The ingredient icon/background
 //! - CheckListSymbol: The symbol (X or ✓) showing drop status
+//! - CheckListNumber: The number label (1#, 2#, etc.) for the checklist item
+//! - CheckListCheckbox: The checkbox (☐/☑) showing drop status
 //! - CheckListIngredientType: Stores which ingredient this checklist item represents
 //! - CheckListStatus: The current status of the ingredient drop
 
@@ -44,3 +46,13 @@ pub struct CheckListItemIcon;
 /// This displays X (red) or ✓ (green) based on drop status
 #[derive(Component)]
 pub struct CheckListSymbol;
+
+/// Marker component for the checklist number label
+/// This displays the item number (1#, 2#, etc.)
+#[derive(Component)]
+pub struct CheckListNumber;
+
+/// Marker component for the checklist checkbox
+/// This displays ☐ (unchecked) or ☑ (checked) based on drop status
+#[derive(Component)]
+pub struct CheckListCheckbox;
