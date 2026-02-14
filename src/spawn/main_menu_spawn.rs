@@ -37,7 +37,7 @@ pub fn main_menu_title_spawn() -> impl Bundle {
             font_size: 64.0,
             ..default()
         },
-        TextColor(Color::srgb(0.8, 0.6, 0.2)),
+        TextColor(Color::srgb(0.0, 0.0, 0.0)),
     )
 }
 
@@ -48,7 +48,7 @@ pub fn main_menu_subtitle_spawn() -> impl Bundle {
             font_size: 24.0,
             ..default()
         },
-        TextColor(Color::srgb(0.4, 0.4, 0.4)),
+        TextColor(Color::srgb(0.0, 0.0, 0.0)),
     )
 }
 

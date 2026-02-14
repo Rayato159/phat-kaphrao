@@ -21,24 +21,24 @@ pub fn spawn_countdown_timer(mut commands: Commands) {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
                 position_type: PositionType::Absolute,
-                top: Val::Px(120.0),
+                top: Val::Px(180.0),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Start,
                 ..default()
             },
-            ZIndex(50),       // Below HUD but above game elements
+            ZIndex(100),      // Below HUD but above game elements
             Pickable::IGNORE, // Don't block pointer events to ingredients
         ))
         .with_children(|parent| {
             parent.spawn((
                 Name::new("CountdownTimer"),
                 CountDownTimer,
-                Text::new("3:00"),
+                Text::new("1:00"),
                 TextFont {
-                    font_size: 60.0,
+                    font_size: 32.0 * 3.0,
                     ..default()
                 },
-                TextColor(Color::srgb(1.0, 0.6, 0.0)), // Orange color
+                TextColor(Color::srgb(0.0, 0.0, 0.0)),
             ));
         });
 

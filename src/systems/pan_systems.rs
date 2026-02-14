@@ -19,6 +19,8 @@ use crate::{
 pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) {
     let pan_sprite = asset_server.load("kitchenware/image/Pan.png");
     let spatula_sprite = asset_server.load("kitchenware/image/Spatula.png");
+    let kaprow_pan_text_sprite = asset_server.load("kitchenware/image/KaprowPanText.png");
+    let egg_pan_text_sprite = asset_server.load("kitchenware/image/EggPanText.png");
 
     let gap = 1.0 * pan::SCALE; // 1.5 is original gap size, scaled up by SCALE
 
@@ -37,6 +39,15 @@ pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) 
                 spatula_sprite.clone(),
                 Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
             ));
+        })
+        .with_children(|p| {
+            p.spawn((
+                Sprite {
+                    image: kaprow_pan_text_sprite,
+                    ..default()
+                },
+                Transform::from_translation(Vec3::new(0.0, -(pan * 0.5 + 120.0), 100.0)),
+            ));
         });
 
     // Spawn Egg pan (right side of center) - Main character
@@ -46,6 +57,15 @@ pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) 
             p.spawn(spatula_spawn(
                 spatula_sprite.clone(),
                 Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
+            ));
+        })
+        .with_children(|p| {
+            p.spawn((
+                Sprite {
+                    image: egg_pan_text_sprite,
+                    ..default()
+                },
+                Transform::from_translation(Vec3::new(0.0, -(pan * 0.5 + 120.0), 100.0)),
             ));
         });
 

@@ -38,16 +38,6 @@ pub fn victory_screen_title_spawn() -> impl Bundle {
         TextColor(Color::srgb(1.0, 1.0, 1.0)),
     )
 }
-pub fn victory_screen_subtitle_spawn() -> impl Bundle {
-    (
-        Text::new("You've made the perfect Pad Kaprao!"),
-        TextFont {
-            font_size: 32.0,
-            ..default()
-        },
-        TextColor(Color::srgb(1.0, 1.0, 1.0)),
-    )
-}
 
 pub fn victory_screen_instructions_spawn() -> impl Bundle {
     (

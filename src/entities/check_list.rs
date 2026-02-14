@@ -57,7 +57,7 @@ pub fn check_list_number(asset_server: AssetServer, item_number: u32) -> impl Bu
             color: Color::WHITE,
             ..default()
         },
-        Transform::from_translation(Vec3::new(-40.0, 0.0, 101.0)),
+        Transform::from_translation(Vec3::new(-60.0, 0.0, 101.0)),
     )
 }
 
@@ -71,7 +71,7 @@ pub fn check_list_checkbox(asset_server: AssetServer) -> impl Bundle {
             color: Color::WHITE,
             ..default()
         },
-        Transform::from_translation(Vec3::new(40.0, 0.0, 101.0)),
+        Transform::from_translation(Vec3::new(60.0, 0.0, 101.0)),
     )
 }
 

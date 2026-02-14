@@ -17,24 +17,15 @@ use crate::spawn::game_over_screen_spawn::{
     game_over_screen_subtitle_spawn, game_over_screen_title_spawn,
 };
 use crate::spawn::victory_screen_spawn::{
-    victory_screen_instructions_spawn, victory_screen_parent_spawn, victory_screen_subtitle_spawn,
-    victory_screen_title_spawn,
+    victory_screen_instructions_spawn, victory_screen_parent_spawn, victory_screen_title_spawn,
 };
 
 /// Show victory screen when the player wins
 pub fn show_victory_screen(mut commands: Commands) {
-    info!("Showing victory screen!");
-
     commands
         .spawn(victory_screen_parent_spawn())
         .with_children(|parent| {
-            // Victory title
             parent.spawn(victory_screen_title_spawn());
-
-            // Subtitle
-            parent.spawn(victory_screen_subtitle_spawn());
-
-            // Instructions
             parent.spawn(victory_screen_instructions_spawn());
         });
 
@@ -44,8 +35,6 @@ pub fn show_victory_screen(mut commands: Commands) {
 /// Show the game over screen when the player loses
 /// Phase 5: Polish & Juice
 pub fn show_game_over_screen(mut commands: Commands) {
-    info!("Showing game over screen!");
-
     commands
         .spawn(game_over_screen_parent_spawn())
         .with_children(|parent| {
