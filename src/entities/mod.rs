@@ -10,6 +10,7 @@
 //! - ui: UI components (HUD, HeartIcon, StepIndicator, GameEndScreen)
 
 pub mod gauge;
+pub mod heart;
 pub mod ingredient;
 pub mod pan;
 pub mod spatula;
@@ -24,6 +25,5 @@ pub use ingredient::{
 };
 pub use pan::{PanEgg, PanKapaow};
 pub use ui::{
-    ButtonAction, GameEndScreen, HPOverlay, HPText, HeartIcon, MainMenu, StepIndicator,
-    StepIndicatorEgg, StepIndicatorKapaow, HUD,
+    ButtonAction, GameEndScreen, MainMenu, StepIndicator, StepIndicatorEgg, StepIndicatorKapaow,
 };

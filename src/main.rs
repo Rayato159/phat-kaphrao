@@ -36,9 +36,8 @@ use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use resource::game_state::{AppState, InGame};
 use systems::{
     check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
-    reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_hud,
-    setup_initial_game_state, setup_main_menu, spawn_gauge_from_event, spawn_ingredients,
-    update_dragging_ingredient, update_hp_text,
+    reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_initial_game_state,
+    setup_main_menu, spawn_gauge_from_event, spawn_ingredients, update_dragging_ingredient,
 };
 
 use crate::{
@@ -54,6 +53,7 @@ use crate::{
     },
     systems::{
         egg_cooking_systems::next_step_egg_cooking,
+        heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
         kapaow_cooking_systems::next_step_kapaow_cooking,
     },
 };
@@ -98,10 +98,12 @@ fn main() {
                 setup_initial_game_state,
                 spawn_ingredients.after(setup_initial_game_state),
                 setup_frying_pan,
+                setup_heart_atlas_ui,
             ),
         )
         // System Schedules - Gameplay Systems
-        .add_systems(OnEnter(InGame), start_timer)
+        .add_systems(OnEnter(InGame), (start_timer, spawn_hud_and_hearts))
+        .add_systems(OnExit(InGame), cleanup_hud)
         .add_systems(
             Update,
             (
@@ -111,7 +113,7 @@ fn main() {
                 check_gauge_hit_window,
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
-                update_hp_text,
+                update_hearts_ui,
             )
                 .run_if(in_state(InGame)),
         )
@@ -120,7 +122,10 @@ fn main() {
         .add_systems(Update, next_step_kapaow_cooking.run_if(in_state(InGame)))
         .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
         // System Schedules - Game State Transitions
-        .add_systems(OnEnter(AppState::InGame), (reset_game_state, setup_hud))
+        .add_systems(
+            OnEnter(AppState::InGame),
+            (reset_game_state, setup_heart_atlas_ui),
+        )
         .add_systems(OnEnter(AppState::Victory), systems::show_victory_screen)
         .add_systems(OnEnter(AppState::GameOver), systems::show_game_over_screen)
         .add_systems(OnExit(AppState::Victory), systems::cleanup_game_end_screens)
