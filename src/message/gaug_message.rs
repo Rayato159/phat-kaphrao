@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Message, Debug, Clone)]
-pub struct GaugeKapoawHitMassage;
+pub struct GaugeKaprowHitMassage;
 
 #[derive(Message, Debug, Clone)]
 pub struct GaugeEggHitMassage;

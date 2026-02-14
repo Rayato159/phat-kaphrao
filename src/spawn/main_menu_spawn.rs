@@ -10,7 +10,7 @@ use bevy::{
     utils::default,
 };
 
-use crate::entities::{ButtonAction, MainMenu};
+use crate::entities::ui::{ButtonAction, MainMenu};
 
 pub fn main_menu_parent_spawn() -> impl Bundle {
     (
@@ -32,7 +32,7 @@ pub fn main_menu_parent_spawn() -> impl Bundle {
 
 pub fn main_menu_title_spawn() -> impl Bundle {
     (
-        Text::new("🍳 Pad Kaprao 🍳"),
+        Text::new("Pad Kaprao"),
         TextFont {
             font_size: 64.0,
             ..default()

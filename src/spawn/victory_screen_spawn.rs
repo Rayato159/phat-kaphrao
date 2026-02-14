@@ -8,7 +8,7 @@ use bevy::{
     utils::default,
 };
 
-use crate::entities::GameEndScreen;
+use crate::entities::ui::GameEndScreen;
 
 pub fn victory_screen_parent_spawn() -> impl Bundle {
     (

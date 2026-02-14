@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::entities::IngredientType;
+use crate::entities::ingredient::IngredientType;
 
 #[derive(Message, Debug, Clone)]
 pub struct IngredientDroppedMessage {

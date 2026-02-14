@@ -1,26 +1,7 @@
-//! Checklist Entities
-//!
-//! Contains all component definitions and spawn functions related to the ingredient checklist:
-//!
-//! ## Components:
-//! - CheckListItem: Marker component for a checklist item container
-//! - CheckListItemIcon: The ingredient icon/background
-//! - CheckListSymbol: The symbol (X or ✓) showing drop status
-//! - CheckListNumber: The number label (1#, 2#, etc.) for the checklist item
-//! - CheckListCheckbox: The checkbox (☐/☑) showing drop status
-//! - CheckListIngredientType: Stores which ingredient this checklist item represents
-//! - CheckListStatus: The current status of the ingredient drop
-//!
-//! ## Spawn Functions:
-//! - check_list_number(): Bundle for spawning a number label (1-8)
-//! - check_list_checkbox(): Bundle for spawning a checkbox (unchecked)
-//! - check_list_symbol(): Bundle for spawning a hashtag symbol (status indicator)
-//! - spawn_checklist(): System that spawns the entire checklist on the left side of the screen
-
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-use crate::entities::IngredientType;
+use crate::entities::ingredient::IngredientType;
 
 /// Marker component for a checklist item container
 /// Each checklist item represents one ingredient that needs to be dropped
@@ -137,7 +118,7 @@ pub fn spawn_checklist(
     let origin_y = grid_h / 3.0; // Centered vertically
 
     // === Ingredient order: single column with 3 visual columns (Number | Icon | Checkbox) ===
-    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg
+    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
     let ingredient_grid = [
         (IngredientType::Oil, 0, 0),
         (IngredientType::Garlic, 0, 1),
@@ -145,7 +126,7 @@ pub fn spawn_checklist(
         (IngredientType::Pork, 0, 3),
         (IngredientType::OysterSauce, 0, 4),
         (IngredientType::MSG, 0, 5),
-        (IngredientType::Basil, 0, 6),
+        (IngredientType::Kaprow, 0, 6),
         (IngredientType::Egg, 0, 7),
     ];
 

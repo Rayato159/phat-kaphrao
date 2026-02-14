@@ -50,7 +50,7 @@ pub struct IngredientMenu;
 
 /// Ingredient types available in the game
 /// 8 ingredients total with a specific cooking sequence
-#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Hash)]
 pub enum IngredientType {
     #[default]
     Oil,
@@ -59,7 +59,7 @@ pub enum IngredientType {
     Pork,
     OysterSauce,
     MSG,
-    Basil,
+    Kaprow,
     Egg,
     None,
 }
@@ -76,14 +76,14 @@ impl IngredientType {
             3 => Some(IngredientType::Pork),
             4 => Some(IngredientType::OysterSauce),
             5 => Some(IngredientType::MSG),
-            6 => Some(IngredientType::Basil),
+            6 => Some(IngredientType::Kaprow),
             7 => Some(IngredientType::Egg),
             _ => None,
         }
     }
 
     /// Returns the next ingredient type in the cooking sequence
-    /// Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg -> None
+    /// Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg -> None
     pub fn next_step(&self) -> Self {
         match self {
             IngredientType::Oil => IngredientType::Garlic,
@@ -91,8 +91,8 @@ impl IngredientType {
             IngredientType::Chilli => IngredientType::Pork,
             IngredientType::Pork => IngredientType::OysterSauce,
             IngredientType::OysterSauce => IngredientType::MSG,
-            IngredientType::MSG => IngredientType::Basil,
-            IngredientType::Basil => IngredientType::Egg,
+            IngredientType::MSG => IngredientType::Kaprow,
+            IngredientType::Kaprow => IngredientType::Egg,
             IngredientType::Egg => IngredientType::None,
             IngredientType::None => IngredientType::None,
         }
@@ -107,7 +107,7 @@ impl IngredientType {
             IngredientType::Pork => "Pork",
             IngredientType::OysterSauce => "Oyster Sauce",
             IngredientType::MSG => "MSG",
-            IngredientType::Basil => "Basil",
+            IngredientType::Kaprow => "Kaprow",
             IngredientType::Egg => "Egg",
             IngredientType::None => "",
         }
@@ -122,7 +122,7 @@ impl IngredientType {
             IngredientType::Pork => Color::srgb(0.9, 0.7, 0.7), // Pink-ish
             IngredientType::OysterSauce => Color::srgb(0.5, 0.4, 0.2), // Dark brown
             IngredientType::MSG => Color::srgb(0.6, 0.7, 0.8), // Brown-ish
-            IngredientType::Basil => Color::srgb(0.3, 0.5, 0.3), // Dark green
+            IngredientType::Kaprow => Color::srgb(0.3, 0.5, 0.3), // Dark green
             IngredientType::Egg => Color::srgb(1.0, 0.9, 0.6), // Yellow-orange
             IngredientType::None => Color::srgb(1.0, 1.0, 1.0), // White
         }
@@ -137,7 +137,7 @@ impl IngredientType {
             IngredientType::Pork => "ingradients/image/Pork.png",
             IngredientType::OysterSauce => "ingradients/image/OysterSauce.png",
             IngredientType::MSG => "ingradients/image/MSG.png",
-            IngredientType::Basil => "ingradients/image/KaProw.png",
+            IngredientType::Kaprow => "ingradients/image/KaProw.png",
             IngredientType::Egg => "ingradients/image/Egg.png",
             IngredientType::None => "",
         }

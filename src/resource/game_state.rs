@@ -8,7 +8,11 @@
 //!
 //! Uses Bevy 0.17+ ComputedStates for automatic state derivation
 
+use std::collections::HashMap;
+
 use bevy::prelude::*;
+
+use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
 
 /// Main application state for the game
 /// This is the primary state that controls game flow
@@ -65,8 +69,8 @@ pub struct GameState {
     pub target_width: f32,
     pub target_egg_x: Option<f32>,
     pub target_kapaow_x: Option<f32>,
-    pub cout_pud_kapoaw: f32,
-    pub cout_tod_kai: f32,
+    pub count_pud_kapoaw: f32,
+    pub count_tod_kai: f32,
     pub kapaow_is_finished: bool,
     pub egg_is_finished: bool,
 }
@@ -74,11 +78,10 @@ pub struct GameState {
 impl Default for GameState {
     fn default() -> Self {
         Self {
-            hp: 5,     // Increased to 4 for 8 ingredients ; change to 10
-            max_hp: 5, // Increased max HP ; change to 10
+            hp: 5,
+            max_hp: 5,
             ingredient_kapaow_dropped: true,
             ingredient_egg_dropped: true,
-            // current_step: 0,
             steps_completed: 0,
             kapaow_has_oil: false,
             egg_has_oil: false,
@@ -91,10 +94,45 @@ impl Default for GameState {
             target_width: 0.15,
             target_egg_x: None,
             target_kapaow_x: None,
-            cout_pud_kapoaw: 0.0,
-            cout_tod_kai: 0.0,
+            count_pud_kapoaw: 0.0,
+            count_tod_kai: 0.0,
             kapaow_is_finished: false,
             egg_is_finished: false,
         }
+    }
+}
+
+#[derive(Resource, Debug, Clone)]
+pub struct KaprowPanCheckList {
+    pub check_list: HashMap<KaprowCookingState, bool>,
+}
+
+impl Default for KaprowPanCheckList {
+    fn default() -> Self {
+        let mut check_list = HashMap::new();
+        check_list.insert(KaprowCookingState::Oil, false);
+        check_list.insert(KaprowCookingState::Garlic, false);
+        check_list.insert(KaprowCookingState::Chilli, false);
+        check_list.insert(KaprowCookingState::Pork, false);
+        check_list.insert(KaprowCookingState::OysterSauce, false);
+        check_list.insert(KaprowCookingState::MSG, false);
+        check_list.insert(KaprowCookingState::Kaprow, false);
+
+        Self { check_list }
+    }
+}
+
+#[derive(Resource, Debug, Clone)]
+pub struct EggPanCheckList {
+    pub check_list: HashMap<EggCookingState, bool>,
+}
+
+impl Default for EggPanCheckList {
+    fn default() -> Self {
+        let mut check_list = HashMap::new();
+        check_list.insert(EggCookingState::Oil, false);
+        check_list.insert(EggCookingState::Egg, false);
+
+        Self { check_list }
     }
 }

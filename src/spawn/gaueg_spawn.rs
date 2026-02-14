@@ -1,4 +1,4 @@
-use crate::entities::{gauge::GaugeFollowsPan, BallGauge};
+use crate::entities::gauge::{BallGauge, GaugeFollowsPan};
 use bevy::prelude::{ColorMaterial, MeshMaterial2d};
 use bevy::{
     asset::Assets,
@@ -72,6 +72,6 @@ pub fn guage_perfect_spawn(name: &'static str, gauge_container_height: f32) -> i
             custom_size: Some(Vec2::new(4.0, gauge_container_height)),
             ..default()
         },
-        Transform::from_xyz(0.0, 0.0, 0.2), // 🔥 0.0 = กลาง zone
+        Transform::from_xyz(0.0, 0.0, 0.2),
     )
 }

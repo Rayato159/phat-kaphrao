@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::entities::{spatula::Spatula, PanArea, PanEgg, PanKapaow};
+use crate::entities::{
+    ingredient::PanArea,
+    pan::{PanEgg, PanKapaow},
+    spatula::Spatula,
+};
 
 pub fn pan_kaprow_spawn(pan_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
     (

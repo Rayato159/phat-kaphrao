@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::entities::{
+use crate::entities::ingredient::{
     Dragging, Ingredient, IngredientBackground, IngredientForeground, IngredientForegroundLink,
     IngredientType, OriginalPosition,
 };

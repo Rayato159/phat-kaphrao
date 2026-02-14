@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::entities::IngredientType;
+use crate::entities::ingredient::IngredientType;
 
 #[derive(States, Clone, PartialEq, Eq, Hash, Debug, Default)]
 pub enum KaprowCookingState {
@@ -11,7 +11,7 @@ pub enum KaprowCookingState {
     Pork,
     OysterSauce,
     MSG,
-    Basil,
+    Kaprow,
     None,
 }
 
@@ -23,8 +23,8 @@ impl KaprowCookingState {
             KaprowCookingState::Chilli => KaprowCookingState::Pork,
             KaprowCookingState::Pork => KaprowCookingState::OysterSauce,
             KaprowCookingState::OysterSauce => KaprowCookingState::MSG,
-            KaprowCookingState::MSG => KaprowCookingState::Basil,
-            KaprowCookingState::Basil => KaprowCookingState::None,
+            KaprowCookingState::MSG => KaprowCookingState::Kaprow,
+            KaprowCookingState::Kaprow => KaprowCookingState::None,
             KaprowCookingState::None => KaprowCookingState::None,
         }
     }
@@ -37,7 +37,7 @@ impl KaprowCookingState {
             KaprowCookingState::Pork => "Pork".to_string(),
             KaprowCookingState::OysterSauce => "Oyster Sauce".to_string(),
             KaprowCookingState::MSG => "MSG".to_string(),
-            KaprowCookingState::Basil => "Basil".to_string(),
+            KaprowCookingState::Kaprow => "Kaprow".to_string(),
             KaprowCookingState::None => "".to_string(),
         }
     }
@@ -52,7 +52,7 @@ impl From<KaprowCookingState> for IngredientType {
             KaprowCookingState::Pork => IngredientType::Pork,
             KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
             KaprowCookingState::MSG => IngredientType::MSG,
-            KaprowCookingState::Basil => IngredientType::Basil,
+            KaprowCookingState::Kaprow => IngredientType::Kaprow,
             KaprowCookingState::None => IngredientType::None,
         }
     }

@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::{
     entities::{
-        ingredient::DroppedIngredient, IngredientType, StepIndicatorEgg, StepIndicatorKapaow,
+        ingredient::{DroppedIngredient, IngredientType},
+        ui::{StepIndicatorEgg, StepIndicatorKapaow},
     },
     message::ingredient_message::IngredientDroppedMessage,
     resource::{cooking_state::KaprowCookingState, game_state::GameState},

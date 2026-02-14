@@ -1,17 +1,11 @@
-//! Checklist Systems
-//!
-//! Contains all systems related to the ingredient checklist:
-//! - update_checklist_on_drop: Updates checklist status when ingredients are dropped
-//! - update_checklist_on_gauge_hit: Updates checklist to checkmarks when gauge is hit correctly
-//! - update_checklist_symbols: Updates symbol display (X or ✓) and checkbox state based on status
-
 use bevy::prelude::*;
 
-use crate::entities::{
+use crate::entities::check_list::{
     CheckListCheckbox, CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListStatus,
-    CheckListSymbol, IngredientType,
+    CheckListSymbol,
 };
-use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage};
+use crate::entities::ingredient::IngredientType;
+use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage};
 use crate::message::ingredient_message::IngredientDroppedMessage;
 
 use crate::resource::LastDroppedIngredient;
@@ -51,7 +45,7 @@ pub fn update_checklist_on_drop(
 
 /// Update checklist to checkmarks when gauge is hit correctly
 pub fn update_checklist_on_gauge_hit(
-    mut gauge_kapaow_events: MessageReader<GaugeKapoawHitMassage>,
+    mut gauge_kapaow_events: MessageReader<GaugeKaprowHitMassage>,
     mut gauge_egg_events: MessageReader<GaugeEggHitMassage>,
     mut checklist_query: Query<
         (&CheckListIngredientType, &mut CheckListStatus),

@@ -76,7 +76,7 @@ pub fn spawn_checklist(
     let origin_y = grid_h / 3.0; // Centered vertically
 
     // === Ingredient order: single column with 3 visual columns (Number | Icon | Checkbox) ===
-    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg
+    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
     let ingredient_grid = [
         (IngredientType::Oil, 0, 0),
         (IngredientType::Garlic, 0, 1),
@@ -84,7 +84,7 @@ pub fn spawn_checklist(
         (IngredientType::Pork, 0, 3),
         (IngredientType::OysterSauce, 0, 4),
         (IngredientType::MSG, 0, 5),
-        (IngredientType::Basil, 0, 6),
+        (IngredientType::Kaprow, 0, 6),
         (IngredientType::Egg, 0, 7),
     ];
 

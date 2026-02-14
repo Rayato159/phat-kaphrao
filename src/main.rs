@@ -1,68 +1,45 @@
-//! Pad Kaprao - A Thai Cooking Game
-//!
-//! An interactive cooking game where you must add ingredients in the correct order:
-//! Oil -> Garlic -> Pork -> Egg -> Fish Sauce -> Oyster Sauce -> Thai Chilli -> Holy Basil Leaves
-//!
-//! Features:
-//! - Drag & Drop mechanics using Bevy's Picking API
-//! - Timing Gauge mini-game when adding oil
-//! - HP system and step tracking
-//! - Observer-based event handling
-//! - 8 ingredients in a 2x4 grid layout
-//!
-//! Uses Bevy 0.17+ with modern patterns:
-//! - Observers & Triggers
-//! - Required Components
-//! - Computed States
-//! - Picking API
-
 use bevy::{prelude::*, window::WindowMode};
-
-// New module structure
-mod animate;
-mod entities;
-mod helper;
-mod logic;
-mod message;
-mod resource;
-mod spawn;
-mod systems;
-
 use bevy_spritesheet_animation::prelude::*;
-use pad_kaprao::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
-
-use resource::game_state::{AppState, InGame};
-use systems::{
-    check_gauge_hit_window, handle_kaprow_pan_ingredient_drop, handle_menu_button_click,
-    reset_game_state, setup_camera_and_scene, setup_frying_pan, setup_initial_game_state,
-    setup_main_menu, spawn_countdown_timer, spawn_gauge_from_event, spawn_ingredients,
-    update_checklist_on_drop, update_checklist_on_gauge_hit, update_checklist_symbols,
-    update_countdown_timer, update_dragging_ingredient,
-};
-
-use crate::{
+use pad_kaprao::{
     animate::gauge_animate::moving_ball_gauge_animation,
     entities::check_list::spawn_checklist,
     logic::check_lose::check_game_over,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
-        gaug_message::{GaugeEggHitMassage, GaugeKapoawHitMassage, GaugeSpawnMassage},
+        gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeSpawnMassage},
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
         cooking_state::{EggCookingState, KaprowCookingState},
+        game_state::{EggPanCheckList, KaprowPanCheckList},
         time_state::{check_game_timer, start_timer},
     },
     systems::{
-        egg_cooking_systems::next_step_egg_cooking,
+        check_list_systems::{
+            update_checklist_on_drop, update_checklist_on_gauge_hit, update_checklist_symbols,
+        },
+        egg_cooking_systems::{handle_egg_pan_ingredient_drop, next_step_egg_cooking},
+        game_end_systems::{
+            cleanup_game_end_screens, handle_game_over_screen_input, handle_victory_screen_input,
+            show_game_over_screen, show_victory_screen,
+        },
+        gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event},
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
-        kapaow_cooking_systems::next_step_kapaow_cooking,
+        ingredient_systems::{spawn_ingredients, update_dragging_ingredient},
+        init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state},
+        kapaow_cooking_systems::{handle_kaprow_pan_ingredient_drop, next_step_kaprow_cooking},
+        menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu},
+        observer_systems::observe_game_state_changes,
+        pan_systems::setup_frying_pan,
+        time_count_down_systems::{spawn_countdown_timer, update_countdown_timer},
     },
+    AppState, InGame, GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH,
 };
 
 fn main() {
     App::new()
-        // Bevy 0.17+ Setup with Default Plugins
+        .insert_resource(KaprowPanCheckList::default())
+        .insert_resource(EggPanCheckList::default())
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -77,21 +54,16 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugins(SpritesheetAnimationPlugin)
-        // Initialize the main game state
         .init_state::<AppState>()
         .init_state::<KaprowCookingState>()
         .init_state::<EggCookingState>()
-        // Add computed state - InGame is automatically computed based on AppState
-        // This follows Bevy 0.16+ ComputedStates pattern
         .add_computed_state::<InGame>()
-        // Register all game events
         .add_message::<GaugeSpawnMassage>()
         .add_message::<GameWinMessage>()
         .add_message::<GameLoseMessage>()
         .add_message::<IngredientDroppedMessage>()
-        .add_message::<GaugeKapoawHitMassage>()
+        .add_message::<GaugeKaprowHitMassage>()
         .add_message::<GaugeEggHitMassage>()
-        // System Schedules - Startup
         .add_systems(
             Startup,
             (
@@ -102,7 +74,6 @@ fn main() {
                 setup_heart_atlas_ui,
             ),
         )
-        // System Schedules - Gameplay Systems
         .add_systems(
             OnEnter(InGame),
             (
@@ -117,6 +88,7 @@ fn main() {
             Update,
             (
                 handle_kaprow_pan_ingredient_drop,
+                handle_egg_pan_ingredient_drop,
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,
@@ -130,37 +102,28 @@ fn main() {
             )
                 .run_if(in_state(InGame)),
         )
-        // System Schedules - Ingredient Systems
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
-        .add_systems(Update, next_step_kapaow_cooking.run_if(in_state(InGame)))
+        .add_systems(Update, next_step_kaprow_cooking.run_if(in_state(InGame)))
         .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
-        // System Schedules - Game State Transitions
         .add_systems(OnEnter(InGame), (reset_game_state, setup_heart_atlas_ui))
-        .add_systems(OnEnter(AppState::Victory), systems::show_victory_screen)
-        .add_systems(OnEnter(AppState::GameOver), systems::show_game_over_screen)
-        .add_systems(OnExit(AppState::Victory), systems::cleanup_game_end_screens)
-        .add_systems(
-            OnExit(AppState::GameOver),
-            systems::cleanup_game_end_screens,
-        )
-        // System Schedules - Game End Screen Input
+        .add_systems(OnEnter(AppState::Victory), show_victory_screen)
+        .add_systems(OnEnter(AppState::GameOver), show_game_over_screen)
+        .add_systems(OnExit(AppState::Victory), cleanup_game_end_screens)
+        .add_systems(OnExit(AppState::GameOver), cleanup_game_end_screens)
         .add_systems(
             Update,
-            systems::handle_victory_screen_input.run_if(in_state(AppState::Victory)),
+            handle_victory_screen_input.run_if(in_state(AppState::Victory)),
         )
         .add_systems(
             Update,
-            systems::handle_game_over_screen_input.run_if(in_state(AppState::GameOver)),
+            handle_game_over_screen_input.run_if(in_state(AppState::GameOver)),
         )
-        // System Schedules - Main Menu
         .add_systems(OnEnter(AppState::Menu), setup_main_menu)
-        .add_systems(OnExit(AppState::Menu), systems::cleanup_main_menu)
+        .add_systems(OnExit(AppState::Menu), cleanup_main_menu)
         .add_systems(
             Update,
             handle_menu_button_click.run_if(in_state(AppState::Menu)),
         )
-        // System Schedules - Game State Observers
-        .add_systems(Update, systems::observe_game_state_changes)
-        // Run the game
+        .add_systems(Update, observe_game_state_changes)
         .run();
 }

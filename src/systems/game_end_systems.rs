@@ -10,7 +10,7 @@
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
 
-use crate::entities::GameEndScreen;
+use crate::entities::ui::GameEndScreen;
 use crate::resource::game_state::AppState;
 use crate::spawn::game_over_screen_spawn::{
     game_over_screen_instructions_spawn, game_over_screen_parent_spawn,

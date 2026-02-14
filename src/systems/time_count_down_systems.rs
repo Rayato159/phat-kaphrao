@@ -6,8 +6,10 @@
 
 use bevy::prelude::*;
 
-use crate::entities::CountDownTimer;
-use crate::resource::time_state::{StartTime, MAX_GAME_TIME};
+use crate::{
+    entities::time_count_down::CountDownTimer,
+    resource::time_state::{StartTime, MAX_GAME_TIME},
+};
 
 /// Spawn the countdown timer in the center of the screen
 /// This system should be called when entering the InGame state

@@ -2,7 +2,8 @@ pub mod cooking_state;
 pub mod game_state;
 pub mod heart;
 pub mod time_state;
-use crate::entities::IngredientType;
+
+use crate::entities::ingredient::IngredientType;
 use bevy::prelude::*;
 
 /// Resource to track the last ingredient that was dropped

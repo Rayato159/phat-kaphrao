@@ -2,18 +2,15 @@ use bevy::input::ButtonInput;
 use bevy::prelude::*;
 
 use crate::entities::gauge::BallGauge;
-use crate::entities::PanEgg;
-use crate::entities::PanKapaow;
+use crate::entities::pan::{PanEgg, PanKapaow};
 use crate::helper::random_target_start::random_target_start;
 
+use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeSpawnMassage};
 use crate::resource::game_state::GameState;
 use crate::spawn::gaueg_spawn::{
     gauge_ball_spawn, gauge_container_background_spawn, gauge_container_spawn,
-    gauge_target_zone_spawn, guage_perfect_spawn,
+    gauge_target_zone_spawn,
 };
-use crate::GaugeEggHitMassage;
-use crate::GaugeKapoawHitMassage;
-use crate::GaugeSpawnMassage;
 
 pub fn spawn_gauge_from_event(
     mut commands: Commands,
@@ -25,7 +22,6 @@ pub fn spawn_gauge_from_event(
     q_egg_pan: Query<&PanEgg>,
 ) {
     for event in gauge_events.read() {
-        // ✅ normalized start
         let start = random_target_start(game_stats.target_width);
 
         let container_entity = if game_stats.gauge_container_entity.is_none() {
@@ -53,7 +49,6 @@ pub fn spawn_gauge_from_event(
             game_stats.gauge_container_entity.unwrap()
         };
 
-        // 🔥 convert normalized → world (render only)
         let world_width = game_stats.target_width * game_stats.gauge_container_width;
 
         let world_x =
@@ -62,7 +57,7 @@ pub fn spawn_gauge_from_event(
         if let Ok(_) = q_kapaow_pan.get(event.target_pan.unwrap()) {
             if !game_stats.kpaow_has_guage {
                 game_stats.kpaow_has_guage = true;
-                game_stats.target_kapaow_x = Some(start); // ✅ เก็บ normalized
+                game_stats.target_kapaow_x = Some(start);
 
                 commands.entity(container_entity).with_children(|parent| {
                     let zone_entity = parent
@@ -75,19 +70,13 @@ pub fn spawn_gauge_from_event(
                         ))
                         .id();
 
-                    // ✅ spawn เส้นแดงเป็น child ของ zone
-                    parent.commands().entity(zone_entity).with_children(|zone| {
-                        zone.spawn(guage_perfect_spawn(
-                            "perfect_loibe1",
-                            game_stats.gauge_container_height,
-                        ));
-                    });
+                    parent.commands().entity(zone_entity);
                 });
             }
         } else if let Ok(_) = q_egg_pan.get(event.target_pan.unwrap()) {
             if !game_stats.egg_has_guage {
                 game_stats.egg_has_guage = true;
-                game_stats.target_egg_x = Some(start); // ✅ เก็บ normalized
+                game_stats.target_egg_x = Some(start);
 
                 commands.entity(container_entity).with_children(|parent| {
                     let zone_entity = parent
@@ -99,13 +88,8 @@ pub fn spawn_gauge_from_event(
                             world_x,
                         ))
                         .id();
-                    // ✅ spawn เส้นแดงเป็น child ของ zone
-                    parent.commands().entity(zone_entity).with_children(|zone| {
-                        zone.spawn(guage_perfect_spawn(
-                            "perfect_loibe2",
-                            game_stats.gauge_container_height,
-                        ));
-                    });
+
+                    parent.commands().entity(zone_entity);
                 });
             }
         }
@@ -118,7 +102,7 @@ pub fn check_gauge_hit_window(
     mut game_stats: ResMut<GameState>,
     ball_gauge: Single<&mut BallGauge>,
     keyboard: Res<ButtonInput<KeyCode>>,
-    mut hit_kapaow: MessageWriter<GaugeKapoawHitMassage>,
+    mut hit_kapaow: MessageWriter<GaugeKaprowHitMassage>,
     mut hit_egg: MessageWriter<GaugeEggHitMassage>,
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
@@ -131,11 +115,10 @@ pub fn check_gauge_hit_window(
         if let Some(start) = game_stats.target_kapaow_x {
             let end = start + zone_width;
 
-            if check_zone(position, start, end, "Kapaow") {
-                info!("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅ HIT KAPAOW!");
-                hit_kapaow.write(GaugeKapoawHitMassage {});
+            if check_zone(position, start, end) {
+                hit_kapaow.write(GaugeKaprowHitMassage {});
                 hit_any = true;
-                game_stats.cout_pud_kapoaw += 1.0;
+                game_stats.count_pud_kapoaw += 1.0;
             }
         }
 
@@ -143,36 +126,20 @@ pub fn check_gauge_hit_window(
         if let Some(start) = game_stats.target_egg_x {
             let end = start + zone_width;
 
-            if check_zone(position, start, end, "Egg") {
-                info!("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅ HIT EGG!");
+            if check_zone(position, start, end) {
                 hit_egg.write(GaugeEggHitMassage {});
                 hit_any = true;
-                game_stats.cout_tod_kai += 1.0;
+                game_stats.count_tod_kai += 1.0;
             }
         }
 
         if !hit_any {
-            info!("❌ MISS! ลด HP");
             game_stats.hp = game_stats.hp.saturating_sub(1);
         }
     }
 }
 
-fn check_zone(position: f32, start: f32, end: f32, name: &str) -> bool {
+fn check_zone(position: f32, start: f32, end: f32) -> bool {
     let in_target = position >= start && position <= end;
-
-    // let center = (start + end) / 2.0;
-    // let is_perfect = (position - center).abs() < 0.0;
-    // info!("start{} -> end: {}", start, end);
-    // info!(
-    //     "{} -> center: {}, position: {}, diff:{}",
-    //     name,
-    //     center,
-    //     position,
-    //     (position - center).abs()
-    // );
-
-    // info!("{} -> Hit: {}, Perfect: {}", name, in_target, is_perfect);
-
     in_target
 }

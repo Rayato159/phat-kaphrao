@@ -1,5 +1,4 @@
-use crate::entities::BallGauge;
-use crate::resource::game_state::GameState;
+use crate::{entities::gauge::BallGauge, resource::game_state::GameState};
 use bevy::prelude::*;
 
 pub fn moving_ball_gauge_animation(

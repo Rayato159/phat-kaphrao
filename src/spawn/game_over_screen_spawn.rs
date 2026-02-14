@@ -8,7 +8,7 @@ use bevy::{
     utils::default,
 };
 
-use crate::entities::GameEndScreen;
+use crate::entities::ui::GameEndScreen;
 
 pub fn game_over_screen_parent_spawn() -> impl Bundle {
     (
@@ -30,7 +30,7 @@ pub fn game_over_screen_parent_spawn() -> impl Bundle {
 
 pub fn game_over_screen_title_spawn() -> impl Bundle {
     (
-        Text::new("💀 Game Over 💀"),
+        Text::new("Game Over"),
         TextFont {
             font_size: 72.0,
             ..default()

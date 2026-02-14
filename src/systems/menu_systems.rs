@@ -9,7 +9,7 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
 
-use crate::entities::{ButtonAction, MainMenu};
+use crate::entities::ui::{ButtonAction, MainMenu};
 use crate::resource::game_state::AppState;
 use crate::spawn::main_menu_spawn::{
     button_child_main_menu_spawn, button_parent_main_menu_spawn, main_menu_parent_spawn,

@@ -10,11 +10,12 @@
 
 use bevy::prelude::*;
 
-use crate::entities::ingredient::{DroppedIngredient, INGREDIENT_SIZE};
-use crate::entities::{
-    Dragging, HoverOriginalZ, Ingredient, IngredientForegroundLink, IngredientType,
-    OriginalPosition, PanEgg, PanKapaow, StepIndicatorEgg, StepIndicatorKapaow,
+use crate::entities::ingredient::{
+    Dragging, DroppedIngredient, HoverOriginalZ, Ingredient, IngredientForegroundLink,
+    IngredientType, OriginalPosition, INGREDIENT_SIZE,
 };
+use crate::entities::pan::{PanEgg, PanKapaow};
+use crate::entities::ui::{StepIndicatorEgg, StepIndicatorKapaow};
 use crate::logic::drop_on_pan::{handle_drop_on_pan_egg, handle_drop_on_pan_kapoaw};
 use crate::message::ingredient_message::IngredientDroppedMessage;
 use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
@@ -56,7 +57,7 @@ pub fn spawn_ingredients(
     let origin_y = -(h * 0.4) + bottom_margin + grid_h;
 
     // === Ingredient order: row-major (top → bottom) ===
-    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Basil -> Egg
+    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
     let ingredient_grid = [
         (IngredientType::Oil, 0, 0),
         (IngredientType::Garlic, 1, 0),
@@ -64,7 +65,7 @@ pub fn spawn_ingredients(
         (IngredientType::Pork, 1, 1),
         (IngredientType::OysterSauce, 0, 2),
         (IngredientType::MSG, 1, 2),
-        (IngredientType::Basil, 0, 3),
+        (IngredientType::Kaprow, 0, 3),
         (IngredientType::Egg, 1, 3),
     ];
 
