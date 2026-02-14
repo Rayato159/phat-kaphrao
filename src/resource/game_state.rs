@@ -74,8 +74,8 @@ pub struct GameState {
 impl Default for GameState {
     fn default() -> Self {
         Self {
-            hp: 10,     // Increased to 4 for 8 ingredients ; change to 10
-            max_hp: 10, // Increased max HP ; change to 10
+            hp: 5,     // Increased to 4 for 8 ingredients ; change to 10
+            max_hp: 5, // Increased max HP ; change to 10
             ingredient_kapaow_dropped: true,
             ingredient_egg_dropped: true,
             // current_step: 0,
