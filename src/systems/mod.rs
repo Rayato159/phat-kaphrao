@@ -14,6 +14,7 @@
 //! - observer_systems: Systems for observing game state changes
 //! - init_game_systems: Systems for initial game setup
 
+pub mod check_list_systems;
 pub mod cooking_systems;
 pub mod egg_cooking_systems;
 pub mod game_end_systems;

@@ -9,6 +9,7 @@
 //! - pan: Pan marker components (FryingPan, PanKapaow, PanEgg)
 //! - ui: UI components (HUD, HeartIcon, StepIndicator, GameEndScreen)
 
+pub mod check_list;
 pub mod gauge;
 pub mod ingredient;
 pub mod pan;
@@ -17,6 +18,9 @@ pub mod time_count_down;
 pub mod ui;
 
 // Re-export commonly used items for convenience
+pub use check_list::{
+    CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListStatus, CheckListSymbol,
+};
 pub use gauge::{BallGauge, TimingGauge};
 pub use ingredient::{
     Dragging, DraggingOriginalParent, HoverOriginalZ, Ingredient, IngredientBackground,
