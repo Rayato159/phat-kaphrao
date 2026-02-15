@@ -1,0 +1,26 @@
+[package]
+name = "phat_kaphrao"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+# Bevy game engine - using version 0.17 for the latest features
+bevy = { version = "0.17", features = [
+    "bevy_state",    # For State and ComputedStates
+    "bevy_picking",  # For the new Picking API
+    "bevy_ui",       # For UI systems
+    "bevy_sprite",   # For Sprite bundles and 2D rendering
+] }
+bevy_spritesheet_animation = "5"
+bevy_kira_audio = {version = "0.24", features = ["mp3"]}
+
+# Random number generation for gauge target zones
+rand = "0.8"
+
+# Enable better error messages during development
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (with a trade-off of compile time)
+[profile.dev.package."*"]
+opt-level = 3
