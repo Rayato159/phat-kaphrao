@@ -6,7 +6,9 @@ use pad_kaprao::{
     logic::check_lose::check_game_over,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
-        gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeSpawnMassage},
+        gaug_message::{
+            GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeMissMassage, GaugeSpawnMassage,
+        },
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
@@ -22,7 +24,8 @@ use pad_kaprao::{
             show_game_over_screen, show_victory_screen,
         },
         gauge_systems::{
-            check_gauge_hit_window, despawn_target_zone_on_hit, spawn_gauge_from_event,
+            check_gauge_hit_window, despawn_target_zone_on_hit, spawn_damage_flash,
+            spawn_gauge_from_event, update_damage_flash,
         },
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
         ingredient_systems::{spawn_ingredients, update_dragging_ingredient},
@@ -64,6 +67,7 @@ fn main() {
         .add_message::<IngredientDroppedMessage>()
         .add_message::<GaugeKaprowHitMassage>()
         .add_message::<GaugeEggHitMassage>()
+        .add_message::<GaugeMissMassage>()
         .add_systems(
             Startup,
             (
@@ -92,6 +96,8 @@ fn main() {
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,
+                spawn_damage_flash.after(check_gauge_hit_window),
+                update_damage_flash,
                 despawn_target_zone_on_hit,
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,

@@ -38,6 +38,7 @@ pub fn game_over_screen_title_spawn() -> impl Bundle {
         TextColor(Color::srgb(0.8, 0.2, 0.2)),
     )
 }
+
 pub fn game_over_screen_subtitle_spawn() -> impl Bundle {
     (
         Text::new("The cooking went wrong..."),

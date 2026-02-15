@@ -30,7 +30,18 @@ pub fn victory_screen_parent_spawn() -> impl Bundle {
 
 pub fn victory_screen_title_spawn() -> impl Bundle {
     (
-        Text::new("You've made the perfect Pad Kaprao!"),
+        Text::new("Completed!"),
+        TextFont {
+            font_size: 72.0,
+            ..default()
+        },
+        TextColor(Color::srgb(103.0 / 255.0, 174.0 / 255.0, 110.0 / 255.0)),
+    )
+}
+
+pub fn victory_screen_subtitle_spawn() -> impl Bundle {
+    (
+        Text::new("The dish is ready to be served!"),
         TextFont {
             font_size: 32.0,
             ..default()

@@ -17,7 +17,8 @@ use crate::spawn::game_over_screen_spawn::{
     game_over_screen_subtitle_spawn, game_over_screen_title_spawn,
 };
 use crate::spawn::victory_screen_spawn::{
-    victory_screen_instructions_spawn, victory_screen_parent_spawn, victory_screen_title_spawn,
+    victory_screen_instructions_spawn, victory_screen_parent_spawn, victory_screen_subtitle_spawn,
+    victory_screen_title_spawn,
 };
 
 /// Show victory screen when the player wins
@@ -26,6 +27,7 @@ pub fn show_victory_screen(mut commands: Commands) {
         .spawn(victory_screen_parent_spawn())
         .with_children(|parent| {
             parent.spawn(victory_screen_title_spawn());
+            parent.spawn(victory_screen_subtitle_spawn());
             parent.spawn(victory_screen_instructions_spawn());
         });
 
