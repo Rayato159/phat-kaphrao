@@ -28,6 +28,13 @@ It's pressure, timing, and chaos.
 
 Built for **Bevy Game Jam**.
 
+# 🎮 How to Play
+
+- Drag and drop an ingradients into a pan.
+- Right is egg's pan, Left is Kaphrao's pan.
+- Press space when it's hit the gauage.
+- PS. You can see the step at left side.
+
 ---
 
 Copyright 2026
