@@ -9,7 +9,7 @@ use bevy::{
 
 use crate::AppState;
 
-pub const MAX_GAME_TIME: f64 = 60.0;
+pub const MAX_GAME_TIME: f64 = 142.0;
 
 #[derive(Resource)]
 pub struct StartTime(f64);

@@ -61,6 +61,13 @@ pub struct GameState {
     pub egg_is_finished: bool,
 }
 
+/// Resource for tracking cooking audio timer
+/// Counts down from 3.0 to 0.0 to limit audio playback duration
+#[derive(Resource, Default)]
+pub struct CookingAudioTimer {
+    pub timer: f32,
+}
+
 impl Default for GameState {
     fn default() -> Self {
         Self {

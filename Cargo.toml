@@ -12,6 +12,7 @@ bevy = { version = "0.17", features = [
     "bevy_sprite",   # For Sprite bundles and 2D rendering
 ] }
 bevy_spritesheet_animation = "5"
+bevy_kira_audio = {version = "0.24", features = ["mp3"]}
 
 # Random number generation for gauge target zones
 rand = "0.8"

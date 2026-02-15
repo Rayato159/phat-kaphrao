@@ -1,5 +1,6 @@
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
+use bevy_kira_audio::prelude::*;
 
 use crate::entities::gauge::RectGauge;
 use crate::entities::pan::{PanEgg, PanKapaow};
@@ -8,7 +9,7 @@ use crate::helper::random_target_start::random_target_start;
 use crate::message::gaug_message::{
     GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeMissMassage, GaugeSpawnMassage,
 };
-use crate::resource::game_state::GameState;
+use crate::resource::game_state::{CookingAudioTimer, GameState};
 use crate::spawn::gaueg_spawn::{
     gauge_container_background_spawn, gauge_container_spawn, gauge_rect_spawn,
     gauge_target_zone_spawn,
@@ -244,13 +245,17 @@ pub fn update_damage_flash(
 pub fn despawn_target_zone_on_hit(
     mut commands: Commands,
     mut game_stats: ResMut<GameState>,
+    mut audio_timer: ResMut<CookingAudioTimer>,
     mut kaprow_hit_events: MessageReader<GaugeKaprowHitMassage>,
     mut egg_hit_events: MessageReader<GaugeEggHitMassage>,
     query: Query<(Entity, &Name)>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
 ) {
     // Handle Kapaow gauge hits
     for _ in kaprow_hit_events.read() {
         if game_stats.target_kapaow_x.is_some() {
+            cooking_audio_play(&mut audio_timer, &asset_server, &audio);
             // Find and despawn the kapaow target zone
             for (entity, name) in query.iter() {
                 if name.as_str() == "kapaow_gauge" {
@@ -266,6 +271,7 @@ pub fn despawn_target_zone_on_hit(
     // Handle Egg gauge hits
     for _ in egg_hit_events.read() {
         if game_stats.target_egg_x.is_some() {
+            cooking_audio_play(&mut audio_timer, &asset_server, &audio);
             // Find and despawn the egg target zone
             for (entity, name) in query.iter() {
                 if name.as_str() == "egg_gauge" {
@@ -276,5 +282,30 @@ pub fn despawn_target_zone_on_hit(
             game_stats.egg_has_guage = false;
             game_stats.target_egg_x = None;
         }
+    }
+}
+
+pub fn cooking_audio_play(
+    audio_timer: &mut ResMut<CookingAudioTimer>,
+    asset_server: &Res<AssetServer>,
+    audio: &Res<Audio>,
+) {
+    // Only play if timer has reached 0 (1.5 seconds have passed)
+    if audio_timer.timer <= 0.0 {
+        audio_timer.timer = 1.5; // Reset timer to 1.5 seconds
+        audio
+            .play(asset_server.load("audio/Cooking.mp3"))
+            .with_volume(-10.)
+            .fade_in(AudioTween::new(
+                std::time::Duration::from_millis(100),
+                AudioEasing::OutPowi(2),
+            ));
+    }
+}
+
+/// Update cooking audio timer - counts down from 3.0 to 0.0
+pub fn update_cooking_audio_timer(time: Res<Time>, mut audio_timer: ResMut<CookingAudioTimer>) {
+    if audio_timer.timer > 0.0 {
+        audio_timer.timer -= time.delta().as_secs_f32();
     }
 }

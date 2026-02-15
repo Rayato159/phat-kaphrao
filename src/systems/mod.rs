@@ -7,6 +7,7 @@ pub mod ingredient_systems;
 pub mod init_game_systems;
 pub mod kapaow_cooking_systems;
 pub mod menu_systems;
+pub mod music_system;
 pub mod observer_systems;
 pub mod pan_systems;
 pub mod spatula_animation_systems;

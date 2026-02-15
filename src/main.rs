@@ -1,4 +1,5 @@
 use bevy::{prelude::*, window::WindowMode};
+use bevy_kira_audio::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
 use pad_kaprao::{
     animate::gauge_animate::moving_ball_gauge_animation,
@@ -14,6 +15,7 @@ use pad_kaprao::{
     resource::{
         cooking_animations::{EggCookingAnimations, KaprowCookingAnimations},
         cooking_state::{EggCookingState, KaprowCookingState},
+        game_state::CookingAudioTimer,
         time_state::{check_game_timer, start_timer},
     },
     systems::{
@@ -25,13 +27,14 @@ use pad_kaprao::{
         },
         gauge_systems::{
             check_gauge_hit_window, despawn_target_zone_on_hit, spawn_damage_flash,
-            spawn_gauge_from_event, update_damage_flash,
+            spawn_gauge_from_event, update_cooking_audio_timer, update_damage_flash,
         },
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
         ingredient_systems::{spawn_ingredients, update_dragging_ingredient},
         init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state},
         kapaow_cooking_systems::{handle_kaprow_pan_ingredient_drop, next_step_kaprow_cooking},
         menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu},
+        music_system::start_music,
         observer_systems::observe_game_state_changes,
         pan_systems::setup_frying_pan,
         spatula_animation_systems::{trigger_spatula_animation, update_spatula_animation},
@@ -44,7 +47,8 @@ fn main() {
     App::new()
         .insert_resource(KaprowCookingAnimations::default())
         .insert_resource(EggCookingAnimations::default())
-        .add_plugins(
+        .init_resource::<CookingAudioTimer>()
+        .add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
@@ -56,7 +60,8 @@ fn main() {
                     ..default()
                 })
                 .set(ImagePlugin::default_nearest()),
-        )
+            AudioPlugin,
+        ))
         .add_plugins(SpritesheetAnimationPlugin)
         .init_state::<AppState>()
         .init_state::<KaprowCookingState>()
@@ -73,6 +78,7 @@ fn main() {
             Startup,
             (
                 setup_camera_and_scene,
+                start_music,
                 setup_initial_game_state,
                 spawn_ingredients.after(setup_initial_game_state),
                 setup_frying_pan,
@@ -112,6 +118,7 @@ fn main() {
                 .run_if(in_state(InGame)),
         )
         .add_systems(Update, update_damage_flash)
+        .add_systems(Update, update_cooking_audio_timer)
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
         .add_systems(Update, next_step_kaprow_cooking.run_if(in_state(InGame)))
         .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
