@@ -290,7 +290,7 @@ pub fn cooking_audio_play(
     if audio_timer.timer <= 0.0 {
         audio_timer.timer = 1.5; // Reset timer to 1.5 seconds
         audio
-            .play(asset_server.load("audio/Cooking.mp3"))
+            .play(asset_server.load("audio/Cooking.ogg"))
             .with_volume(-10.)
             .fade_in(AudioTween::new(
                 std::time::Duration::from_millis(100),

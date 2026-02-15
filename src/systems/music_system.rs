@@ -5,7 +5,7 @@ use bevy_kira_audio::prelude::*;
 
 pub fn start_music(asset_server: Res<AssetServer>, audio: Res<Audio>) {
     audio
-        .play(asset_server.load("audio/Rayato159 - Coffee Break.mp3"))
+        .play(asset_server.load("audio/Rayato159 - Coffee Break.ogg"))
         // Fade-in with a dynamic easing
         .fade_in(AudioTween::new(
             Duration::from_secs(0),
