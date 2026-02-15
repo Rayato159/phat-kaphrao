@@ -29,7 +29,6 @@ pub fn ingredient_background_spawn(
         IngredientBackground,
         Sprite {
             image: asset_server.load("ingradients/image/Icon.png"),
-            custom_size: Some(Vec2::new(120.0, 120.0)),
             ..default()
         },
         Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
@@ -53,7 +52,6 @@ pub fn ingredient_foreground_spawn_independent(
         },
         Sprite {
             image: asset_server.load(ingredient_type.image_path()),
-            custom_size: Some(Vec2::new(120.0, 120.0)),
             ..default()
         },
         Transform::from_translation(Vec3::new(

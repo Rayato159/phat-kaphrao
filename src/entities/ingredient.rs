@@ -55,7 +55,7 @@ pub enum IngredientType {
     #[default]
     Oil,
     Garlic,
-    Chilli,
+    Chili,
     Pork,
     OysterSauce,
     MSG,
@@ -72,7 +72,7 @@ impl IngredientType {
         match step {
             0 => Some(IngredientType::Oil),
             1 => Some(IngredientType::Garlic),
-            2 => Some(IngredientType::Chilli),
+            2 => Some(IngredientType::Chili),
             3 => Some(IngredientType::Pork),
             4 => Some(IngredientType::OysterSauce),
             5 => Some(IngredientType::MSG),
@@ -83,12 +83,12 @@ impl IngredientType {
     }
 
     /// Returns the next ingredient type in the cooking sequence
-    /// Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg -> None
+    /// Sequence: Oil -> Garlic -> Chili -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg -> None
     pub fn next_step(&self) -> Self {
         match self {
             IngredientType::Oil => IngredientType::Garlic,
-            IngredientType::Garlic => IngredientType::Chilli,
-            IngredientType::Chilli => IngredientType::Pork,
+            IngredientType::Garlic => IngredientType::Chili,
+            IngredientType::Chili => IngredientType::Pork,
             IngredientType::Pork => IngredientType::OysterSauce,
             IngredientType::OysterSauce => IngredientType::MSG,
             IngredientType::MSG => IngredientType::Kaprow,
@@ -103,7 +103,7 @@ impl IngredientType {
         match self {
             IngredientType::Oil => "Oil",
             IngredientType::Garlic => "Garlic",
-            IngredientType::Chilli => "Chilli",
+            IngredientType::Chili => "Chili",
             IngredientType::Pork => "Pork",
             IngredientType::OysterSauce => "Oyster Sauce",
             IngredientType::MSG => "MSG",
@@ -118,7 +118,7 @@ impl IngredientType {
         match self {
             IngredientType::Oil => Color::srgb(0.9, 0.8, 0.5), // Yellow-ish
             IngredientType::Garlic => Color::srgb(0.95, 0.95, 0.9), // White-ish
-            IngredientType::Chilli => Color::srgb(0.9, 0.2, 0.1), // Red
+            IngredientType::Chili => Color::srgb(0.9, 0.2, 0.1), // Red
             IngredientType::Pork => Color::srgb(0.9, 0.7, 0.7), // Pink-ish
             IngredientType::OysterSauce => Color::srgb(0.5, 0.4, 0.2), // Dark brown
             IngredientType::MSG => Color::srgb(0.6, 0.7, 0.8), // Brown-ish
@@ -133,7 +133,7 @@ impl IngredientType {
         match self {
             IngredientType::Oil => "ingradients/image/Oil.png",
             IngredientType::Garlic => "ingradients/image/Galic.png",
-            IngredientType::Chilli => "ingradients/image/Chili.png",
+            IngredientType::Chili => "ingradients/image/Chili.png",
             IngredientType::Pork => "ingradients/image/Pork.png",
             IngredientType::OysterSauce => "ingradients/image/OysterSauce.png",
             IngredientType::MSG => "ingradients/image/MSG.png",

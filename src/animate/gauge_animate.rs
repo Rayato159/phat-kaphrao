@@ -1,10 +1,10 @@
-use crate::{entities::gauge::BallGauge, resource::game_state::GameState};
+use crate::{entities::gauge::RectGauge, resource::game_state::GameState};
 use bevy::prelude::*;
 
 pub fn moving_ball_gauge_animation(
     game_stats: Res<GameState>,
-    q_gauge: Single<&mut BallGauge>,
-    mut q_ball: Query<&mut Transform, With<BallGauge>>,
+    q_gauge: Single<&mut RectGauge>,
+    mut q_rect: Query<&mut Transform, With<RectGauge>>,
     time: Res<Time>,
 ) {
     let delta = time.delta_secs();
@@ -19,7 +19,7 @@ pub fn moving_ball_gauge_animation(
     }
     gauge.position = new_position;
 
-    for mut transform in q_ball.iter_mut() {
+    for mut transform in q_rect.iter_mut() {
         transform.translation.x = (new_position - 0.5) * game_stats.gauge_container_width;
     }
 }

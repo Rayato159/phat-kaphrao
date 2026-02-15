@@ -77,7 +77,7 @@ impl Default for GameState {
             gauge_container_height: 40.0,
             kpaow_has_guage: false,
             egg_has_guage: false,
-            target_width: 0.15,
+            target_width: 0.10,
             target_egg_x: None,
             target_kapaow_x: None,
             count_pud_kapoaw: 0.0,

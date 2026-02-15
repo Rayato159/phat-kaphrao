@@ -70,7 +70,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         image,
                         row,
                         col,
-                        300,
+                        500,
                         &mut atlas_layouts,
                         &mut animations,
                     );
@@ -102,7 +102,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
 
                 let expected_ingredient = match *kaprow_cooking_state.get() {
                     KaprowCookingState::Garlic => IngredientType::Garlic,
-                    KaprowCookingState::Chilli => IngredientType::Chilli,
+                    KaprowCookingState::Chili => IngredientType::Chili,
                     KaprowCookingState::Pork => IngredientType::Pork,
                     KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
                     KaprowCookingState::MSG => IngredientType::MSG,
@@ -123,7 +123,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
                 for kaprow_pan_transform in q_kaprow_pans.iter() {
                     let (image_path, row, col) = match *kaprow_cooking_state.get() {
                         KaprowCookingState::Garlic => ("cooking_steps/image/Garlic.png", 3, 3),
-                        KaprowCookingState::Chilli => ("cooking_steps/image/Chili.png", 3, 3),
+                        KaprowCookingState::Chili => ("cooking_steps/image/Chili.png", 3, 3),
                         KaprowCookingState::Pork => ("cooking_steps/image/Pork.png", 3, 3),
                         KaprowCookingState::OysterSauce => {
                             for (step_tag, entity) in q_step_sprite.iter() {
@@ -146,7 +146,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     };
 
                     let image = asset_server.load(image_path);
-                    let duration = 300;
+                    let duration = 500;
 
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
                         image.clone(),

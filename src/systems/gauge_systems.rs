@@ -1,14 +1,14 @@
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
 
-use crate::entities::gauge::BallGauge;
+use crate::entities::gauge::RectGauge;
 use crate::entities::pan::{PanEgg, PanKapaow};
 use crate::helper::random_target_start::random_target_start;
 
 use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeSpawnMassage};
 use crate::resource::game_state::GameState;
 use crate::spawn::gaueg_spawn::{
-    gauge_ball_spawn, gauge_container_background_spawn, gauge_container_spawn,
+    gauge_container_background_spawn, gauge_container_spawn, gauge_rect_spawn,
     gauge_target_zone_spawn,
 };
 
@@ -35,7 +35,7 @@ pub fn spawn_gauge_from_event(
                     game_stats.gauge_container_height,
                 ));
 
-                parent.spawn(gauge_ball_spawn(
+                parent.spawn(gauge_rect_spawn(
                     Color::srgb(1.0, 0.3, 0.3),
                     &mut *meshes,
                     &mut *materials,
@@ -63,7 +63,7 @@ pub fn spawn_gauge_from_event(
                     let zone_entity = parent
                         .spawn(gauge_target_zone_spawn(
                             "kapaow_gauge",
-                            Color::srgb(0.0, 1.0, 0.0),
+                            Color::srgb(108.0 / 255.0, 166.0 / 255.0, 81.0 / 255.0),
                             world_width,
                             game_stats.gauge_container_height,
                             world_x,
@@ -82,7 +82,7 @@ pub fn spawn_gauge_from_event(
                     let zone_entity = parent
                         .spawn(gauge_target_zone_spawn(
                             "egg_gauge",
-                            Color::WHITE,
+                            Color::srgb(255.0 / 255.0, 209.0 / 255.0, 80.0 / 255.0),
                             world_width,
                             game_stats.gauge_container_height,
                             world_x,
@@ -100,7 +100,7 @@ pub fn spawn_gauge_from_event(
 /// This is called when the player presses space to hit the gauge
 pub fn check_gauge_hit_window(
     mut game_stats: ResMut<GameState>,
-    ball_gauge: Single<&mut BallGauge>,
+    ball_gauge: Single<&mut RectGauge>,
     keyboard: Res<ButtonInput<KeyCode>>,
     mut hit_kapaow: MessageWriter<GaugeKaprowHitMassage>,
     mut hit_egg: MessageWriter<GaugeEggHitMassage>,
@@ -142,4 +142,45 @@ pub fn check_gauge_hit_window(
 fn check_zone(position: f32, start: f32, end: f32) -> bool {
     let in_target = position >= start && position <= end;
     in_target
+}
+
+/// Despawn target zones when the gauge is hit
+/// This removes the colored target zone after a successful hit
+/// allowing it to spawn again when the next ingredient is dropped
+pub fn despawn_target_zone_on_hit(
+    mut commands: Commands,
+    mut game_stats: ResMut<GameState>,
+    mut kaprow_hit_events: MessageReader<GaugeKaprowHitMassage>,
+    mut egg_hit_events: MessageReader<GaugeEggHitMassage>,
+    query: Query<(Entity, &Name)>,
+) {
+    // Handle Kapaow gauge hits
+    for _ in kaprow_hit_events.read() {
+        if game_stats.target_kapaow_x.is_some() {
+            // Find and despawn the kapaow target zone
+            for (entity, name) in query.iter() {
+                if name.as_str() == "kapaow_gauge" {
+                    commands.entity(entity).despawn();
+                }
+            }
+            // Reset the kapaow gauge state so it can spawn again
+            game_stats.kpaow_has_guage = false;
+            game_stats.target_kapaow_x = None;
+        }
+    }
+
+    // Handle Egg gauge hits
+    for _ in egg_hit_events.read() {
+        if game_stats.target_egg_x.is_some() {
+            // Find and despawn the egg target zone
+            for (entity, name) in query.iter() {
+                if name.as_str() == "egg_gauge" {
+                    commands.entity(entity).despawn();
+                }
+            }
+            // Reset the egg gauge state so it can spawn again
+            game_stats.egg_has_guage = false;
+            game_stats.target_egg_x = None;
+        }
+    }
 }

@@ -70,7 +70,7 @@ pub fn handle_egg_pan_ingredient_drop(
                         image,
                         row,
                         col,
-                        300,
+                        500,
                         &mut atlas_layouts,
                         &mut animations,
                     );
@@ -122,7 +122,7 @@ pub fn handle_egg_pan_ingredient_drop(
                     };
 
                     let image = asset_server.load(image_path);
-                    let duration = 300;
+                    let duration = 500;
 
                     let (sprite, spritesheet_animation) = spawn_ingredient_animation(
                         image.clone(),

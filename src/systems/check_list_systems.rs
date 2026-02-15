@@ -1,150 +1,84 @@
 use bevy::prelude::*;
 
-use crate::entities::check_list::{
-    CheckListCheckbox, CheckListIngredientType, CheckListItem, CheckListItemIcon, CheckListStatus,
-    CheckListSymbol,
-};
+use crate::entities::check_list::{CheckListItem, CheckListPaper};
 use crate::entities::ingredient::IngredientType;
-use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage};
+use crate::entities::pan::{EggPanStepStateTag, KaprowPanStepStateTag, PanEgg, PanKapaow};
 use crate::message::ingredient_message::IngredientDroppedMessage;
 
+use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
 use crate::resource::LastDroppedIngredient;
 
-/// Update checklist status when ingredients are dropped
-/// Sets status to DroppedIncorrect initially (will be updated to correct if gauge is hit)
 pub fn update_checklist_on_drop(
+    mut commands: Commands,
     mut events: MessageReader<IngredientDroppedMessage>,
-    mut checklist_query: Query<
-        (&CheckListIngredientType, &mut CheckListStatus),
-        With<CheckListItem>,
-    >,
+    checklist_query: Query<(&Children, &Transform), With<CheckListPaper>>,
+    checklist_item_query: Query<&CheckListItem, With<CheckListItem>>,
     mut last_dropped: ResMut<LastDroppedIngredient>,
+    asset_server: Res<AssetServer>,
+    kaprow_pan_step_tag: Single<&KaprowPanStepStateTag>,
+    egg_pan_step_tag: Single<&EggPanStepStateTag>,
+    q_kaprow_pan: Query<(), With<PanKapaow>>,
+    q_egg_pan: Query<(), With<PanEgg>>,
 ) {
+    let marked_img = asset_server.load("check_list/image/Marked.png");
+
     for event in events.read() {
-        // Track the last dropped ingredient
         last_dropped.set(event.ingredient_type);
-        info!(
-            "Last dropped ingredient set to: {:?}",
-            event.ingredient_type
-        );
 
-        for (checklist_type, mut status) in checklist_query.iter_mut() {
-            if checklist_type.ingredient_type == event.ingredient_type {
-                // Only update if not already dropped correctly
-                if *status != CheckListStatus::DroppedCorrect {
-                    *status = CheckListStatus::DroppedIncorrect;
-                    info!(
-                        "Checklist updated for {:?}: DroppedIncorrect",
-                        event.ingredient_type
-                    );
-                }
-            }
+        let Some(target_pan) = event.target_pan else {
+            continue;
+        };
+
+        let is_kaprow = q_kaprow_pan.contains(target_pan);
+        let is_egg = q_egg_pan.contains(target_pan);
+
+        // ถ้าไม่ใช่ทั้งคู่ ก็ไม่ต้อง mark
+        if !is_kaprow && !is_egg {
+            continue;
         }
-    }
-}
 
-/// Update checklist to checkmarks when gauge is hit correctly
-pub fn update_checklist_on_gauge_hit(
-    mut gauge_kapaow_events: MessageReader<GaugeKaprowHitMassage>,
-    mut gauge_egg_events: MessageReader<GaugeEggHitMassage>,
-    mut checklist_query: Query<
-        (&CheckListIngredientType, &mut CheckListStatus),
-        With<CheckListItem>,
-    >,
-    // Track which ingredient was last dropped
-    last_dropped: Res<LastDroppedIngredient>,
-) {
-    // Handle Kapaow gauge hits
-    for _event in gauge_kapaow_events.read() {
-        // Get the last dropped ingredient
-        let ingredient_type = match last_dropped.get() {
-            Some(ingredient) => ingredient,
-            None => {
-                info!("Gauge hit: No last dropped ingredient, skipping");
-                continue;
+        let kaprow_step = kaprow_pan_step_tag.0.clone();
+        let egg_step = egg_pan_step_tag.0.clone();
+
+        let allowed = if is_kaprow {
+            match event.ingredient_type {
+                IngredientType::Oil => kaprow_step == KaprowCookingState::Oil,
+                IngredientType::Garlic => kaprow_step == KaprowCookingState::Garlic,
+                IngredientType::Chili => kaprow_step == KaprowCookingState::Chili,
+                IngredientType::Pork => kaprow_step == KaprowCookingState::Pork,
+                IngredientType::OysterSauce => kaprow_step == KaprowCookingState::OysterSauce,
+                IngredientType::MSG => kaprow_step == KaprowCookingState::MSG,
+                IngredientType::Kaprow => kaprow_step == KaprowCookingState::Kaprow,
+                IngredientType::Egg => false,
+                _ => true,
+            }
+        } else {
+            // egg pan
+            match event.ingredient_type {
+                IngredientType::Oil => egg_step == EggCookingState::Oil,
+                IngredientType::Egg => egg_step == EggCookingState::Egg,
+                _ => false,
             }
         };
 
-        info!("Gauge hit for Kapaow: last_dropped = {:?}", ingredient_type);
-
-        // Find the matching checklist item and update it
-        for (checklist_type, mut status) in checklist_query.iter_mut() {
-            if checklist_type.ingredient_type == ingredient_type {
-                *status = CheckListStatus::DroppedCorrect;
-                info!(
-                    "Checklist updated for {:?}: DroppedCorrect",
-                    ingredient_type
-                );
-                break; // Exit loop after finding the match
-            }
+        if !allowed {
+            continue;
         }
-    }
 
-    // Handle Egg gauge hits
-    for _event in gauge_egg_events.read() {
-        info!("Gauge hit for Egg: last_dropped = {:?}", last_dropped.get());
-
-        // Find the Egg checklist item and update it
-        for (checklist_type, mut status) in checklist_query.iter_mut() {
-            if checklist_type.ingredient_type == IngredientType::Egg {
-                *status = CheckListStatus::DroppedCorrect;
-                info!("Checklist updated for Egg: DroppedCorrect");
-                break; // Exit loop after finding the match
-            }
-        }
-    }
-}
-
-/// Update checklist symbols, icon colors, and checkbox state based on status
-/// - NotDropped: White icon, empty symbol, unchecked checkbox
-/// - DroppedIncorrect: Gray icon, red X, unchecked checkbox
-/// - DroppedCorrect: Gray icon, green ✓, checked checkbox
-pub fn update_checklist_symbols(
-    checklist_query: Query<(&CheckListStatus, &Children), With<CheckListItem>>,
-    mut sprite_queries: ParamSet<(
-        Query<&mut Sprite, With<CheckListItemIcon>>,
-        Query<&mut Sprite, With<CheckListCheckbox>>,
-        Query<&mut Sprite, With<CheckListSymbol>>,
-    )>,
-    asset_server: Res<AssetServer>,
-) {
-    for (status, children) in checklist_query.iter() {
-        for child in children.iter() {
-            if let Ok(mut sprite) = sprite_queries.p0().get_mut(child) {
-                // Update icon color based on status
-                match status {
-                    CheckListStatus::NotDropped => {
-                        sprite.color = Color::WHITE;
-                    }
-                    CheckListStatus::DroppedIncorrect | CheckListStatus::DroppedCorrect => {
-                        sprite.color = Color::srgb(0.3, 0.3, 0.3); // Gray
-                    }
-                }
-            }
-
-            if let Ok(mut sprite) = sprite_queries.p1().get_mut(child) {
-                // Update checkbox based on status
-                match status {
-                    CheckListStatus::NotDropped | CheckListStatus::DroppedIncorrect => {
-                        sprite.image = asset_server.load("check_list/image/check_box.png");
-                    }
-                    CheckListStatus::DroppedCorrect => {
-                        sprite.image = asset_server.load("check_list/image/check_box_correct.png");
-                    }
-                }
-            }
-
-            if let Ok(mut sprite) = sprite_queries.p2().get_mut(child) {
-                // Update hashtag symbol based on status
-                match status {
-                    CheckListStatus::NotDropped => {
-                        sprite.color = Color::srgba(1.0, 0.0, 0.0, 0.0); // Invisible
-                    }
-                    CheckListStatus::DroppedIncorrect => {
-                        sprite.color = Color::srgba(1.0, 0.0, 0.0, 1.0); // Red, visible
-                    }
-                    CheckListStatus::DroppedCorrect => {
-                        sprite.color = Color::srgba(0.0, 1.0, 0.0, 1.0); // Green, visible
+        for (children, paper_tf) in checklist_query.iter() {
+            for child in children.iter() {
+                if let Ok(item) = checklist_item_query.get(child) {
+                    if item.0 == event.ingredient_type {
+                        commands.spawn((
+                            Sprite {
+                                image: marked_img.clone(),
+                                ..default()
+                            },
+                            Transform::from_translation(
+                                paper_tf.translation + Vec3::new(0.0, item.1, 100.0),
+                            ),
+                        ));
+                        break;
                     }
                 }
             }

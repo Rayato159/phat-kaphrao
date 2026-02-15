@@ -15,15 +15,15 @@ use pad_kaprao::{
         time_state::{check_game_timer, start_timer},
     },
     systems::{
-        check_list_systems::{
-            update_checklist_on_drop, update_checklist_on_gauge_hit, update_checklist_symbols,
-        },
+        check_list_systems::update_checklist_on_drop,
         egg_cooking_systems::{handle_egg_pan_ingredient_drop, next_step_egg_cooking},
         game_end_systems::{
             cleanup_game_end_screens, handle_game_over_screen_input, handle_victory_screen_input,
             show_game_over_screen, show_victory_screen,
         },
-        gauge_systems::{check_gauge_hit_window, spawn_gauge_from_event},
+        gauge_systems::{
+            check_gauge_hit_window, despawn_target_zone_on_hit, spawn_gauge_from_event,
+        },
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
         ingredient_systems::{spawn_ingredients, update_dragging_ingredient},
         init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state},
@@ -92,12 +92,11 @@ fn main() {
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,
+                despawn_target_zone_on_hit,
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
                 update_countdown_timer,
                 update_checklist_on_drop,
-                update_checklist_on_gauge_hit,
-                update_checklist_symbols,
                 update_hearts_ui,
             )
                 .run_if(in_state(InGame)),

@@ -7,7 +7,7 @@ pub enum KaprowCookingState {
     #[default]
     Oil,
     Garlic,
-    Chilli,
+    Chili,
     Pork,
     OysterSauce,
     MSG,
@@ -19,8 +19,8 @@ impl KaprowCookingState {
     pub fn next_step(&self) -> Self {
         match self {
             KaprowCookingState::Oil => KaprowCookingState::Garlic,
-            KaprowCookingState::Garlic => KaprowCookingState::Chilli,
-            KaprowCookingState::Chilli => KaprowCookingState::Pork,
+            KaprowCookingState::Garlic => KaprowCookingState::Chili,
+            KaprowCookingState::Chili => KaprowCookingState::Pork,
             KaprowCookingState::Pork => KaprowCookingState::OysterSauce,
             KaprowCookingState::OysterSauce => KaprowCookingState::MSG,
             KaprowCookingState::MSG => KaprowCookingState::Kaprow,
@@ -33,7 +33,7 @@ impl KaprowCookingState {
         match self {
             KaprowCookingState::Oil => "Oil".to_string(),
             KaprowCookingState::Garlic => "Garlic".to_string(),
-            KaprowCookingState::Chilli => "Chilli".to_string(),
+            KaprowCookingState::Chili => "Chili".to_string(),
             KaprowCookingState::Pork => "Pork".to_string(),
             KaprowCookingState::OysterSauce => "Oyster Sauce".to_string(),
             KaprowCookingState::MSG => "MSG".to_string(),
@@ -48,7 +48,7 @@ impl From<KaprowCookingState> for IngredientType {
         match state {
             KaprowCookingState::Oil => IngredientType::Oil,
             KaprowCookingState::Garlic => IngredientType::Garlic,
-            KaprowCookingState::Chilli => IngredientType::Chilli,
+            KaprowCookingState::Chili => IngredientType::Chili,
             KaprowCookingState::Pork => IngredientType::Pork,
             KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
             KaprowCookingState::MSG => IngredientType::MSG,

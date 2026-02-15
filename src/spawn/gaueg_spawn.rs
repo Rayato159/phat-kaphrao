@@ -1,10 +1,11 @@
-use crate::entities::gauge::{BallGauge, GaugeFollowsPan};
+use crate::entities::gauge::{GaugeFollowsPan, RectGauge};
+use bevy::math::primitives::Rectangle;
 use bevy::prelude::{ColorMaterial, MeshMaterial2d};
 use bevy::{
     asset::Assets,
     color::Color,
     ecs::{bundle::Bundle, entity::Entity, name::Name},
-    math::{primitives::Circle, Vec2, Vec3},
+    math::{Vec2, Vec3},
     mesh::{Mesh, Mesh2d},
     sprite::Sprite,
     transform::components::Transform,
@@ -50,16 +51,16 @@ pub fn gauge_target_zone_spawn(
         Transform::from_translation(Vec3::new(world_x, 0.0, 0.1)),
     )
 }
-pub fn gauge_ball_spawn(
-    ball_color: Color,
+pub fn gauge_rect_spawn(
+    rect_color: Color,
     meshes: &mut Assets<Mesh>,
     materials: &mut Assets<ColorMaterial>,
 ) -> impl Bundle {
     (
-        Name::new("MovingBall"),
-        BallGauge::default(),
-        Mesh2d(meshes.add(Circle::new(20.0))),
-        MeshMaterial2d(materials.add(ColorMaterial::from(ball_color))),
+        Name::new("MovingRect"),
+        RectGauge::default(),
+        Mesh2d(meshes.add(Rectangle::new(20.0, 40.0))),
+        MeshMaterial2d(materials.add(ColorMaterial::from(rect_color))),
         Transform::from_translation(Vec3::new(0.0, 0.0, 0.2)),
     )
 }

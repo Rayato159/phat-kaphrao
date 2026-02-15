@@ -57,11 +57,11 @@ pub fn spawn_ingredients(
     let origin_y = -(h * 0.4) + bottom_margin + grid_h;
 
     // === Ingredient order: row-major (top → bottom) ===
-    // Sequence: Oil -> Garlic -> Chilli -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
+    // Sequence: Oil -> Garlic -> Chili -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
     let ingredient_grid = [
         (IngredientType::Oil, 0, 0),
         (IngredientType::Garlic, 1, 0),
-        (IngredientType::Chilli, 0, 1),
+        (IngredientType::Chili, 0, 1),
         (IngredientType::Pork, 1, 1),
         (IngredientType::OysterSauce, 0, 2),
         (IngredientType::MSG, 1, 2),
