@@ -8,6 +8,12 @@ pub struct CheckListPaper;
 #[derive(Component)]
 pub struct CheckListItem(pub IngredientType, pub f32);
 
+/// Component to indicate that a checklist item has been marked
+/// Contains the ingredient type to identify which item is marked
+/// and the paper entity to track which checklist it belongs to
+#[derive(Component)]
+pub struct CheckListMark(pub IngredientType, pub Entity);
+
 /// Spawn the checklist on the left side of the screen
 /// Displays all ingredients in a single column layout
 pub fn spawn_checklist(

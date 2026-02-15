@@ -96,7 +96,9 @@ fn main() {
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
                 update_countdown_timer,
-                update_checklist_on_drop,
+                update_checklist_on_drop
+                    .after(handle_kaprow_pan_ingredient_drop)
+                    .after(handle_egg_pan_ingredient_drop),
                 update_hearts_ui,
             )
                 .run_if(in_state(InGame)),
