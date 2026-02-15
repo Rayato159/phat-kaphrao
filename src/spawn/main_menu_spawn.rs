@@ -5,9 +5,9 @@ use bevy::{
     prelude::*,
     text::{TextColor, TextFont},
     ui::{
+        widget::{Button, Text},
         AlignItems, BackgroundColor, BorderRadius, FlexDirection, JustifyContent, Node, Val,
         ZIndex,
-        widget::{Button, Text},
     },
     utils::default,
 };
@@ -34,7 +34,7 @@ pub fn main_menu_parent_spawn() -> impl Bundle {
 
 pub fn main_menu_title_spawn() -> impl Bundle {
     (
-        Text::new("Pad Kaphrao"),
+        Text::new("Phat Kaphrao"),
         TextFont {
             font_size: 64.0,
             ..default()
