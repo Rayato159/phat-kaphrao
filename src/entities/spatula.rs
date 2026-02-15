@@ -5,9 +5,9 @@ pub const SCALE: f32 = 10.0; // Scale factor for all pan objects
 #[derive(Component)]
 pub struct Spatula;
 
-/// Marker component for Kapaow pan's spatula
+/// Marker component for Kaphrao pan's spatula
 #[derive(Component)]
-pub struct KapaowSpatula;
+pub struct KaphraoSpatula;
 
 /// Marker component for Egg pan's spatula
 #[derive(Component)]

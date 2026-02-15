@@ -19,10 +19,10 @@ pub struct HUD;
 #[derive(Component)]
 pub struct StepIndicator;
 
-/// Marker component for the Kapaow pan step indicator
-/// Shows the next ingredient for the Kapaow (Thai Kaprow Pork) cooking sequence
+/// Marker component for the Kaphrao pan step indicator
+/// Shows the next ingredient for the Kaphrao (Thai Kaphrao Pork) cooking sequence
 #[derive(Component)]
-pub struct StepIndicatorKapaow;
+pub struct StepIndicatorKaphrao;
 
 /// Marker component for the Egg pan step indicator
 /// Shows the next ingredient for the Egg cooking sequence

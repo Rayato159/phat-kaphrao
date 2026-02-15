@@ -2,22 +2,22 @@
 //!
 //! Contains all pan-related marker components used for different cooking stations:
 //! - FryingPan: Main frying pan entity
-//! - PanKapaow: Pan for the Kapaow (Thai Kaprow Pork) recipe
+//! - PanKaphrao: Pan for the Kaphrao (Thai Kaphrao Pork) recipe
 //! - PanEgg: Pan for the Egg-based recipe
 
 use bevy::prelude::*;
 
-use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
+use crate::resource::cooking_state::{EggCookingState, KaphraoCookingState};
 
 pub const SCALE: f32 = 10.0; // Scale factor for all pan objects
 pub const PAN_SIZE: f32 = 32.0 * SCALE; // 32 is original pan size, scaled up by SCALE
 pub const INGREDIENT_SIZE: f32 = 32.0 * SCALE; // 32 is original ingredient size, scaled up by SCALE
 
-/// Marker component for the Kapaow pan
-/// Used for the Pad Kapaow (Thai Kaprow Pork Stir-fry) recipe
+/// Marker component for the Kaphrao pan
+/// Used for the Phat Kaphrao (Thai Kaphrao Pork Stir-fry) recipe
 #[derive(Component)]
 #[require(Transform, Visibility)]
-pub struct PanKapaow;
+pub struct PanKaphrao;
 
 /// Marker component for the Egg pan
 /// Used for the Egg-based recipe
@@ -30,10 +30,10 @@ pub struct PanEgg;
 pub struct Pan;
 
 #[derive(Component)]
-pub struct KaprowPanStepStateTag(pub KaprowCookingState);
+pub struct KaphraoPanStepStateTag(pub KaphraoCookingState);
 
 #[derive(Component)]
-pub struct KapaowStepSprite;
+pub struct KaphraoStepSprite;
 
 #[derive(Component)]
 pub struct EggPanStepStateTag(pub EggCookingState);

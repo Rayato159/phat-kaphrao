@@ -11,14 +11,14 @@
 use bevy::prelude::*;
 
 use crate::entities::ingredient::{
-    Dragging, DroppedIngredient, HoverOriginalZ, Ingredient, IngredientForegroundLink,
-    IngredientType, OriginalPosition, INGREDIENT_SIZE,
+    Dragging, DroppedIngredient, HoverOriginalZ, INGREDIENT_SIZE, Ingredient,
+    IngredientForegroundLink, IngredientType, OriginalPosition,
 };
-use crate::entities::pan::{PanEgg, PanKapaow};
-use crate::entities::ui::{StepIndicatorEgg, StepIndicatorKapaow};
-use crate::logic::drop_on_pan::{handle_drop_on_pan_egg, handle_drop_on_pan_kapoaw};
+use crate::entities::pan::{PanEgg, PanKaphrao};
+use crate::entities::ui::{StepIndicatorEgg, StepIndicatorKaphrao};
+use crate::logic::drop_on_pan::{handle_drop_on_pan_egg, handle_drop_on_pan_kaphrao};
 use crate::message::ingredient_message::IngredientDroppedMessage;
-use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
+use crate::resource::cooking_state::{EggCookingState, KaphraoCookingState};
 use crate::resource::game_state::GameState;
 use crate::spawn::ingredient_spawn::{
     ghost_ingredient_foreground_spawn, ingredient_background_spawn,
@@ -57,7 +57,7 @@ pub fn spawn_ingredients(
     let origin_y = -(h * 0.4) + bottom_margin + grid_h;
 
     // === Ingredient order: row-major (top → bottom) ===
-    // Sequence: Oil -> Garlic -> Chili -> Pork -> OysterSauce -> MSG -> Kaprow -> Egg
+    // Sequence: Oil -> Garlic -> Chili -> Pork -> OysterSauce -> MSG -> Kaphrao -> Egg
     let ingredient_grid = [
         (IngredientType::Oil, 0, 0),
         (IngredientType::Garlic, 1, 0),
@@ -65,7 +65,7 @@ pub fn spawn_ingredients(
         (IngredientType::Pork, 1, 1),
         (IngredientType::OysterSauce, 0, 2),
         (IngredientType::MSG, 1, 2),
-        (IngredientType::Kaprow, 0, 3),
+        (IngredientType::Kaphrao, 0, 3),
         (IngredientType::Egg, 1, 3),
     ];
 
@@ -171,7 +171,7 @@ pub fn on_drag_end(
     mut commands: Commands,
     mut event_writer: MessageWriter<IngredientDroppedMessage>,
     mut game_stats: ResMut<GameState>,
-    kapow_state: Res<State<KaprowCookingState>>,
+    kapow_state: Res<State<KaphraoCookingState>>,
     egg_state: Res<State<EggCookingState>>,
     q_foreground_link: Query<&IngredientForegroundLink>,
     q_ingredients: Query<&Ingredient>,
@@ -179,10 +179,10 @@ pub fn on_drag_end(
     windows: Query<&Window>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
     q_dragging: Query<Entity, With<Dragging>>,
-    q_pan_kapoaw: Query<(Entity, &Transform), With<PanKapaow>>,
+    q_pan_kaphrao: Query<(Entity, &Transform), With<PanKaphrao>>,
     q_pan_egg: Query<(Entity, &Transform), With<PanEgg>>,
     mut check_drop_ingredient_text: ParamSet<(
-        Query<(&mut Text, &mut TextColor), (With<DroppedIngredient>, With<StepIndicatorKapaow>)>,
+        Query<(&mut Text, &mut TextColor), (With<DroppedIngredient>, With<StepIndicatorKaphrao>)>,
         Query<(&mut Text, &mut TextColor), (With<DroppedIngredient>, With<StepIndicatorEgg>)>,
     )>,
 ) {
@@ -213,25 +213,25 @@ pub fn on_drag_end(
                     .unwrap();
 
                 // Get pan entities
-                let (pan_kapoaw_entity, _) = q_pan_kapoaw.single().unwrap();
+                let (pan_kaphrao_entity, _) = q_pan_kaphrao.single().unwrap();
                 let (pan_egg_entity, _) = q_pan_egg.single().unwrap();
 
                 info!("position_drop {:?}", position_drop);
 
-                // Create separate queries for kapaow and egg step indicators
-                // Use ParamSet to access queries for kapaow and egg step indicators
+                // Create separate queries for kaphrao and egg step indicators
+                // Use ParamSet to access queries for kaphrao and egg step indicators
 
                 let mut handled = false;
 
-                // Check pan kapoaw first (left side: -300.0 to 0.0)
+                // Check pan kaphrao first (left side: -300.0 to 0.0)
                 if position_drop.x >= -300.0 && position_drop.x < 0.0 {
-                    if handle_drop_on_pan_kapoaw(
+                    if handle_drop_on_pan_kaphrao(
                         &mut event_writer,
                         &mut game_stats,
                         &mut check_drop_ingredient_text.p0(),
                         ingredient.ingredient_type,
                         drop_position,
-                        pan_kapoaw_entity,
+                        pan_kaphrao_entity,
                         kapow_state.get(),
                     ) {
                         handled = true;

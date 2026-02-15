@@ -141,10 +141,9 @@ pub fn handle_egg_pan_ingredient_drop(
                     );
 
                     for animation in animations_cahce.iter() {
-                        egg_cooking_animation.animations.insert(
-                            (animation.0 .0.clone(), animation.0 .1),
-                            animation.1.clone(),
-                        );
+                        egg_cooking_animation
+                            .animations
+                            .insert((animation.0.0.clone(), animation.0.1), animation.1.clone());
                     }
 
                     let transform = Transform::from_translation(
@@ -215,8 +214,8 @@ pub fn next_step_egg_cooking(
         if matches!(next, EggCookingState::None) {
             game_stats.egg_is_finished = true;
 
-            // Check if kapaow is not finished yet - egg wins!
-            if game_stats.kapaow_is_finished && game_stats.egg_is_finished {
+            // Check if kaphrao is not finished yet - egg wins!
+            if game_stats.kaphrao_is_finished && game_stats.egg_is_finished {
                 game_win.write(GameWinMessage);
             }
         }

@@ -4,8 +4,8 @@
 //! - trigger_spatula_animation: Adds animation component to spatulas when gauge is hit
 //! - update_spatula_animation: Updates spatula position during cooking animation
 
-use crate::entities::spatula::{EggSpatula, KapaowSpatula, Spatula, SpatulaAnimation};
-use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaprowHitMassage};
+use crate::entities::spatula::{EggSpatula, KaphraoSpatula, Spatula, SpatulaAnimation};
+use crate::message::gaug_message::{GaugeEggHitMassage, GaugeKaphraoHitMassage};
 use bevy::prelude::*;
 
 /// Trigger spatula cooking animation when gauge is hit
@@ -13,14 +13,14 @@ use bevy::prelude::*;
 /// to the spatula of the activated pan only (determined by x position)
 pub fn trigger_spatula_animation(
     mut commands: Commands,
-    mut kapaow_hit_events: MessageReader<GaugeKaprowHitMassage>,
+    mut kaphrao_hit_events: MessageReader<GaugeKaphraoHitMassage>,
     mut egg_hit_events: MessageReader<GaugeEggHitMassage>,
-    q_kapaow_spatula: Query<(Entity, &Transform), (With<Spatula>, With<KapaowSpatula>)>,
+    q_kaphrao_spatula: Query<(Entity, &Transform), (With<Spatula>, With<KaphraoSpatula>)>,
     q_egg_spatula: Query<(Entity, &Transform), (With<Spatula>, With<EggSpatula>)>,
 ) {
-    // Handle Kapaow gauge hits - animate only kapaow spatula
-    for _ in kapaow_hit_events.read() {
-        for (spatula_entity, transform) in q_kapaow_spatula.iter() {
+    // Handle Kaphrao gauge hits - animate only kaphrao spatula
+    for _ in kaphrao_hit_events.read() {
+        for (spatula_entity, transform) in q_kaphrao_spatula.iter() {
             commands.entity(spatula_entity).insert(SpatulaAnimation {
                 timer: 0.5,
                 duration: 0.5,

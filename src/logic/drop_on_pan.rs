@@ -3,10 +3,10 @@ use bevy::prelude::*;
 use crate::{
     entities::{
         ingredient::{DroppedIngredient, IngredientType},
-        ui::{StepIndicatorEgg, StepIndicatorKapaow},
+        ui::{StepIndicatorEgg, StepIndicatorKaphrao},
     },
     message::ingredient_message::IngredientDroppedMessage,
-    resource::{cooking_state::KaprowCookingState, game_state::GameState},
+    resource::{cooking_state::KaphraoCookingState, game_state::GameState},
 };
 
 /// Helper function to handle drop on pan egg area (x >= 0.0 && x <= 300.0)
@@ -50,18 +50,18 @@ pub fn handle_drop_on_pan_egg(
     });
 }
 
-/// Helper function to handle drop on pan kapoaw area (x >= -300.0 && x < 0.0)
-pub fn handle_drop_on_pan_kapoaw(
+/// Helper function to handle drop on pan kaphrao area (x >= -300.0 && x < 0.0)
+pub fn handle_drop_on_pan_kaphrao(
     event_writer: &mut MessageWriter<IngredientDroppedMessage>,
     game_stats: &mut GameState,
     check_drop_ingredient_text: &mut Query<
         (&mut Text, &mut TextColor),
-        (With<DroppedIngredient>, With<StepIndicatorKapaow>),
+        (With<DroppedIngredient>, With<StepIndicatorKaphrao>),
     >,
     ingredient_type: IngredientType,
     drop_position: Vec2,
     pan_entity: Entity,
-    kapow_state: &KaprowCookingState,
+    kapow_state: &KaphraoCookingState,
 ) -> bool {
     info!("kapow_state {:?}", kapow_state);
     info!(
@@ -75,7 +75,7 @@ pub fn handle_drop_on_pan_kapoaw(
     }
 
     info!("pan_entity {:?}", pan_entity);
-    game_stats.ingredient_kapaow_dropped = true;
+    game_stats.ingredient_kaphrao_dropped = true;
 
     for (mut text, mut color) in check_drop_ingredient_text.iter_mut() {
         *text = Text::new("Ingredient dropped!");
@@ -83,7 +83,7 @@ pub fn handle_drop_on_pan_kapoaw(
     }
 
     info!(
-        "Dropped {:?} on pan kapoaw at ({:.1}, {:.1})",
+        "Dropped {:?} on pan kaphrao at ({:.1}, {:.1})",
         ingredient_type, drop_position.x, drop_position.y
     );
 

@@ -3,11 +3,11 @@ use std::collections::HashMap;
 use bevy::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
 
-use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
+use crate::resource::cooking_state::{EggCookingState, KaphraoCookingState};
 
 #[derive(Resource, Clone, Debug, Default)]
-pub struct KaprowCookingAnimations {
-    pub animations: HashMap<(KaprowCookingState, u8), Handle<Animation>>,
+pub struct KaphraoCookingAnimations {
+    pub animations: HashMap<(KaphraoCookingState, u8), Handle<Animation>>,
 }
 
 #[derive(Resource, Clone, Debug, Default)]

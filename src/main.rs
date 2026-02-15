@@ -1,20 +1,21 @@
 use bevy::{prelude::*, window::WindowMode};
 use bevy_kira_audio::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
-use pad_kaprao::{
+use phat_kaphrao::{
+    AppState, GAME_TITLE, InGame, WINDOW_HEIGHT, WINDOW_WIDTH,
     animate::gauge_animate::moving_ball_gauge_animation,
     entities::check_list::spawn_checklist,
     logic::check_lose::check_game_over,
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
         gaug_message::{
-            GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeMissMassage, GaugeSpawnMassage,
+            GaugeEggHitMassage, GaugeKaphraoHitMassage, GaugeMissMassage, GaugeSpawnMassage,
         },
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
-        cooking_animations::{EggCookingAnimations, KaprowCookingAnimations},
-        cooking_state::{EggCookingState, KaprowCookingState},
+        cooking_animations::{EggCookingAnimations, KaphraoCookingAnimations},
+        cooking_state::{EggCookingState, KaphraoCookingState},
         game_state::CookingAudioTimer,
         time_state::{check_game_timer, start_timer},
     },
@@ -32,7 +33,7 @@ use pad_kaprao::{
         heart_system::{cleanup_hud, setup_heart_atlas_ui, spawn_hud_and_hearts, update_hearts_ui},
         ingredient_systems::{spawn_ingredients, update_dragging_ingredient},
         init_game_systems::{reset_game_state, setup_camera_and_scene, setup_initial_game_state},
-        kapaow_cooking_systems::{handle_kaprow_pan_ingredient_drop, next_step_kaprow_cooking},
+        kaphrao_cooking_systems::{handle_kaphrao_pan_ingredient_drop, next_step_kaphrao_cooking},
         menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu},
         music_system::start_music,
         observer_systems::observe_game_state_changes,
@@ -40,12 +41,11 @@ use pad_kaprao::{
         spatula_animation_systems::{trigger_spatula_animation, update_spatula_animation},
         time_count_down_systems::{spawn_countdown_timer, update_countdown_timer},
     },
-    AppState, InGame, GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH,
 };
 
 fn main() {
     App::new()
-        .insert_resource(KaprowCookingAnimations::default())
+        .insert_resource(KaphraoCookingAnimations::default())
         .insert_resource(EggCookingAnimations::default())
         .init_resource::<CookingAudioTimer>()
         .add_plugins((
@@ -64,14 +64,14 @@ fn main() {
         ))
         .add_plugins(SpritesheetAnimationPlugin)
         .init_state::<AppState>()
-        .init_state::<KaprowCookingState>()
+        .init_state::<KaphraoCookingState>()
         .init_state::<EggCookingState>()
         .add_computed_state::<InGame>()
         .add_message::<GaugeSpawnMassage>()
         .add_message::<GameWinMessage>()
         .add_message::<GameLoseMessage>()
         .add_message::<IngredientDroppedMessage>()
-        .add_message::<GaugeKaprowHitMassage>()
+        .add_message::<GaugeKaphraoHitMassage>()
         .add_message::<GaugeEggHitMassage>()
         .add_message::<GaugeMissMassage>()
         .add_systems(
@@ -98,7 +98,7 @@ fn main() {
         .add_systems(
             Update,
             (
-                handle_kaprow_pan_ingredient_drop,
+                handle_kaphrao_pan_ingredient_drop,
                 handle_egg_pan_ingredient_drop,
                 spawn_gauge_from_event,
                 moving_ball_gauge_animation,
@@ -110,7 +110,7 @@ fn main() {
                 check_game_timer,
                 update_countdown_timer,
                 update_checklist_on_drop
-                    .after(handle_kaprow_pan_ingredient_drop)
+                    .after(handle_kaphrao_pan_ingredient_drop)
                     .after(handle_egg_pan_ingredient_drop),
                 update_hearts_ui,
                 update_spatula_animation,
@@ -120,7 +120,7 @@ fn main() {
         .add_systems(Update, update_damage_flash)
         .add_systems(Update, update_cooking_audio_timer)
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
-        .add_systems(Update, next_step_kaprow_cooking.run_if(in_state(InGame)))
+        .add_systems(Update, next_step_kaphrao_cooking.run_if(in_state(InGame)))
         .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))
         .add_systems(OnEnter(InGame), (reset_game_state, setup_heart_atlas_ui))
         .add_systems(OnEnter(AppState::Victory), show_victory_screen)

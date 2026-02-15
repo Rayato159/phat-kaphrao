@@ -2,10 +2,10 @@ use bevy::prelude::*;
 
 use crate::entities::check_list::{CheckListItem, CheckListMark, CheckListPaper};
 use crate::entities::ingredient::IngredientType;
-use crate::entities::pan::{PanEgg, PanKapaow};
+use crate::entities::pan::{PanEgg, PanKaphrao};
 use crate::message::ingredient_message::IngredientDroppedMessage;
 
-use crate::resource::{game_state::GameState, LastDroppedIngredient};
+use crate::resource::{LastDroppedIngredient, game_state::GameState};
 
 pub fn update_checklist_on_drop(
     mut commands: Commands,
@@ -16,7 +16,7 @@ pub fn update_checklist_on_drop(
     asset_server: Res<AssetServer>,
     existing_marks: Query<&CheckListMark, With<CheckListMark>>,
     game_stats: Res<GameState>,
-    q_kaprow_pan: Query<(), With<PanKapaow>>,
+    q_kaphrao_pan: Query<(), With<PanKaphrao>>,
     q_egg_pan: Query<(), With<PanEgg>>,
 ) {
     let marked_img = asset_server.load("check_list/image/Marked.png");
@@ -28,16 +28,16 @@ pub fn update_checklist_on_drop(
             continue;
         };
 
-        let is_kaprow = q_kaprow_pan.contains(target_pan);
+        let is_kaphrao = q_kaphrao_pan.contains(target_pan);
         let is_egg = q_egg_pan.contains(target_pan);
 
-        if !is_kaprow && !is_egg {
+        if !is_kaphrao && !is_egg {
             continue;
         }
 
         // For Oil, only mark if both pans have oil
         if event.ingredient_type == IngredientType::Oil {
-            if !game_stats.kapaow_has_oil || !game_stats.egg_has_oil {
+            if !game_stats.kaphrao_has_oil || !game_stats.egg_has_oil {
                 continue;
             }
         }

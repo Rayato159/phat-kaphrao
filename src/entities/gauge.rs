@@ -3,7 +3,7 @@
 //! Contains all component definitions related to the timing gauge mini-game:
 //! - TimingGauge: Main timing gauge component for the mini-game
 //! - BarGauge: Component for the bar gauge visualization
-//! - BallGaugeKapaow: Component for the Kapaow recipe ball gauge
+//! - BallGaugeKaphrao: Component for the Kaphrao recipe ball gauge
 //! - BallGaugeEgg: Component for the Egg recipe ball gauge
 //! - GaugeSpawnEvent: Event fired when a timing gauge should be spawned
 
@@ -43,8 +43,8 @@ impl Default for TimingGauge {
     }
 }
 
-/// Component for the Kapaow Ball Gauge
-/// Used for the Kapaow recipe timing mini-game
+/// Component for the Kaphrao Ball Gauge
+/// Used for the Kaphrao recipe timing mini-game
 #[derive(Component)]
 pub struct RectGauge {
     /// Current position of the ball (0.0 to 1.0)

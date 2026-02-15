@@ -40,7 +40,7 @@ pub fn spawn_checklist(
         IngredientType::Pork,
         IngredientType::OysterSauce,
         IngredientType::MSG,
-        IngredientType::Kaprow,
+        IngredientType::Kaphrao,
         IngredientType::Egg,
     ];
 

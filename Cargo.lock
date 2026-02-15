@@ -3578,16 +3578,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pad_kaprao"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "bevy_kira_audio",
- "bevy_spritesheet_animation",
- "rand 0.8.5",
-]
-
-[[package]]
 name = "parking"
 version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3639,6 +3629,16 @@ dependencies = [
  "indexmap",
  "serde",
  "serde_derive",
+]
+
+[[package]]
+name = "phat_kaphrao"
+version = "1.0.0"
+dependencies = [
+ "bevy",
+ "bevy_kira_audio",
+ "bevy_spritesheet_animation",
+ "rand 0.8.5",
 ]
 
 [[package]]

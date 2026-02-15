@@ -1,14 +1,14 @@
 use bevy::prelude::*;
 use bevy_spritesheet_animation::prelude::*;
 
-use crate::resource::cooking_state::{EggCookingState, KaprowCookingState};
+use crate::resource::cooking_state::{EggCookingState, KaphraoCookingState};
 
-pub fn insert_kaprow_cooking_animation(
-    state: KaprowCookingState,
+pub fn insert_kaphrao_cooking_animation(
+    state: KaphraoCookingState,
     spritesheet: Spritesheet,
     duration_ms: u32,
     animations: &mut ResMut<Assets<Animation>>,
-) -> Vec<((KaprowCookingState, u8), Handle<Animation>)> {
+) -> Vec<((KaphraoCookingState, u8), Handle<Animation>)> {
     let raw_animation = spritesheet
         .create_animation()
         .add_row(0)

@@ -5,7 +5,7 @@ pub mod gauge_systems;
 pub mod heart_system;
 pub mod ingredient_systems;
 pub mod init_game_systems;
-pub mod kapaow_cooking_systems;
+pub mod kaphrao_cooking_systems;
 pub mod menu_systems;
 pub mod music_system;
 pub mod observer_systems;

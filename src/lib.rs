@@ -1,7 +1,7 @@
-//! Pad Kaprao - A Thai Cooking Game
+//! Phat Kaphrao - A Thai Cooking Game
 //!
 //! This library contains all the game logic, systems, and components
-//! for the Pad Kaprao cooking game.
+//! for the Phat Kaphrao cooking game.
 //!
 //! Features:
 //! - 8 ingredients in a 2x4 grid layout
@@ -29,4 +29,4 @@ pub mod systems;
 pub use resource::game_state::{AppState, GameState, InGame};
 pub const WINDOW_WIDTH: f32 = 1920.0;
 pub const WINDOW_HEIGHT: f32 = 1080.0;
-pub const GAME_TITLE: &str = "Pad Kaprao - Thai Cooking Game";
+pub const GAME_TITLE: &str = "Phat Kaphrao - Thai Cooking Game";

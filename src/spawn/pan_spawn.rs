@@ -2,13 +2,13 @@ use bevy::prelude::*;
 
 use crate::entities::{
     ingredient::PanArea,
-    pan::{PanEgg, PanKapaow},
+    pan::{PanEgg, PanKaphrao},
     spatula::Spatula,
 };
 
-pub fn pan_kaprow_spawn(pan_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
+pub fn pan_kaphrao_spawn(pan_sprite: Handle<Image>, transform: Transform) -> impl Bundle {
     (
-        PanKapaow,
+        PanKaphrao,
         PanArea,
         Sprite {
             image: pan_sprite,

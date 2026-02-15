@@ -3,11 +3,11 @@ use bevy::prelude::*;
 use bevy_kira_audio::prelude::*;
 
 use crate::entities::gauge::RectGauge;
-use crate::entities::pan::{PanEgg, PanKapaow};
+use crate::entities::pan::{PanEgg, PanKaphrao};
 use crate::helper::random_target_start::random_target_start;
 
 use crate::message::gaug_message::{
-    GaugeEggHitMassage, GaugeKaprowHitMassage, GaugeMissMassage, GaugeSpawnMassage,
+    GaugeEggHitMassage, GaugeKaphraoHitMassage, GaugeMissMassage, GaugeSpawnMassage,
 };
 use crate::resource::game_state::{CookingAudioTimer, GameState};
 use crate::spawn::gaueg_spawn::{
@@ -27,7 +27,7 @@ pub fn spawn_gauge_from_event(
     mut gauge_events: MessageReader<GaugeSpawnMassage>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    q_kapaow_pan: Query<&PanKapaow>,
+    q_kaphrao_pan: Query<&PanKaphrao>,
     q_egg_pan: Query<&PanEgg>,
 ) {
     for event in gauge_events.read() {
@@ -63,23 +63,19 @@ pub fn spawn_gauge_from_event(
         let world_x =
             (start + game_stats.target_width / 2.0 - 0.5) * game_stats.gauge_container_width;
 
-        if let Ok(_) = q_kapaow_pan.get(event.target_pan.unwrap()) {
-            if !game_stats.kpaow_has_guage {
-                game_stats.kpaow_has_guage = true;
-                game_stats.target_kapaow_x = Some(start);
+        if let Ok(_) = q_kaphrao_pan.get(event.target_pan.unwrap()) {
+            if !game_stats.kaphrao_has_gauge {
+                game_stats.kaphrao_has_gauge = true;
+                game_stats.target_kaphrao_x = Some(start);
 
                 commands.entity(container_entity).with_children(|parent| {
-                    let zone_entity = parent
-                        .spawn(gauge_target_zone_spawn(
-                            "kapaow_gauge",
-                            Color::srgb(108.0 / 255.0, 166.0 / 255.0, 81.0 / 255.0),
-                            world_width,
-                            game_stats.gauge_container_height,
-                            world_x,
-                        ))
-                        .id();
-
-                    parent.commands().entity(zone_entity);
+                    parent.spawn(gauge_target_zone_spawn(
+                        "kaphrao_gauge",
+                        Color::srgb(108.0 / 255.0, 166.0 / 255.0, 81.0 / 255.0),
+                        world_width,
+                        game_stats.gauge_container_height,
+                        world_x,
+                    ));
                 });
             }
         } else if let Ok(_) = q_egg_pan.get(event.target_pan.unwrap()) {
@@ -111,7 +107,7 @@ pub fn check_gauge_hit_window(
     mut game_stats: ResMut<GameState>,
     ball_gauge: Single<&mut RectGauge>,
     keyboard: Res<ButtonInput<KeyCode>>,
-    mut hit_kapaow: MessageWriter<GaugeKaprowHitMassage>,
+    mut hit_kaphrao: MessageWriter<GaugeKaphraoHitMassage>,
     mut hit_egg: MessageWriter<GaugeEggHitMassage>,
     mut miss_event: MessageWriter<GaugeMissMassage>,
 ) {
@@ -123,21 +119,21 @@ pub fn check_gauge_hit_window(
 
         let mut hit_any = false;
 
-        // ----- KAPAO -----
-        if let Some(start) = game_stats.target_kapaow_x {
+        // ----- KAPHRAO -----
+        if let Some(start) = game_stats.target_kaphrao_x {
             let end = start + zone_width;
 
             if check_zone(position, start, end) {
                 info!(
-                    "Hit Kapaow target zone! Position {:.3} in range [{:.3}, {:.3}]",
+                    "Hit Kaphrao target zone! Position {:.3} in range [{:.3}, {:.3}]",
                     position, start, end
                 );
-                hit_kapaow.write(GaugeKaprowHitMassage {});
+                hit_kaphrao.write(GaugeKaphraoHitMassage {});
                 hit_any = true;
-                game_stats.count_pud_kapoaw += 1.0;
+                game_stats.count_phat_kaphrao += 1.0;
             } else {
                 info!(
-                    "Missed Kapaow target zone. Position {:.3} not in range [{:.3}, {:.3}]",
+                    "Missed Kaphrao target zone. Position {:.3} not in range [{:.3}, {:.3}]",
                     position, start, end
                 );
             }
@@ -246,25 +242,25 @@ pub fn despawn_target_zone_on_hit(
     mut commands: Commands,
     mut game_stats: ResMut<GameState>,
     mut audio_timer: ResMut<CookingAudioTimer>,
-    mut kaprow_hit_events: MessageReader<GaugeKaprowHitMassage>,
+    mut kaphrao_hit_events: MessageReader<GaugeKaphraoHitMassage>,
     mut egg_hit_events: MessageReader<GaugeEggHitMassage>,
     query: Query<(Entity, &Name)>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
 ) {
-    // Handle Kapaow gauge hits
-    for _ in kaprow_hit_events.read() {
-        if game_stats.target_kapaow_x.is_some() {
+    // Handle Kaphrao gauge hits
+    for _ in kaphrao_hit_events.read() {
+        if game_stats.target_kaphrao_x.is_some() {
             cooking_audio_play(&mut audio_timer, &asset_server, &audio);
-            // Find and despawn the kapaow target zone
+            // Find and despawn the kaphrao target zone
             for (entity, name) in query.iter() {
-                if name.as_str() == "kapaow_gauge" {
+                if name.as_str() == "kaphrao_gauge" {
                     commands.entity(entity).despawn();
                 }
             }
-            // Reset the kapaow gauge state so it can spawn again
-            game_stats.kpaow_has_guage = false;
-            game_stats.target_kapaow_x = None;
+            // Reset the kaphrao gauge state so it can spawn again
+            game_stats.kaphrao_has_gauge = false;
+            game_stats.target_kaphrao_x = None;
         }
     }
 

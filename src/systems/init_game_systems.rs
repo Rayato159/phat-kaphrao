@@ -7,12 +7,12 @@ use crate::{
     entities::{
         check_list::CheckListMark,
         gauge::{GaugeFollowsPan, RectGauge},
-        pan::{EggStepSprite, KapaowStepSprite},
+        pan::{EggStepSprite, KaphraoStepSprite},
     },
     resource::{
-        cooking_state::{EggCookingState, KaprowCookingState},
-        game_state::GameState,
         LastDroppedIngredient,
+        cooking_state::{EggCookingState, KaphraoCookingState},
+        game_state::GameState,
     },
     spawn::{camera_spawn::camera_2d_spawn, spawn_table::table_spawn},
 };
@@ -22,11 +22,11 @@ use bevy::prelude::*;
 /// Sets up the 2D camera and initial scene
 pub fn setup_camera_and_scene(mut commands: Commands, asset_server: Res<AssetServer>) {
     let table_sprite = asset_server.load("kitchenware/image/Table.png");
-    let pan_kaprow_transform = Transform::from_translation(Vec3::new(0.0, 0.0, -10.0));
+    let pan_kaphrao_transform = Transform::from_translation(Vec3::new(0.0, 0.0, -10.0));
 
     // Spawn a 2D camera for the cooking game
     commands.spawn(camera_2d_spawn());
-    commands.spawn(table_spawn(table_sprite.clone(), pan_kaprow_transform));
+    commands.spawn(table_spawn(table_sprite.clone(), pan_kaphrao_transform));
 }
 
 /// Initialize the game with starting values
@@ -42,10 +42,10 @@ pub fn setup_initial_game_state(mut commands: Commands) {
 pub fn reset_game_state(
     mut commands: Commands,
     mut game_stats: ResMut<GameState>,
-    mut kaprow_state: ResMut<NextState<KaprowCookingState>>,
+    mut kaphrao_state: ResMut<NextState<KaphraoCookingState>>,
     mut egg_state: ResMut<NextState<EggCookingState>>,
     q_egg_step_sprites: Query<Entity, With<EggStepSprite>>,
-    q_kapaow_step_sprites: Query<Entity, With<KapaowStepSprite>>,
+    q_kaphrao_step_sprites: Query<Entity, With<KaphraoStepSprite>>,
     q_checklist_marks: Query<Entity, With<CheckListMark>>,
     q_rect_gauges: Query<Entity, With<RectGauge>>,
     q_gauge_containers: Query<Entity, With<GaugeFollowsPan>>,
@@ -54,7 +54,7 @@ pub fn reset_game_state(
     for entity in q_egg_step_sprites.iter() {
         commands.entity(entity).despawn();
     }
-    for entity in q_kapaow_step_sprites.iter() {
+    for entity in q_kaphrao_step_sprites.iter() {
         commands.entity(entity).despawn();
     }
 
@@ -72,25 +72,25 @@ pub fn reset_game_state(
     }
 
     // Reset cooking states to first step
-    kaprow_state.set(KaprowCookingState::Oil);
+    kaphrao_state.set(KaphraoCookingState::Oil);
     egg_state.set(EggCookingState::Oil);
 
     // Reset game state
     game_stats.hp = game_stats.max_hp;
     game_stats.steps_completed = 0;
-    game_stats.kapaow_has_oil = false;
+    game_stats.kaphrao_has_oil = false;
     game_stats.egg_has_oil = false;
-    game_stats.ingredient_kapaow_dropped = true;
+    game_stats.ingredient_kaphrao_dropped = true;
     game_stats.ingredient_egg_dropped = true;
     game_stats.gauge_container = false;
     game_stats.gauge_container_entity = None;
-    game_stats.kpaow_has_guage = false;
+    game_stats.kaphrao_has_gauge = false;
     game_stats.egg_has_guage = false;
     game_stats.target_egg_x = None;
-    game_stats.target_kapaow_x = None;
-    game_stats.count_pud_kapoaw = 0.0;
+    game_stats.target_kaphrao_x = None;
+    game_stats.count_phat_kaphrao = 0.0;
     game_stats.count_tod_kai = 0.0;
-    game_stats.kapaow_is_finished = false;
+    game_stats.kaphrao_is_finished = false;
     game_stats.egg_is_finished = false;
 
     info!("Game state reset - HP: {}, Step: 0", game_stats.hp);

@@ -4,40 +4,40 @@ use bevy_spritesheet_animation::prelude::*;
 use crate::{
     entities::{
         ingredient::{DroppedIngredient, IngredientType},
-        pan::{KapaowStepSprite, KaprowPanStepStateTag, PanKapaow},
-        ui::StepIndicatorKapaow,
+        pan::{KaphraoPanStepStateTag, KaphraoStepSprite, PanKaphrao},
+        ui::StepIndicatorKaphrao,
     },
     message::{
         game_message::{GameLoseMessage, GameWinMessage},
-        gaug_message::{GaugeKaprowHitMassage, GaugeSpawnMassage},
+        gaug_message::{GaugeKaphraoHitMassage, GaugeSpawnMassage},
         ingredient_message::IngredientDroppedMessage,
     },
     resource::{
-        cooking_animations::KaprowCookingAnimations, cooking_state::KaprowCookingState,
+        cooking_animations::KaphraoCookingAnimations, cooking_state::KaphraoCookingState,
         game_state::GameState,
     },
     spawn::{
-        animation_spawn::insert_kaprow_cooking_animation, step_spawn::spawn_ingredient_animation,
+        animation_spawn::insert_kaphrao_cooking_animation, step_spawn::spawn_ingredient_animation,
     },
 };
 
-pub fn handle_kaprow_pan_ingredient_drop(
+pub fn handle_kaphrao_pan_ingredient_drop(
     mut commands: Commands,
     mut event_reader: MessageReader<IngredientDroppedMessage>,
     mut game_stats: ResMut<GameState>,
     mut gauge_spawn_events: MessageWriter<GaugeSpawnMassage>,
     mut game_over_events: MessageWriter<GameLoseMessage>,
-    kaprow_cooking_state: Res<State<KaprowCookingState>>,
-    q_kaprow_pans: Query<&Transform, With<PanKapaow>>,
-    q_pan_entities: Query<&PanKapaow>,
+    kaphrao_cooking_state: Res<State<KaphraoCookingState>>,
+    q_kaphrao_pans: Query<&Transform, With<PanKaphrao>>,
+    q_pan_entities: Query<&PanKaphrao>,
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<Assets<Animation>>,
-    q_step_sprite: Query<(&KaprowPanStepStateTag, Entity), With<KapaowStepSprite>>,
-    mut kaprow_cooking_animation: ResMut<KaprowCookingAnimations>,
+    q_step_sprite: Query<(&KaphraoPanStepStateTag, Entity), With<KaphraoStepSprite>>,
+    mut kaphrao_cooking_animation: ResMut<KaphraoCookingAnimations>,
 ) {
     for event in event_reader.read() {
-        let state = kaprow_cooking_state.get();
+        let state = kaphrao_cooking_state.get();
         // Determine which pan the ingredient was dropped on
         let target_pan = event.target_pan;
 
@@ -47,21 +47,21 @@ pub fn handle_kaprow_pan_ingredient_drop(
 
         let target_pan = target_pan.unwrap();
 
-        let is_kapoaw_pan = q_pan_entities.contains(target_pan);
+        let is_kaphrao_pan = q_pan_entities.contains(target_pan);
 
         // Handle Egg Pan
-        if is_kapoaw_pan {
-            if !game_stats.kapaow_has_oil {
+        if is_kaphrao_pan {
+            if !game_stats.kaphrao_has_oil {
                 if event.ingredient_type != IngredientType::Oil {
-                    // Game over - first ingredient on kapoaw pan is not oil!
+                    // Game over - first ingredient on kaphrao pan is not oil!
                     game_over_events.write(GameLoseMessage);
                     return;
                 }
 
-                // Oil added to kapoaw pan - spawn oil step and gauge
-                game_stats.kapaow_has_oil = true;
+                // Oil added to kaphrao pan - spawn oil step and gauge
+                game_stats.kaphrao_has_oil = true;
 
-                for kaprow_pan_transform in q_kaprow_pans.iter() {
+                for kaphrao_pan_transform in q_kaphrao_pans.iter() {
                     let (image_path, row, col) = ("cooking_steps/image/Oil.png", 1, 3);
 
                     let image = asset_server.load(image_path);
@@ -76,13 +76,13 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     );
 
                     let transform = Transform::from_translation(
-                        kaprow_pan_transform.translation
-                            + Vec3::new(0.0, 0.0, game_stats.count_pud_kapoaw + 1.0),
+                        kaphrao_pan_transform.translation
+                            + Vec3::new(0.0, 0.0, game_stats.count_phat_kaphrao + 1.0),
                     );
 
                     commands.spawn((
-                        KaprowPanStepStateTag(state.clone()),
-                        KapaowStepSprite,
+                        KaphraoPanStepStateTag(state.clone()),
+                        KaphraoStepSprite,
                         sprite,
                         spritesheet_animation,
                         transform,
@@ -100,13 +100,13 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     }
                 }
 
-                let expected_ingredient = match *kaprow_cooking_state.get() {
-                    KaprowCookingState::Garlic => IngredientType::Garlic,
-                    KaprowCookingState::Chili => IngredientType::Chili,
-                    KaprowCookingState::Pork => IngredientType::Pork,
-                    KaprowCookingState::OysterSauce => IngredientType::OysterSauce,
-                    KaprowCookingState::MSG => IngredientType::MSG,
-                    KaprowCookingState::Kaprow => IngredientType::Kaprow,
+                let expected_ingredient = match *kaphrao_cooking_state.get() {
+                    KaphraoCookingState::Garlic => IngredientType::Garlic,
+                    KaphraoCookingState::Chili => IngredientType::Chili,
+                    KaphraoCookingState::Pork => IngredientType::Pork,
+                    KaphraoCookingState::OysterSauce => IngredientType::OysterSauce,
+                    KaphraoCookingState::MSG => IngredientType::MSG,
+                    KaphraoCookingState::Kaphrao => IngredientType::Kaphrao,
                     _ => {
                         // Wrong ingredient or game over condition
                         game_over_events.write(GameLoseMessage);
@@ -120,28 +120,28 @@ pub fn handle_kaprow_pan_ingredient_drop(
                 }
 
                 // Correct ingredient - spawn the step and gauge
-                for kaprow_pan_transform in q_kaprow_pans.iter() {
-                    let (image_path, row, col) = match *kaprow_cooking_state.get() {
-                        KaprowCookingState::Garlic => ("cooking_steps/image/Garlic.png", 3, 3),
-                        KaprowCookingState::Chili => ("cooking_steps/image/Chili.png", 3, 3),
-                        KaprowCookingState::Pork => ("cooking_steps/image/Pork.png", 3, 3),
-                        KaprowCookingState::OysterSauce => {
+                for kaphrao_pan_transform in q_kaphrao_pans.iter() {
+                    let (image_path, row, col) = match *kaphrao_cooking_state.get() {
+                        KaphraoCookingState::Garlic => ("cooking_steps/image/Garlic.png", 3, 3),
+                        KaphraoCookingState::Chili => ("cooking_steps/image/Chili.png", 3, 3),
+                        KaphraoCookingState::Pork => ("cooking_steps/image/Pork.png", 3, 3),
+                        KaphraoCookingState::OysterSauce => {
                             for (step_tag, entity) in q_step_sprite.iter() {
-                                if step_tag.0 == KaprowCookingState::Pork {
+                                if step_tag.0 == KaphraoCookingState::Pork {
                                     commands.entity(entity).despawn();
                                 }
                             }
                             ("cooking_steps/image/PorkWithOysterSauce.png", 3, 3)
                         }
-                        KaprowCookingState::MSG => {
+                        KaphraoCookingState::MSG => {
                             for (step_tag, entity) in q_step_sprite.iter() {
-                                if step_tag.0 == KaprowCookingState::OysterSauce {
+                                if step_tag.0 == KaphraoCookingState::OysterSauce {
                                     commands.entity(entity).despawn();
                                 }
                             }
                             ("cooking_steps/image/PorkWithMSG.png", 3, 3)
                         }
-                        KaprowCookingState::Kaprow => ("cooking_steps/image/Kaprow.png", 3, 3),
+                        KaphraoCookingState::Kaphrao => ("cooking_steps/image/Kaphrao.png", 3, 3),
                         _ => continue,
                     };
 
@@ -157,7 +157,7 @@ pub fn handle_kaprow_pan_ingredient_drop(
                         &mut animations,
                     );
 
-                    let animations_cahce = insert_kaprow_cooking_animation(
+                    let animations_cahce = insert_kaphrao_cooking_animation(
                         state.clone(),
                         Spritesheet::new(&image, col, row),
                         duration,
@@ -165,20 +165,19 @@ pub fn handle_kaprow_pan_ingredient_drop(
                     );
 
                     for animation in animations_cahce.iter() {
-                        kaprow_cooking_animation.animations.insert(
-                            (animation.0 .0.clone(), animation.0 .1),
-                            animation.1.clone(),
-                        );
+                        kaphrao_cooking_animation
+                            .animations
+                            .insert((animation.0.0.clone(), animation.0.1), animation.1.clone());
                     }
 
                     let transform = Transform::from_translation(
-                        kaprow_pan_transform.translation
-                            + Vec3::new(0.0, 0.0, game_stats.count_pud_kapoaw + 1.0),
+                        kaphrao_pan_transform.translation
+                            + Vec3::new(0.0, 0.0, game_stats.count_phat_kaphrao + 1.0),
                     );
 
                     commands.spawn((
-                        KaprowPanStepStateTag(state.clone()),
-                        KapaowStepSprite,
+                        KaphraoPanStepStateTag(state.clone()),
+                        KaphraoStepSprite,
                         sprite,
                         spritesheet_animation,
                         transform,
@@ -194,25 +193,25 @@ pub fn handle_kaprow_pan_ingredient_drop(
     }
 }
 
-pub fn next_step_kaprow_cooking(
+pub fn next_step_kaphrao_cooking(
     mut game_stats: ResMut<GameState>,
-    state: Res<State<KaprowCookingState>>,
-    mut next_state: ResMut<NextState<KaprowCookingState>>,
-    mut gauge_events: MessageReader<GaugeKaprowHitMassage>,
+    state: Res<State<KaphraoCookingState>>,
+    mut next_state: ResMut<NextState<KaphraoCookingState>>,
+    mut gauge_events: MessageReader<GaugeKaphraoHitMassage>,
     mut game_win: MessageWriter<GameWinMessage>,
-    mut query: Query<(&Name, &mut Text), (Without<DroppedIngredient>, With<StepIndicatorKapaow>)>,
+    mut query: Query<(&Name, &mut Text), (Without<DroppedIngredient>, With<StepIndicatorKaphrao>)>,
     mut check_drop_ingredient_text: Query<
         (&mut Text, &mut TextColor),
-        (With<DroppedIngredient>, With<StepIndicatorKapaow>),
+        (With<DroppedIngredient>, With<StepIndicatorKaphrao>),
     >,
     mut q_sprite_sheet_animation: Query<
-        (&KaprowPanStepStateTag, &mut SpritesheetAnimation),
-        With<KapaowStepSprite>,
+        (&KaphraoPanStepStateTag, &mut SpritesheetAnimation),
+        With<KaphraoStepSprite>,
     >,
-    kaprow_cooking_animation: Res<KaprowCookingAnimations>,
+    kaphrao_cooking_animation: Res<KaphraoCookingAnimations>,
 ) {
     for _ in gauge_events.read() {
-        if !game_stats.ingredient_kapaow_dropped {
+        if !game_stats.ingredient_kaphrao_dropped {
             return;
         }
 
@@ -221,13 +220,14 @@ pub fn next_step_kaprow_cooking(
         for (step_tag, mut spritesheet_animation) in q_sprite_sheet_animation.iter_mut() {
             let state = state.clone();
 
-            if state == KaprowCookingState::Oil {
+            if state == KaphraoCookingState::Oil {
                 continue;
             }
 
             if step_tag.0 == state {
-                if let Some(animation) =
-                    kaprow_cooking_animation.animations.get(&(state.clone(), 2))
+                if let Some(animation) = kaphrao_cooking_animation
+                    .animations
+                    .get(&(state.clone(), 2))
                 {
                     spritesheet_animation.animation = animation.clone();
                 }
@@ -237,11 +237,11 @@ pub fn next_step_kaprow_cooking(
         let next = state.next_step();
         next_state.set(next.clone());
 
-        // Check if kapaow cooking is finished
-        if matches!(next, KaprowCookingState::None) {
-            game_stats.kapaow_is_finished = true;
+        // Check if kaphrao cooking is finished
+        if matches!(next, KaphraoCookingState::None) {
+            game_stats.kaphrao_is_finished = true;
 
-            if game_stats.kapaow_is_finished && game_stats.egg_is_finished {
+            if game_stats.kaphrao_is_finished && game_stats.egg_is_finished {
                 game_win.write(GameWinMessage);
             }
         }
@@ -258,6 +258,6 @@ pub fn next_step_kaprow_cooking(
             *color = TextColor(Color::srgb(1.0, 0.3, 0.5));
         }
 
-        game_stats.ingredient_kapaow_dropped = false;
+        game_stats.ingredient_kaphrao_dropped = false;
     }
 }
