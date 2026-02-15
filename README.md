@@ -12,7 +12,7 @@ Every action is event-driven and synchronized through Bevy ECS — from ingredie
 
 ## 📺 Demo Video
 
-**Youtube:** [!https://www.youtube.com/watch?v=Qh8n9sX7l3I](https://www.youtube.com/watch?v=Qh8n9sX7l3I)
+[Youtube](https://www.youtube.com/watch?v=KdyGovts-y8)
 
 ## ⚙️ Tech Stack
 
@@ -33,4 +33,4 @@ Built for **Bevy Game Jam**.
 Copyright 2026
 Ruangyot Nanchiang
 Kachon Wanglavan
-[Phat Kaphrao Cooking Project]
+**[Phat Kaphrao Cooking Project]**
