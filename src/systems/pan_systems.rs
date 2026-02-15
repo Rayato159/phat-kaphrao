@@ -7,7 +7,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    entities::{pan, spatula},
+    entities::{pan, spatula, spatula::*},
     spawn::pan_spawn::{pan_egg_spawn, pan_kaprow_spawn, spatula_spawn},
 };
 
@@ -35,9 +35,12 @@ pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) 
     commands
         .spawn(pan_kaprow_spawn(pan_sprite.clone(), pan_kaprow_transform))
         .with_children(|p| {
-            p.spawn(spatula_spawn(
-                spatula_sprite.clone(),
-                Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
+            p.spawn((
+                spatula_spawn(
+                    spatula_sprite.clone(),
+                    Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
+                ),
+                KapaowSpatula,
             ));
         })
         .with_children(|p| {
@@ -54,9 +57,12 @@ pub fn setup_frying_pan(mut commands: Commands, asset_server: Res<AssetServer>) 
     commands
         .spawn(pan_egg_spawn(pan_sprite.clone(), pan_egg_transform))
         .with_children(|p| {
-            p.spawn(spatula_spawn(
-                spatula_sprite.clone(),
-                Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
+            p.spawn((
+                spatula_spawn(
+                    spatula_sprite.clone(),
+                    Transform::from_translation(Vec3::new(-spatula_offset, 0.0, 2.0)),
+                ),
+                EggSpatula,
             ));
         })
         .with_children(|p| {

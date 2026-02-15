@@ -34,6 +34,7 @@ use pad_kaprao::{
         menu_systems::{cleanup_main_menu, handle_menu_button_click, setup_main_menu},
         observer_systems::observe_game_state_changes,
         pan_systems::setup_frying_pan,
+        spatula_animation_systems::{trigger_spatula_animation, update_spatula_animation},
         time_count_down_systems::{spawn_countdown_timer, update_countdown_timer},
     },
     AppState, InGame, GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH,
@@ -97,8 +98,8 @@ fn main() {
                 moving_ball_gauge_animation,
                 check_gauge_hit_window,
                 spawn_damage_flash.after(check_gauge_hit_window),
-                update_damage_flash,
                 despawn_target_zone_on_hit,
+                trigger_spatula_animation.after(check_gauge_hit_window),
                 check_game_over.after(check_gauge_hit_window),
                 check_game_timer,
                 update_countdown_timer,
@@ -106,9 +107,11 @@ fn main() {
                     .after(handle_kaprow_pan_ingredient_drop)
                     .after(handle_egg_pan_ingredient_drop),
                 update_hearts_ui,
+                update_spatula_animation,
             )
                 .run_if(in_state(InGame)),
         )
+        .add_systems(Update, update_damage_flash)
         .add_systems(Update, update_dragging_ingredient.run_if(in_state(InGame)))
         .add_systems(Update, next_step_kaprow_cooking.run_if(in_state(InGame)))
         .add_systems(Update, next_step_egg_cooking.run_if(in_state(InGame)))

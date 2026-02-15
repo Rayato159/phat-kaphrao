@@ -9,4 +9,5 @@ pub mod kapaow_cooking_systems;
 pub mod menu_systems;
 pub mod observer_systems;
 pub mod pan_systems;
+pub mod spatula_animation_systems;
 pub mod time_count_down_systems;

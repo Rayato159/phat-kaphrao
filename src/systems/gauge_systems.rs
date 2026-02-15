@@ -218,7 +218,7 @@ pub fn update_damage_flash(
     time: Res<Time>,
 ) {
     for (entity, mut flash, mut bg_color) in query.iter_mut() {
-        flash.timer -= time.delta_secs();
+        flash.timer -= time.delta().as_secs_f32();
 
         // Fade out the alpha value
         let alpha = (flash.timer / 0.2) * 0.5; // 0.2 is the initial duration, 0.5 is initial alpha

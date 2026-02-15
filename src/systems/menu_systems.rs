@@ -12,13 +12,13 @@ use bevy::prelude::*;
 use crate::entities::ui::{ButtonAction, MainMenu};
 use crate::resource::game_state::AppState;
 use crate::spawn::main_menu_spawn::{
-    button_child_main_menu_spawn, button_parent_main_menu_spawn, main_menu_parent_spawn,
-    main_menu_subtitle_spawn, main_menu_title_spawn,
+    button_child_main_menu_spawn, button_parent_main_menu_spawn, completed_image_spawn,
+    main_menu_parent_spawn, main_menu_subtitle_spawn, main_menu_title_spawn,
 };
 
 /// Setup the main menu with start and quit buttons
 /// Creates a centered menu with game title and action buttons
-pub fn setup_main_menu(mut commands: Commands) {
+pub fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     info!("Setting up main menu!");
 
     commands
@@ -29,6 +29,9 @@ pub fn setup_main_menu(mut commands: Commands) {
 
             // Subtitle
             parent.spawn(main_menu_subtitle_spawn());
+
+            // Completed image
+            parent.spawn(completed_image_spawn(&asset_server));
 
             // Start Game button
             spawn_menu_button(

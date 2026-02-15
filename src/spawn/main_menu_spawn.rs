@@ -1,6 +1,8 @@
 use bevy::{
+    asset::AssetServer,
     color::Color,
     ecs::{bundle::Bundle, name::Name},
+    prelude::*,
     text::{TextColor, TextFont},
     ui::{
         widget::{Button, Text},
@@ -22,7 +24,7 @@ pub fn main_menu_parent_spawn() -> impl Bundle {
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            row_gap: Val::Px(40.0),
+            row_gap: Val::Px(30.0),
             ..default()
         },
         BackgroundColor(Color::srgb(0.95, 0.92, 0.88)), // Same as background color
@@ -77,5 +79,17 @@ pub fn button_child_main_menu_spawn(text: &str) -> impl Bundle {
             ..default()
         },
         TextColor(Color::WHITE),
+    )
+}
+
+pub fn completed_image_spawn(asset_server: &AssetServer) -> impl Bundle {
+    (
+        Name::new("CompletedImage"),
+        Node {
+            width: Val::Auto,
+            height: Val::Auto,
+            ..default()
+        },
+        ImageNode::new(asset_server.load("ui/image/Completed.png")),
     )
 }
