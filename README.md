@@ -14,6 +14,12 @@ Every action is event-driven and synchronized through Bevy ECS — from ingredie
 
 [Youtube](https://www.youtube.com/watch?v=KdyGovts-y8)
 
+## 👍 Submission And Demo on Web:
+
+[Submission](https://itch.io/jam/bevy-jam-7/rate/4292240)
+[Itch.io Page](https://rayato159.itch.io/phat-kaphrao-cooking)
+[WASM Demo on Web](https://rayato159.github.io/phat-kaphrao-wasm/)
+
 ## ⚙️ Tech Stack
 
 * Rust
